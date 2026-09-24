@@ -3,8 +3,12 @@
 1. Structure (via bankparse): four distinct options, a valid key, steps and a shortcut.
 2. Every CHK line is executed with sympy / scipy in scope and must come out True.
    A CHK is either one expression, or statements that set `ok`.
-3. Every $...$ / $$...$$ segment is rendered with the vendored KaTeX (throwOnError),
-   and the text outside math may only use a small whitelist of HTML tags.
+3. Every $...$ / $$...$$ segment is rendered with the vendored KaTeX in strict mode
+   (throwOnError, strict:'error', the dashboard's macro table).
+4. Outside math: only <b>, <i> and (in questions) <br> tags; no Unicode maths symbols
+   (Greek letters, operators, arrows, super/subscripts) and no characters the
+   dashboard's markdown-lite would reinterpret (* ^ _ ` |).  All maths is LaTeX.
+5. Every item has a shortcut and at least three tips (the trap line counts as one).
 
 Run:  python3 verify.py            (exit status 1 on any failure)
 """
@@ -19,7 +23,13 @@ import bankparse
 
 HERE = Path(__file__).parent
 MATH_RE = re.compile(r'\$\$(.+?)\$\$|\$(.+?)\$', re.S)
-ALLOWED_TAG_RE = re.compile(r'</?(br|b|i|u|sub|sup|small)\s*/?>')
+ALLOWED_TAG_RE = re.compile(r'</?(br|b|i)\s*/?>')
+# Unicode maths that must be written as LaTeX instead (Greek, super/subscripts,
+# arrows, mathematical operators, and the Latin-1 maths signs).
+UNICODE_MATH_RE = re.compile('[\u0370-\u03ff\u2070-\u209f\u2190-\u21ff\u2200-\u22ff'
+                             '\u27f0-\u27ff\u2900-\u297f\u00b1\u00b2\u00b3\u00b9\u00bc-\u00be'
+                             '\u00d7\u00f7\u221a\u2026]')
+MARKDOWN_RE = re.compile(r'[*^_`|]')
 SHEET_TAG_RE = re.compile(r'</?(br|b|i|u|sub|sup|small|p|ul|ol|li|table|thead|tbody|tr|td|th|h4)\s*/?>')
 
 
@@ -95,6 +105,8 @@ def text_fields(it):
     yield 'sc', it['sc']
     if it['tr']:
         yield 'tr', it['tr']
+    for i, t in enumerate(it.get('tips', [])):
+        yield f'tip{i}', t
 
 
 def collect_math(chapters, extra_texts=()):
@@ -107,6 +119,13 @@ def collect_math(chapters, extra_texts=()):
         stripped = tag_re.sub('', plain)
         if '<' in stripped or '>' in stripped:
             fails.append(f'{owner} {field}: raw < or > outside math: {plain[:120]!r}')
+        if tag_re is ALLOWED_TAG_RE and field != 'q' and '<br' in plain:
+            fails.append(f'{owner} {field}: <br> is only allowed in the question stem')
+        bad = UNICODE_MATH_RE.findall(stripped)
+        if bad:
+            fails.append(f'{owner} {field}: Unicode maths outside $...$ {sorted(set(bad))}: {plain[:120]!r}')
+        if MARKDOWN_RE.search(stripped):
+            fails.append(f'{owner} {field}: markdown-sensitive character outside math: {plain[:120]!r}')
         for m in MATH_RE.finditer(text):
             tex = m.group(1) if m.group(1) is not None else m.group(2)
             segs.append({'id': f'{owner}:{field}', 'tex': tex, 'display': m.group(1) is not None})
@@ -115,6 +134,11 @@ def collect_math(chapters, extra_texts=()):
         for it in ch['items']:
             for field, text in text_fields(it):
                 scan(it['id'], field, text)
+            n_tips = len(it.get('tips', [])) + (1 if it['tr'] else 0)
+            if n_tips < 3:
+                fails.append(f'{it["id"]} ({it["_where"]}): only {n_tips} tips/traps (need 3)')
+            if not it['sc'].strip():
+                fails.append(f'{it["id"]} ({it["_where"]}): no exam shortcut')
     for owner, text in extra_texts:
         scan(owner, 'html', text, SHEET_TAG_RE)
     return segs, fails

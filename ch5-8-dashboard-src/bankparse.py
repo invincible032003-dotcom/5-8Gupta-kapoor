@@ -12,7 +12,8 @@ Format (one item):
     ANS: C
     S: solution step            (repeatable, in order)
     SC: exam shortcut
-    TR: trap / why the distractors tempt   (optional)
+    TR: trap / why the distractors tempt   (optional; shown as the first tip)
+    TIP: tip or trick   (repeatable; with TR there must be at least 3 in all)
     CHK: python expression that must be True   (optional, repeatable)
 
 File-level lines:
@@ -24,7 +25,7 @@ import re
 import sys
 from pathlib import Path
 
-FIELD_RE = re.compile(r'^(Q|A|B|C|D|ANS|S|SC|TR|CHK):\s?(.*)$')
+FIELD_RE = re.compile(r'^(Q|A|B|C|D|ANS|S|SC|TR|TIP|CHK):\s?(.*)$')
 DIFF_NAMES = {1: 'Foundation', 2: 'Exam-level', 3: 'Elite'}
 
 
@@ -64,7 +65,7 @@ def parse_file(path):
             if meta.get('topic') not in topics:
                 raise BankError(f'{where}: unknown topic {meta.get("topic")!r}')
             cur = {'meta': meta, 'Q': '', 'opts': {}, 'ANS': '', 'S': [], 'SC': '',
-                   'TR': '', 'CHK': [], 'line': ln, 'file': str(path)}
+                   'TR': '', 'TIP': [], 'CHK': [], 'line': ln, 'file': str(path)}
             last = None
             continue
         m = FIELD_RE.match(line)
@@ -73,7 +74,7 @@ def parse_file(path):
             if tag in 'ABCD' and len(tag) == 1:
                 cur['opts'][tag] = val
                 last = ('opt', tag)
-            elif tag in ('S', 'CHK'):
+            elif tag in ('S', 'CHK', 'TIP'):
                 cur[tag].append(val)
                 last = (tag, len(cur[tag]) - 1)
             else:
@@ -87,7 +88,7 @@ def parse_file(path):
         kind, idx = last
         if kind == 'opt':
             cur['opts'][idx] += ' ' + text
-        elif kind in ('S', 'CHK'):
+        elif kind in ('S', 'CHK', 'TIP'):
             joiner = '\n' if kind == 'CHK' else ' '
             cur[kind][idx] += joiner + text
         else:
@@ -130,6 +131,8 @@ def normalise(chapter, topics, items):
             'steps': it['S'],
             'sc': it['SC'],
             'tr': it['TR'],
+            'tips': it['TIP'],
+            'pyq': meta.get('pyq', ''),
             '_chk': it['CHK'],
             '_where': where,
         })

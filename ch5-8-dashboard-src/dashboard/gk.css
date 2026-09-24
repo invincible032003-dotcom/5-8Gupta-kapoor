@@ -1,0 +1,51 @@
+/* ------------------------------------------------ Gupta & Kapoor tab
+   Injected by ch5-8-dashboard-src/integrate.py; edit it there. */
+.gk-badge{display:inline-block;padding:1px 7px;border-radius:999px;vertical-align:middle;
+  background:var(--mark-bg);color:var(--mark);border:1px solid var(--mark-line);
+  font-size:11px;font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.gk-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 12px}
+@media (min-width:760px){.gk-tabs{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.gk-tab{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;
+  background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:var(--r);
+  padding:9px 11px;cursor:pointer;box-shadow:var(--shadow);min-width:0}
+.gk-tab b{font-size:.95rem}
+.gk-tab span{font-size:.8rem;color:var(--ink-2);overflow-wrap:anywhere}
+.gk-tab small{font-size:.72rem;color:var(--ink-3)}
+.gk-tab:hover{border-color:var(--brand)}
+.gk-tab.on{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.gk-tab.on span,.gk-tab.on small{color:var(--brand-ink);opacity:.9}
+.gk-chap-hd{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.gk-chap-hd h2{margin:0;min-width:0;overflow-wrap:anywhere}
+.gk-subtabs{display:flex;flex-wrap:wrap;gap:6px}
+.gk-sub{background:var(--surface-2);color:var(--ink);border:1px solid var(--line-2);border-radius:999px;
+  padding:5px 11px;font-size:.8rem;cursor:pointer;text-align:left;max-width:100%;line-height:1.3}
+.gk-sub:hover{border-color:var(--brand)}
+.gk-sub.on{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.gk-sub .gk-count{display:inline-block;min-width:1.6em;text-align:center;margin-left:3px;padding:0 5px;
+  border-radius:999px;background:var(--surface-3);color:var(--ink-2);font-size:.72rem;font-weight:700}
+.gk-sub.on .gk-count{background:rgba(255,255,255,.25);color:var(--brand-ink)}
+.gk-sheet-tab{border-style:dashed}
+.gk-code{font-family:var(--font-mono);color:var(--brand);font-size:.9em}
+.gk-list > li.gk-item{padding:14px}
+.gk-item .gk-n{font-weight:700;color:var(--ink-2);font-size:.8rem}
+.gk-item .top .chip{white-space:normal;max-width:100%}
+.gk-item .qtext{margin-bottom:10px}
+ol.stmts{margin:8px 0 6px;padding-left:24px}
+ol.stmts > li{margin-bottom:4px}
+.ask{margin-top:4px}
+/* grid tracks must be allowed to shrink below a wide table's width; the
+   table then scrolls inside its own .scrollx box */
+.gk-sheets{grid-template-columns:minmax(0,1fr)}
+@media (min-width:620px){.gk-sheets{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.gk-sheet{min-width:0}
+.gk-sheet .sheet-body ul{margin:0 0 .6em;padding-left:20px}
+.gk-sheet .sheet-body li{margin-bottom:5px}
+.gk-sheet .sheet-body p{margin:.4em 0 .6em}
+table.gk-dt td,table.gk-dt th{vertical-align:top}
+.katex,.katex-display,.sheet-body,.scrollx,.palette,.qtext,.opt .v{position:relative}
+.grid > .card{margin-top:0}
+@media (max-width:480px){
+  #topbar .topline{gap:6px}
+  #topbar button{padding:6px 8px;font-size:.8rem}
+  .gk-tab{padding:8px 9px}
+}
