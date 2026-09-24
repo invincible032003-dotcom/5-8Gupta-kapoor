@@ -1,0 +1,1046 @@
+#CHAPTER 7 | Theoretical Discrete Probability Distributions
+#TOPIC 7A | Bernoulli & binomial: parameters and probabilities
+#TOPIC 7B | Binomial: moments, mode, m.g.f., additive & related results
+#TOPIC 7C | Poisson: moments, mode, m.g.f., recurrence
+#TOPIC 7D | Poisson: limit, additivity, conditioning & applications
+#TOPIC 7E | Negative binomial distribution
+#TOPIC 7F | Geometric distribution & lack of memory
+#TOPIC 7G | Hypergeometric distribution
+#TOPIC 7H | Multinomial distribution
+#TOPIC 7I | Discrete uniform, power series family & identification by m.g.f.
+
+// ---------------------------------------------------------------- 7A
+@@ topic=7A | sec=7·1 | page=7·1 | diff=1 | type=Statement
+Q: $X$ is a Bernoulli variate with $P(X=1)=p$.<br>1. $E(X^r)=p$ for every $r\ge1$<br>2. $\text{Var}(X)\le\tfrac14$<br>3. $\mu_3=pq(q-p)$<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 2 only
+C: 2 and 3 only
+D: 1 only
+ANS: A
+S: $X^r=X$ because $X\in\{0,1\}$, so $E(X^r)=p$.
+S: $\text{Var}=pq=p(1-p)\le\tfrac14$ with equality at $p=\tfrac12$.
+S: $\mu_3=E(X-p)^3=q(-p)^3+p\,q^3=pq(q^2-p^2)=pq(q-p)$.
+SC: Bernoulli is $B(1,p)$: every binomial formula with $n=1$. Sums of independent Bernoullis give the binomial.
+CHK: expand(q*(-p)**3+p*q**3 - p*q*(q-p)*(q+p)) == 0
+
+@@ topic=7A | sec=7·2 | page=7·29 | diff=1 | type=Numerical
+Q: A binomial variate has mean 16 and variance 8. Then $P(X\ge1)$ is
+A: $1-2^{-32}$
+B: $1-2^{-16}$
+C: $2^{-32}$
+D: $1-32\cdot2^{-32}$
+ANS: A
+S: $q=\tfrac{\text{var}}{\text{mean}}=\tfrac8{16}=\tfrac12$, $p=\tfrac12$, $n=\tfrac{16}{1/2}=32$.
+S: $P(X=0)=q^n=2^{-32}$, so $P(X\ge1)=1-2^{-32}$.
+SC: $q=\sigma^2/\mu$, then $n=\mu/p$. Takes five seconds.
+CHK: R(8,16) == R(1,2)
+
+@@ topic=7A | sec=7·2 | page=7·29 | diff=1 | type=Numerical
+Q: For a binomial distribution the mean is 6 and the standard deviation is $\sqrt2$. The parameters $(n,p)$ are
+A: $\left(9,\ \tfrac23\right)$
+B: $\left(18,\ \tfrac13\right)$
+C: $\left(12,\ \tfrac12\right)$
+D: $\left(9,\ \tfrac13\right)$
+ANS: A
+S: $npq=2,\ np=6\Rightarrow q=\tfrac13,\ p=\tfrac23$.
+S: $n=\tfrac6{2/3}=9$.
+SC: Use variance, not SD: $q=\sigma^2/\mu=2/6$.
+TR: $(18,\tfrac13)$ has mean 6 but variance 4.
+CHK: 9*R(2,3)*R(1,3) == 2
+
+@@ topic=7A | sec=7·2 | page=7·113 | diff=1 | type=Conceptual
+Q: Which of the following (mean, variance) pairs is impossible for a binomial distribution?
+A: mean 3, variance 4
+B: mean 4, variance 3
+C: mean 6, variance 2
+D: mean 2.5, variance 1.25
+ANS: A
+S: For $B(n,p)$: variance $=$ mean $\times q$ with $0<q<1$, so variance $<$ mean.
+S: Mean 3 with variance 4 would need $q=\tfrac43>1$ — impossible.
+S: The others give $(n,p)=(16,\tfrac14),(9,\tfrac23),(5,\tfrac12)$ — all valid.
+SC: Binomial: $\sigma^2<\mu$; Poisson: $\sigma^2=\mu$; negative binomial: $\sigma^2>\mu$.
+
+@@ topic=7A | sec=7·2 | page=7·30 | diff=2 | type=Numerical
+Q: In a binomial distribution with 5 independent trials, the probabilities of 1 and 2 successes are 0.4096 and 0.2048. The parameter $p$ is
+A: $0.2$
+B: $0.25$
+C: $0.4$
+D: $0.1$
+ANS: A
+S: $\dfrac{P(2)}{P(1)}=\dfrac{\binom52p^2q^3}{\binom51pq^4}=\dfrac{2p}q=\dfrac{0.2048}{0.4096}=\dfrac12$.
+S: $\dfrac pq=\dfrac14\Rightarrow p=0.2$.
+SC: Ratio of successive terms: $\dfrac{P(x+1)}{P(x)}=\dfrac{n-x}{x+1}\cdot\dfrac pq$. Ratios avoid solving high-degree equations.
+CHK: 5*R(2,10)*R(8,10)**4 == R(4096,10000)
+
+@@ topic=7A | sec=7·2 | page=7·31 | diff=2 | type=Numerical
+Q: $X\sim B(6,p)$ and $9P(X=4)=P(X=2)$. Then $p$ equals
+A: $\tfrac14$
+B: $\tfrac13$
+C: $\tfrac12$
+D: $\tfrac34$
+ANS: A
+S: $9\binom64p^4q^2=\binom62p^2q^4$ and $\binom64=\binom62=15$.
+S: $9p^2=q^2\Rightarrow q=3p\Rightarrow p=\tfrac14$.
+SC: Symmetric coefficients $\binom nk=\binom n{n-k}$ cancel instantly; take square roots.
+CHK: 9*R(1,4)**2 == R(3,4)**2
+
+@@ topic=7A | sec=7·2 | page=7·31 | diff=1 | type=Numerical
+Q: The probability that a man hits a target is $\tfrac14$. The least number of times he must fire so that the probability of hitting the target at least once exceeds $\tfrac23$ is
+A: $4$
+B: $3$
+C: $5$
+D: $6$
+ANS: A
+S: $1-\left(\tfrac34\right)^n>\tfrac23\iff\left(\tfrac34\right)^n<\tfrac13$.
+S: $\left(\tfrac34\right)^3=\tfrac{27}{64}=0.42$, $\left(\tfrac34\right)^4=\tfrac{81}{256}=0.316$. So $n=4$.
+SC: "At least once" $\Rightarrow$ solve $q^n<1-P$ by trying powers.
+CHK: min(m for m in range(1,20) if 1-R(3,4)**m > R(2,3)) == 4
+
+@@ topic=7A | sec=7·2 | page=7·31 | diff=2 | type=Numerical
+Q: A lot contains 1% defective items. The minimum sample size $n$ such that the probability of finding at least one defective is at least 0.95 is
+A: $299$
+B: $298$
+C: $300$
+D: $95$
+ANS: A
+S: $1-0.99^n\ge0.95\iff0.99^n\le0.05\iff n\ge\dfrac{\ln0.05}{\ln0.99}=\dfrac{-2.9957}{-0.01005}=298.07$.
+S: $n$ must be an integer, so $n=299$.
+SC: Rule of three: $n\approx3/p$ for 95% ($\ln20\approx3$). Here $\approx300$, then refine.
+TR: Rounding $298.07$ down to 298 gives probability just below 0.95.
+CHK: min(m for m in range(250,350) if 1-0.99**m >= 0.95) == 299
+
+@@ topic=7A | sec=7·2 | page=7·30 | diff=1 | type=Numerical
+Q: A student guesses (with a fair coin) on each of 10 true–false questions. The probability of at least 5 correct answers is
+A: $\tfrac{319}{512}$
+B: $\tfrac{193}{512}$
+C: $\tfrac{63}{256}$
+D: $\tfrac12$
+ANS: A
+S: $P(X\ge5)=\dfrac{\binom{10}5+\binom{10}6+\cdots+\binom{10}{10}}{1024}=\dfrac{252+210+120+45+10+1}{1024}$.
+S: $=\dfrac{638}{1024}=\dfrac{319}{512}$.
+SC: By symmetry $P(X\ge5)=\tfrac12+\tfrac12P(X=5)=\tfrac12+\tfrac{126}{1024}$.
+TR: $\tfrac{193}{512}=P(X\ge6)$, and $\tfrac{63}{256}=P(X=5)$.
+CHK: sum(binomial(10,j) for j in range(5,11))/R(1024) == R(319,512)
+
+@@ topic=7A | sec=7·2 | page=7·29 | diff=1 | type=Numerical
+Q: In 256 sets of twelve tosses of a fair coin, in how many sets may one expect exactly eight heads?
+A: $31$
+B: $12$
+C: $62$
+D: $128$
+ANS: A
+S: $P(X=8)=\binom{12}8\left(\tfrac12\right)^{12}=\dfrac{495}{4096}$.
+S: Expected number of sets $=256\cdot\dfrac{495}{4096}=\dfrac{495}{16}\approx30.9\approx31$.
+SC: Expected frequency $=N\cdot P(x)$. Note $256/4096=1/16$.
+CHK: close(256*binomial(12,8)/4096, 30.9375)
+
+@@ topic=7A | sec=7·2 | page=7·32 | diff=2 | type=Numerical
+Q: A hotel has 5 rooms (always occupied) and 3 television sets. Each occupant independently requests a set with probability $\tfrac12$. On what fraction of evenings will requests exceed the number of sets?
+A: $\tfrac3{16}$
+B: $\tfrac12$
+C: $\tfrac5{16}$
+D: $\tfrac1{32}$
+ANS: A
+S: Requests $X\sim B(5,\tfrac12)$; demand exceeds supply when $X\ge4$.
+S: $P(X\ge4)=\dfrac{\binom54+\binom55}{32}=\dfrac6{32}=\dfrac3{16}$.
+SC: Read the binomial row $1,5,10,10,5,1$ (total 32) and add the tail.
+CHK: R(5+1,32) == R(3,16)
+
+@@ topic=7A | sec=7·2 | page=7·31 | diff=2 | type=Statement
+Q: Consider the chevalier de Méré's two bets:<br>1. At least one six in 4 throws of a die has probability greater than $\tfrac12$<br>2. At least one double six in 24 throws of a pair of dice has probability greater than $\tfrac12$<br>Which is/are correct?
+A: 1 only
+B: 2 only
+C: Both 1 and 2
+D: Neither 1 nor 2
+ANS: A
+S: $P_1=1-\left(\tfrac56\right)^4=1-0.4823=0.5177>\tfrac12$.
+S: $P_2=1-\left(\tfrac{35}{36}\right)^{24}=1-0.5086=0.4914<\tfrac12$.
+S: So only the first bet is favourable.
+SC: Compute $q^n$ directly: $(5/6)^4\approx0.482$ and $(35/36)^{24}\approx0.509$. The rough rule $1-e^{-np}$ gives $0.487$ for both (same $np=\tfrac23$) and cannot separate them — that is exactly de Méré's paradox.
+CHK: 1-R(5,6)**4 > R(1,2) and 1-R(35,36)**24 < R(1,2)
+
+@@ topic=7A | sec=7·2 | page=7·30 | diff=2 | type=Numerical
+Q: For a binomial distribution with $n=5$, the sum of the mean and the variance is $1.8$. Then $p$ equals
+A: $0.2$
+B: $0.3$
+C: $0.4$
+D: $0.1$
+ANS: A
+S: $np+npq=1.8\Rightarrow5p(1+q)=1.8\Rightarrow p(2-p)=0.36$.
+S: $p^2-2p+0.36=0\Rightarrow p=1\pm0.8$; only $p=0.2$ lies in $(0,1)$.
+SC: Write $1+q=2-p$; the quadratic $p(2-p)=c$ has root $p=1-\sqrt{1-c}$.
+CHK: 5*R(1,5)+5*R(1,5)*R(4,5) == R(9,5)
+
+@@ topic=7A | sec=7·2 | page=7·29 | diff=1 | type=Numerical
+Q: A binomial variate has mean 4 and variance 3. Then $P(X\ge1)$ equals
+A: $1-\left(\tfrac34\right)^{16}$
+B: $1-\left(\tfrac14\right)^{16}$
+C: $\left(\tfrac34\right)^{16}$
+D: $1-\left(\tfrac34\right)^{4}$
+ANS: A
+S: $q=\tfrac34$, $p=\tfrac14$, $n=\tfrac4{1/4}=16$.
+S: $P(X\ge1)=1-q^n=1-\left(\tfrac34\right)^{16}$.
+SC: $q=\sigma^2/\mu$, $n=\mu/p$, then complement of "all failures".
+CHK: 16*R(1,4) == 4 and 16*R(1,4)*R(3,4) == 3
+
+@@ topic=7A | sec=7·2 | page=7·20 | diff=2 | type=Numerical
+Q: Four coins were tossed 100 times and the mean number of heads per toss was 2.4. Fitting a binomial distribution, the expected frequency of "no head" is about
+A: $2.56$
+B: $6.25$
+C: $0.81$
+D: $13$
+ANS: A
+S: $\hat p=\bar x/n=2.4/4=0.6$, $\hat q=0.4$.
+S: Expected frequency $=N\hat q^4=100\times0.0256=2.56$.
+SC: Fitting a binomial: $\hat p=\bar x/n$, then $N\binom nx\hat p^x\hat q^{n-x}$ via the recurrence.
+TR: $6.25=100\times(1/2)^4$ assumes fair coins.
+CHK: close(100*0.4**4, 2.56)
+
+// ---------------------------------------------------------------- 7B
+@@ topic=7B | sec=7·2·5 | page=7·12 | diff=2 | type=Statement
+Q: Consider the binomial distribution $B\left(9,\tfrac25\right)$.<br>1. It is bimodal with modes 3 and 4<br>2. It is positively skewed<br>3. Its mean equals one of its modes<br>Which are correct?
+A: 1 and 2 only
+B: 1 and 3 only
+C: 2 and 3 only
+D: 1, 2 and 3
+ANS: A
+S: $(n+1)p=10\cdot\tfrac25=4$ is an integer, so the modes are $4-1=3$ and $4$.
+S: $\gamma_1=\dfrac{q-p}{\sqrt{npq}}>0$ since $p<\tfrac12$: positively skewed.
+S: Mean $np=3.6$ is not a mode (modes are integers 3 and 4).
+SC: Mode rule: $(n+1)p$ integer $\Rightarrow$ two modes $(n+1)p-1$ and $(n+1)p$; otherwise the single mode is $\lfloor(n+1)p\rfloor$.
+CHK: binomial(9,3)*R(2,5)**3*R(3,5)**6 == binomial(9,4)*R(2,5)**4*R(3,5)**5
+
+@@ topic=7B | sec=7·2 | page=7·8 | diff=2 | type=Numerical
+Q: For $B\left(n,\tfrac12\right)$ the kurtosis coefficient $\beta_2$ equals
+A: $3-\tfrac2n$
+B: $3$
+C: $3+\tfrac2n$
+D: $3-\tfrac1n$
+ANS: A
+S: $\beta_2=3+\dfrac{1-6pq}{npq}$.
+S: With $p=q=\tfrac12$: $1-6pq=1-\tfrac32=-\tfrac12$, $npq=\tfrac n4$, so $\beta_2=3-\tfrac2n$.
+SC: Binomial: $\beta_1=\dfrac{(q-p)^2}{npq}$, $\beta_2=3+\dfrac{1-6pq}{npq}$. Platykurtic iff $pq>\tfrac16$. Both $\to$ normal values as $n\to\infty$.
+CHK: 3+(1-6*R(1,4))/(n*R(1,4)) - (3-2/n) == 0
+
+@@ topic=7B | sec=7·2·4 | page=7·11 | diff=2 | type=Numerical
+Q: The mean deviation about the mean of $B\left(4,\tfrac12\right)$ is
+A: $\tfrac34$
+B: $1$
+C: $\tfrac12$
+D: $\tfrac38$
+ANS: A
+S: Mean $=2$. Probabilities $\tfrac1{16},\tfrac4{16},\tfrac6{16},\tfrac4{16},\tfrac1{16}$ at $0,\dots,4$.
+S: $E|X-2|=\tfrac{2\cdot1+1\cdot4+0+1\cdot4+2\cdot1}{16}=\tfrac{12}{16}=\tfrac34$.
+SC: G&K formula: $MD=2npq\binom{n-1}{\mu-1}p^{\mu-1}q^{n-\mu}$ ($\mu=np$ integer) $=2\cdot1\cdot\binom31\tfrac1{8}=\tfrac34$.
+TR: $1$ is the standard deviation; MD $<$ SD always.
+CHK: sum(abs(j-2)*binomial(4,j) for j in range(5))/R(16) == R(3,4)
+
+@@ topic=7B | sec=7·2 | page=7·11 | diff=2 | type=Numerical
+Q: For $X\sim B(n,p)$, the third factorial moment $E[X(X-1)(X-2)]$ equals
+A: $n(n-1)(n-2)p^3$
+B: $n^3p^3$
+C: $np(1-p)(1-2p)$
+D: $n(n-1)(n-2)p^3q^3$
+ANS: A
+S: P.g.f. $(q+ps)^n$; third derivative at $s=1$: $n(n-1)(n-2)p^3$.
+SC: $r$-th factorial moment of $B(n,p)$: $n^{(r)}p^r$. Raw moments follow: $E(X^2)=n(n-1)p^2+np$.
+TR: Option C is the third <i>central</i> moment $\mu_3=npq(q-p)$ — do not confuse central and factorial moments.
+CHK: eq(diff((1-p+p*s)**n,s,3).subs(s,1), n*(n-1)*(n-2)*p**3)
+
+@@ topic=7B | sec=7·2·11 | page=7·15 | diff=2 | type=Statement
+Q: $X\sim B(n_1,p_1)$ and $Y\sim B(n_2,p_2)$ are independent.<br>1. If $p_1=p_2=p$ then $X+Y\sim B(n_1+n_2,p)$<br>2. If $p_1\ne p_2$ then $X+Y$ is binomial with $p=\dfrac{n_1p_1+n_2p_2}{n_1+n_2}$<br>3. $n_1-X\sim B(n_1,1-p_1)$<br>Which are correct?
+A: 1 and 3 only
+B: 1 and 2 only
+C: 1, 2 and 3
+D: 3 only
+ANS: A
+S: M.g.f.: $(q+pe^t)^{n_1}(q+pe^t)^{n_2}=(q+pe^t)^{n_1+n_2}$ — statement 1.
+S: With different $p$'s the product $(q_1+p_1e^t)^{n_1}(q_2+p_2e^t)^{n_2}$ is not of binomial form (its variance is $n_1p_1q_1+n_2p_2q_2<(n_1+n_2)\bar p\bar q$) — statement 2 false.
+S: Failures are "successes" with probability $q$ — statement 3.
+SC: Additive property needs a <b>common</b> $p$. Unequal $p$'s give the Poisson-binomial law, which is less variable than the binomial with averaged $p$.
+
+@@ topic=7B | sec=7·2 | page=7·15 | diff=3 | type=Conceptual
+Q: $X\sim B(n_1,p)$ and $Y\sim B(n_2,p)$ are independent. The conditional distribution of $X$ given $X+Y=m$ is
+A: hypergeometric: $\dfrac{\binom{n_1}k\binom{n_2}{m-k}}{\binom{n_1+n_2}m}$
+B: $B\left(m,\ \dfrac{n_1}{n_1+n_2}\right)$
+C: $B(m,p)$
+D: Poisson with mean $\dfrac{mn_1}{n_1+n_2}$
+ANS: A
+S: $P(X=k\mid X+Y=m)=\dfrac{\binom{n_1}kp^kq^{n_1-k}\binom{n_2}{m-k}p^{m-k}q^{n_2-m+k}}{\binom{n_1+n_2}mp^mq^{n_1+n_2-m}}$.
+S: All powers of $p,q$ cancel, leaving $\dfrac{\binom{n_1}k\binom{n_2}{m-k}}{\binom{n_1+n_2}m}$ — free of $p$.
+SC: Binomials conditioned on their total $\to$ hypergeometric; Poissons conditioned on their total $\to$ binomial. (Basis of Fisher's exact test.)
+TR: Option B is the answer for the Poisson analogue.
+
+@@ topic=7B | sec=7·2 | page=7·29 | diff=3 | type=Conceptual
+Q: $X\sim B(n,p)$ and $Y$ has the Beta distribution of the first kind with parameters $k$ and $n-k+1$. Then $P(X\ge k)$ equals
+A: $P(Y\le p)$
+B: $P(Y\ge p)$
+C: $P(Y\le1-p)$
+D: $1-P(Y\le p)$
+ANS: A
+S: The $k$-th order statistic $U_{(k)}$ of $n$ uniforms is Beta$(k,n-k+1)$.
+S: $U_{(k)}\le p\iff$ at least $k$ of the $n$ uniforms are $\le p\iff X\ge k$ where $X\sim B(n,p)$.
+SC: Binomial tail $=$ incomplete Beta: $P(X\ge k)=I_p(k,n-k+1)$ (G&K p. 7·29). Used to compute exact binomial confidence limits.
+CHK: close(sum(float(binomial(6,j))*0.3**j*0.7**(6-j) for j in range(2,7)), st.beta.cdf(0.3,2,5))
+
+@@ topic=7B | sec=7·2 | page=7·32 | diff=2 | type=Numerical
+Q: Five coins are tossed: four are fair and the fifth shows a head with probability 0.75. The variance of the number of heads is
+A: $1.1875$
+B: $1.25$
+C: $0.9375$
+D: $1.2$
+ANS: A
+S: The number of heads is a sum of independent Bernoullis: $\text{Var}=\sum p_iq_i$.
+S: $=4\cdot\tfrac14+0.75\cdot0.25=1+0.1875=1.1875$.
+SC: Independent trials with different $p_i$: mean $\sum p_i$, variance $\sum p_iq_i$ — no binomial formula needed.
+TR: $1.25$ assumes all five coins are fair.
+CHK: 4*R(1,4)+R(3,4)*R(1,4) == R(19,16)
+
+@@ topic=7B | sec=7·2 | page=7·8 | diff=1 | type=Numerical
+Q: For fixed $n$, the maximum possible variance of a binomial variate $B(n,p)$ is
+A: $\dfrac n4$
+B: $\dfrac n2$
+C: $n$
+D: $\dfrac{n^2}4$
+ANS: A
+S: $\text{Var}=np(1-p)$, maximised at $p=\tfrac12$.
+S: Maximum $=\dfrac n4$; maximum SD $=\dfrac{\sqrt n}2$.
+SC: $pq\le\tfrac14$ — the reason $\tfrac1{4n}$ is used as the worst-case variance of a sample proportion.
+
+@@ topic=7B | sec=7·2·7 | page=7·14 | diff=1 | type=Numerical
+Q: $X$ has m.g.f. $M(t)=\left(\dfrac{1+2e^t}3\right)^6$. The variance of $X$ is
+A: $\tfrac43$
+B: $2$
+C: $\tfrac83$
+D: $4$
+ANS: A
+S: $(q+pe^t)^n$ with $q=\tfrac13,\ p=\tfrac23,\ n=6$.
+S: $\text{Var}=npq=6\cdot\tfrac23\cdot\tfrac13=\tfrac43$.
+SC: Rewrite $\tfrac{1+2e^t}{3}=\tfrac13+\tfrac23e^t$ and read off $p$ as the coefficient of $e^t$.
+TR: $4$ is the mean $np$.
+CHK: (lambda M: diff(M,t,2).subs(t,0)-diff(M,t).subs(t,0)**2 == R(4,3))(((1+2*exp(t))/3)**6)
+
+@@ topic=7B | sec=7·2·12 | page=7·19 | diff=1 | type=Conceptual
+Q: The recurrence relation for binomial probabilities $p(x)=P(X=x)$ is
+A: $p(x+1)=\dfrac{n-x}{x+1}\cdot\dfrac pq\,p(x)$
+B: $p(x+1)=\dfrac{n-x}{x}\cdot\dfrac qp\,p(x)$
+C: $p(x+1)=\dfrac{\lambda}{x+1}\,p(x)$
+D: $p(x+1)=\dfrac{x+1}{n-x}\cdot\dfrac pq\,p(x)$
+ANS: A
+S: $\dfrac{p(x+1)}{p(x)}=\dfrac{\binom n{x+1}p^{x+1}q^{n-x-1}}{\binom nxp^xq^{n-x}}=\dfrac{n-x}{x+1}\cdot\dfrac pq$.
+SC: Start from $p(0)=q^n$ and multiply successively — the standard way to fit a binomial. Option C is the Poisson recurrence.
+
+@@ topic=7B | sec=7·2·2 | page=7·9 | diff=2 | type=Conceptual
+Q: The recurrence relation (Romanovsky) for the central moments of the binomial distribution is
+A: $\mu_{r+1}=pq\left[nr\mu_{r-1}+\dfrac{d\mu_r}{dp}\right]$
+B: $\mu_{r+1}=\lambda\left[r\mu_{r-1}+\dfrac{d\mu_r}{d\lambda}\right]$
+C: $\mu_{r+1}=npq\,\mu_r$
+D: $\mu_{r+1}=pq\,\dfrac{d\mu_r}{dp}$
+ANS: A
+S: Differentiate $\mu_r=\sum(x-np)^r\binom nxp^xq^{n-x}$ with respect to $p$ and simplify (§7·2·2).
+S: Check: $r=1$: $\mu_2=pq[n\mu_0+0]=npq$ ✓; $r=2$: $\mu_3=pq\left[0+\tfrac{d}{dp}(npq)\right]=npq(q-p)$ ✓.
+SC: Binomial: $pq[nr\mu_{r-1}+d\mu_r/dp]$; Poisson: $\lambda[r\mu_{r-1}+d\mu_r/d\lambda]$ (option B). Option D is the <i>cumulant</i> recurrence $\kappa_{r+1}=pq\,d\kappa_r/dp$.
+CHK: eq(p*(1-p)*diff(n*p*(1-p),p), n*p*(1-p)*(1-2*p))
+
+@@ topic=7B | sec=7·2 | page=7·31 | diff=3 | type=Numerical
+Q: Eight mice are split into two groups of four. Each mouse in group A gets a poison that kills with probability $\tfrac14$; each in group B gets a poison that kills with probability $\tfrac12$. The probability that group B (the stronger poison) has <b>fewer</b> deaths than group A is
+A: $\tfrac{525}{4096}$
+B: $\tfrac{1}{16}$
+C: $\tfrac{1225}{4096}$
+D: $\tfrac{81}{256}$
+ANS: A
+S: $A\sim B(4,\tfrac14)$: probabilities $\tfrac{81,108,54,12,1}{256}$; $B\sim B(4,\tfrac12)$ with $P(B<1,2,3,4)=\tfrac1{16},\tfrac5{16},\tfrac{11}{16},\tfrac{15}{16}$.
+S: $P(B<A)=\dfrac{108(1)+54(5)+12(11)+1(15)}{256\cdot16}=\dfrac{525}{4096}$.
+SC: Condition on the smaller-support variable and use cumulative probabilities of the other: $\sum_a P(A=a)P(B<a)$.
+CHK: sum(binomial(4,i)*R(1,4)**i*R(3,4)**(4-i)*sum(binomial(4,j)*R(1,16) for j in range(i)) for i in range(5)) == R(525,4096)
+
+@@ topic=7B | sec=7·2 | page=7·14 | diff=2 | type=Numerical
+Q: $X\sim B\left(10,\tfrac14\right)$. The probability that $X$ is even (including 0) is
+A: $\dfrac{1025}{2048}$
+B: $\dfrac12$
+C: $\dfrac{1023}{2048}$
+D: $\dfrac{3}{4}$
+ANS: A
+S: $P(\text{even})=\tfrac12[P(1)+P(-1)]$ with p.g.f. $P(s)=(q+ps)^n$.
+S: $P(-1)=(q-p)^{10}=\left(\tfrac12\right)^{10}$, so $P(\text{even})=\tfrac12\left(1+\tfrac1{1024}\right)=\tfrac{1025}{2048}$.
+SC: Binomial: $P(X\text{ even})=\tfrac12[1+(q-p)^n]$ — exactly $\tfrac12$ only when $p=\tfrac12$.
+TR: $\tfrac{1023}{2048}$ is $P(X\text{ odd})$.
+CHK: sum(binomial(10,j)*R(1,4)**j*R(3,4)**(10-j) for j in range(0,11,2)) == R(1025,2048)
+
+@@ topic=7B | sec=7·2 | page=7·11 | diff=3 | type=Numerical
+Q: $X\sim B\left(3,\tfrac12\right)$. Then $E\left[\dfrac1{X+1}\right]$ equals
+A: $\tfrac{15}{32}$
+B: $\tfrac25$
+C: $\tfrac12$
+D: $\tfrac{7}{16}$
+ANS: A
+S: General result: $E\left[\dfrac1{X+1}\right]=\dfrac{1-q^{n+1}}{(n+1)p}$.
+S: $=\dfrac{1-1/16}{4\cdot\frac12}=\dfrac{15/16}2=\dfrac{15}{32}$.
+S: Direct check: $\tfrac18\left(1+\tfrac32+\tfrac33+\tfrac14\right)=\tfrac{3.75}8$.
+SC: $\dfrac1{x+1}\binom nx=\dfrac1{n+1}\binom{n+1}{x+1}$ turns the sum into a binomial sum missing its first term.
+TR: $\tfrac25=\dfrac1{E(X)+1}$ — Jensen says the true value is larger.
+CHK: sum(R(1,j+1)*binomial(3,j)*R(1,8) for j in range(4)) == R(15,32)
+
+// ---------------------------------------------------------------- 7C
+@@ topic=7C | sec=7·3 | page=7·63 | diff=2 | type=Numerical
+Q: $X$ is a Poisson variate with $P(X=2)=9P(X=4)+90P(X=6)$. The mean of $X$ is
+A: $1$
+B: $2$
+C: $3$
+D: $\tfrac12$
+ANS: A
+S: $\dfrac{\lambda^2}2=9\dfrac{\lambda^4}{24}+90\dfrac{\lambda^6}{720}\Rightarrow\dfrac12=\dfrac{3\lambda^2}8+\dfrac{\lambda^4}8$.
+S: $\lambda^4+3\lambda^2-4=0\Rightarrow(\lambda^2+4)(\lambda^2-1)=0\Rightarrow\lambda=1$.
+SC: Cancel $e^{-\lambda}\lambda^2$ first; the equation becomes a quadratic in $\lambda^2$. Test $\lambda=1$: $\tfrac12=\tfrac38+\tfrac18$ ✓.
+CHK: solve(Eq(lam**2/2, 9*lam**4/24+90*lam**6/720),lam) == [1]
+
+@@ topic=7C | sec=7·3 | page=7·63 | diff=1 | type=Numerical
+Q: $X$ is a Poisson variate with $2P(X=0)+P(X=2)=2P(X=1)$. Then $\text{Var}(X)$ is
+A: $2$
+B: $1$
+C: $4$
+D: $3$
+ANS: A
+S: $2+\dfrac{\lambda^2}2=2\lambda\Rightarrow\lambda^2-4\lambda+4=0\Rightarrow\lambda=2$.
+S: Variance $=\lambda=2$.
+SC: After cancelling $e^{-\lambda}$ the equation is a perfect square — repeated root.
+CHK: solve(2+lam**2/2-2*lam,lam) == [2]
+
+@@ topic=7C | sec=7·3·2 | page=7·45 | diff=2 | type=Statement
+Q: For a Poisson distribution with mean 4:<br>1. It is bimodal with modes 3 and 4<br>2. The coefficient of variation is 50%<br>3. $\beta_2=3.25$<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 2 only
+C: 2 and 3 only
+D: 1 only
+ANS: A
+S: $\lambda=4$ integer $\Rightarrow$ $P(X=3)=P(X=4)$: modes 3 and 4.
+S: CV $=\sigma/\mu=2/4=50\%$.
+S: $\beta_2=3+\tfrac1\lambda=3.25$.
+SC: Poisson: mode $=\lfloor\lambda\rfloor$ (two modes $\lambda-1,\lambda$ if $\lambda$ is an integer); CV $=1/\sqrt\lambda$; $\beta_1=1/\lambda$; $\beta_2=3+1/\lambda$.
+CHK: exp(-4)*4**3/factorial(3) == exp(-4)*4**4/factorial(4)
+
+@@ topic=7C | sec=7·3 | page=7·114 | diff=2 | type=Numerical
+Q: In a Poisson distribution the second moment about the origin is 12. Its third moment about the mean is
+A: $3$
+B: $2$
+C: $5$
+D: $10$
+ANS: A
+S: $\mu_2'=\lambda+\lambda^2=12\Rightarrow\lambda=3$.
+S: $\mu_3=\lambda=3$.
+SC: Poisson: $\mu_2=\mu_3=\lambda$ and $\mu_4=3\lambda^2+\lambda$. (G&K objective question.)
+CHK: solve(lam**2+lam-12,lam) == [3]
+
+@@ topic=7C | sec=7·3 | page=7·47 | diff=1 | type=Conceptual
+Q: The characteristic function of the Poisson distribution with mean $m$ is
+A: $e^{m(e^{it}-1)}$
+B: $e^{m(e^{t}-1)}$
+C: $e^{m(e^{it}+1)}$
+D: $e^{mit}$
+ANS: A
+S: $\phi(t)=\sum e^{itx}\dfrac{e^{-m}m^x}{x!}=e^{-m}e^{me^{it}}=e^{m(e^{it}-1)}$.
+SC: C.f. = m.g.f. with $t$ replaced by $it$. Option B is the m.g.f.
+
+@@ topic=7C | sec=7·3 | page=7·46 | diff=2 | type=Conceptual
+Q: The recurrence relation for the central moments of the Poisson distribution with parameter $\lambda$ is
+A: $\mu_{r+1}=r\lambda\mu_{r-1}+\lambda\dfrac{d\mu_r}{d\lambda}$
+B: $\mu_{r+1}=\lambda\mu_r$
+C: $\mu_{r+1}=r\lambda\mu_{r-1}$
+D: $\mu_{r+1}=\lambda\dfrac{d\mu_r}{d\lambda}$
+ANS: A
+S: Differentiate $\mu_r=\sum(x-\lambda)^re^{-\lambda}\lambda^x/x!$ with respect to $\lambda$ (§7·3).
+S: Check: $\mu_2=\lambda\mu_0+\lambda\cdot0=\lambda$; $\mu_3=2\lambda\mu_1+\lambda\tfrac{d\lambda}{d\lambda}=\lambda$; $\mu_4=3\lambda\cdot\lambda+\lambda\cdot1=3\lambda^2+\lambda$ ✓.
+SC: Verify any recurrence on $\mu_2$ and $\mu_3$ — the wrong options fail immediately.
+CHK: 3*lam*lam+lam*diff(lam,lam) == 3*lam**2+lam
+
+@@ topic=7C | sec=7·3 | page=7·44 | diff=1 | type=Statement
+Q: For the Poisson distribution with parameter $\lambda$:<br>1. Every cumulant equals $\lambda$<br>2. Mean = variance = third central moment<br>3. The distribution is positively skewed for every $\lambda$<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 2 only
+C: 2 only
+D: 1 and 3 only
+ANS: A
+S: $K(t)=\lambda(e^t-1)=\lambda\sum_{r\ge1}t^r/r!$, so $\kappa_r=\lambda$.
+S: $\mu=\kappa_1,\ \mu_2=\kappa_2,\ \mu_3=\kappa_3$: all equal $\lambda$.
+S: $\gamma_1=\lambda^{-1/2}>0$: always positively skewed, tending to symmetry as $\lambda\to\infty$.
+SC: "All cumulants equal" characterises the Poisson — the fastest way to get any Poisson moment.
+
+@@ topic=7C | sec=7·3 | page=7·44 | diff=1 | type=Numerical
+Q: For a Poisson variate $X$, $P(X=0)=\tfrac12$. The variance of $X$ is
+A: $\ln2$
+B: $\tfrac12$
+C: $2$
+D: $e^{-1/2}$
+ANS: A
+S: $e^{-\lambda}=\tfrac12\Rightarrow\lambda=\ln2\approx0.693$.
+S: Variance $=\lambda=\ln2$.
+SC: $P(X=0)$ alone pins down a Poisson: $\lambda=-\ln P(0)$.
+CHK: solve(exp(-lam)-R(1,2),lam) == [log(2)]
+
+@@ topic=7C | sec=7·3 | page=7·44 | diff=2 | type=Numerical
+Q: $X\sim$ Poisson$(2)$. Then $P(X\ge2\mid X\ge1)$ equals
+A: $\dfrac{1-3e^{-2}}{1-e^{-2}}$
+B: $1-3e^{-2}$
+C: $\dfrac{1-2e^{-2}}{1-e^{-2}}$
+D: $\dfrac{2e^{-2}}{1-e^{-2}}$
+ANS: A
+S: $P(X\ge2)=1-e^{-2}(1+2)=1-3e^{-2}$; $P(X\ge1)=1-e^{-2}$.
+S: The event $X\ge2$ is contained in $X\ge1$, so the ratio is the answer.
+SC: Conditional tail = ratio of tails. Option D is $P(X=1\mid X\ge1)$.
+CHK: close((1-3*math.exp(-2))/(1-math.exp(-2)), 1-(2*math.exp(-2))/(1-math.exp(-2)))
+
+// ---------------------------------------------------------------- 7D
+@@ topic=7D | sec=7·3 | page=7·40 | diff=1 | type=Conceptual
+Q: The Poisson distribution is a limiting case of the binomial $B(n,p)$ when
+A: $n\to\infty,\ p\to0$ with $np=\lambda$ finite
+B: $n\to\infty$ with $p$ fixed
+C: $n\to\infty,\ p\to\tfrac12$
+D: $n\to0,\ p\to0$
+ANS: A
+S: $\binom nx\left(\tfrac\lambda n\right)^x\left(1-\tfrac\lambda n\right)^{n-x}\to\dfrac{\lambda^x}{x!}e^{-\lambda}$ as $n\to\infty$.
+SC: Rare events: large $n$, small $p$, moderate $np$. With $p$ fixed and $n\to\infty$ the limit is <b>normal</b> (option B).
+
+@@ topic=7D | sec=7·3·3 | page=7·47 | diff=1 | type=Statement
+Q: $X\sim P(\lambda_1)$ and $Y\sim P(\lambda_2)$ are independent.<br>1. $X+Y\sim P(\lambda_1+\lambda_2)$<br>2. $X-Y\sim P(\lambda_1-\lambda_2)$ when $\lambda_1>\lambda_2$<br>3. $2X$ is a Poisson variate<br>Which are correct?
+A: 1 only
+B: 1 and 2 only
+C: 1 and 3 only
+D: 1, 2 and 3
+ANS: A
+S: $M_{X+Y}=e^{(\lambda_1+\lambda_2)(e^t-1)}$ — Poisson.
+S: $X-Y$ takes negative values, so it cannot be Poisson (its law is the Skellam distribution).
+S: $2X$ takes only even values and has variance $4\lambda_1\ne$ mean $2\lambda_1$ — not Poisson.
+SC: Poisson is closed under independent <b>sums</b> only. Test any claimed Poisson: support $\{0,1,2,\dots\}$ and mean = variance.
+
+@@ topic=7D | sec=7·3·3 | page=7·48 | diff=2 | type=Conceptual
+Q: $X\sim P(\lambda_1)$ and $Y\sim P(\lambda_2)$ are independent. The conditional distribution of $X$ given $X+Y=n$ is
+A: $B\left(n,\ \dfrac{\lambda_1}{\lambda_1+\lambda_2}\right)$
+B: $P(\lambda_1)$
+C: $P\left(\dfrac{n\lambda_1}{\lambda_1+\lambda_2}\right)$
+D: hypergeometric
+ANS: A
+S: $P(X=k\mid X+Y=n)=\dfrac{e^{-\lambda_1}\lambda_1^k/k!\cdot e^{-\lambda_2}\lambda_2^{n-k}/(n-k)!}{e^{-(\lambda_1+\lambda_2)}(\lambda_1+\lambda_2)^n/n!}$.
+S: $=\binom nk\left(\dfrac{\lambda_1}{\lambda_1+\lambda_2}\right)^k\left(\dfrac{\lambda_2}{\lambda_1+\lambda_2}\right)^{n-k}$.
+SC: Poissons given their total are multinomial/binomial with probabilities proportional to the means.
+
+@@ topic=7D | sec=7·3 | page=7·49 | diff=2 | type=Numerical
+Q: 2% of razor blades are defective; blades are sold in packets of 10. Using the Poisson approximation, in a consignment of 10,000 packets, the expected number of packets with no defective blade is about
+A: $8187$
+B: $1637$
+C: $164$
+D: $9048$
+ANS: A
+S: $\lambda=np=10\times0.02=0.2$.
+S: $P(0)=e^{-0.2}=0.8187$; expected packets $=10000\times0.8187\approx8187$.
+SC: Remember $e^{-0.2}\approx0.8187$, $e^{-0.5}\approx0.6065$, $e^{-1}\approx0.3679$, $e^{-2}\approx0.1353$.
+TR: $1637$ is the count with exactly one defective ($0.2e^{-0.2}$).
+CHK: round(10000*math.exp(-0.2)) == 8187
+
+@@ topic=7D | sec=7·3 | page=7·50 | diff=2 | type=Numerical
+Q: A car-hire firm has 2 cars; daily demand is Poisson with mean 1.5. The proportion of days on which some demand is refused is about
+A: $0.1912$
+B: $0.2231$
+C: $0.8088$
+D: $0.3347$
+ANS: A
+S: Demand is refused when $X>2$.
+S: $P(X\le2)=e^{-1.5}\left(1+1.5+\tfrac{2.25}2\right)=0.2231\times3.625=0.8088$.
+S: $P(X>2)=1-0.8088=0.1912$.
+SC: Poisson tail beyond $k$: $1-e^{-\lambda}\sum_{j\le k}\lambda^j/j!$. The other G&K part: days neither car is used $=e^{-1.5}=0.2231$.
+TR: $0.2231$ answers "neither car used".
+CHK: close(1-math.exp(-1.5)*(1+1.5+1.125), 0.1912, 1e-3)
+
+@@ topic=7D | sec=7·3 | page=7·50 | diff=2 | type=Numerical
+Q: 390 misprints are distributed at random over the 520 pages of a book. The probability that a given page contains at least two misprints is about
+A: $0.173$
+B: $0.354$
+C: $0.472$
+D: $0.827$
+ANS: A
+S: $\lambda=\tfrac{390}{520}=0.75$ per page.
+S: $P(X\ge2)=1-e^{-0.75}(1+0.75)=1-0.4724\times1.75=1-0.8266=0.173$.
+SC: $\lambda$ = total count / number of cells. "At least two" $=1-e^{-\lambda}(1+\lambda)$.
+TR: $0.472=P(X=0)$; $0.827=P(X\le1)$.
+CHK: close(1-math.exp(-0.75)*1.75, 0.1734, 1e-3)
+
+@@ topic=7D | sec=7·3 | page=7·52 | diff=2 | type=Numerical
+Q: The number of deaths from horse kicks in 200 corps-years were: 0 deaths: 109, 1: 65, 2: 22, 3: 3, 4: 1. Fitting a Poisson distribution, the expected frequency of corps-years with no death is about
+A: $109$
+B: $66$
+C: $20$
+D: $122$
+ANS: A
+S: Mean $=\dfrac{0+65+44+9+4}{200}=\dfrac{122}{200}=0.61$.
+S: Expected frequency $=200e^{-0.61}=200\times0.5434\approx108.7\approx109$.
+SC: Fitting: $\hat\lambda=\bar x$, then $N e^{-\hat\lambda}$ and multiply successively by $\hat\lambda/(x+1)$.
+TR: $122$ is $\sum xf$, not a frequency.
+CHK: round(200*math.exp(-0.61)) == 109
+
+@@ topic=7D | sec=7·3·3 | page=7·47 | diff=1 | type=Numerical
+Q: $X\sim$ Poisson$(1)$ and $Y\sim$ Poisson$(2)$ are independent. Then $P(X+Y=2)$ equals
+A: $\tfrac92e^{-3}$
+B: $3e^{-3}$
+C: $2e^{-3}$
+D: $\tfrac52e^{-3}$
+ANS: A
+S: $X+Y\sim$ Poisson$(3)$.
+S: $P(X+Y=2)=e^{-3}\dfrac{3^2}{2!}=\tfrac92e^{-3}$.
+SC: Add the means first; never convolve Poissons term by term.
+CHK: exp(-3)*9/2 == R(9,2)*exp(-3)
+
+// ---------------------------------------------------------------- 7E
+@@ topic=7E | sec=7·4 | page=7·70 | diff=1 | type=Numerical
+Q: $X$ is the number of failures before the 2nd success in Bernoulli trials with success probability $\tfrac13$. The variance of $X$ is
+A: $12$
+B: $4$
+C: $6$
+D: $18$
+ANS: A
+S: Negative binomial: mean $\dfrac{rq}p=\dfrac{2\cdot\frac23}{\frac13}=4$.
+S: Variance $=\dfrac{rq}{p^2}=\dfrac{4/3}{1/9}=12$.
+SC: NB variance $=$ mean$/p$. Since $p<1$, variance $>$ mean — the over-dispersion signature.
+TR: $4$ is the mean.
+CHK: 2*R(2,3)/R(1,3)**2 == 12
+
+@@ topic=7E | sec=7·4 | page=7·70 | diff=2 | type=Numerical
+Q: Boys and girls are equally likely. The probability that a family's tenth child is its third son is
+A: $\tfrac9{256}$
+B: $\tfrac{45}{1024}$
+C: $\tfrac3{256}$
+D: $\tfrac9{128}$
+ANS: A
+S: Exactly 2 sons among the first 9 children, then a son: $\binom92\left(\tfrac12\right)^9\cdot\tfrac12$.
+S: $=\dfrac{36}{1024}=\dfrac9{256}$.
+SC: "$k$-th trial is the $r$-th success": $\binom{k-1}{r-1}p^rq^{k-r}$ (Pascal distribution).
+TR: $\tfrac{45}{1024}$ uses $\binom{10}{2}$ instead of $\binom92$ — only the first 9 children are free; the tenth must itself be a son.
+CHK: binomial(9,2)*R(1,2)**10 == R(9,256)
+
+@@ topic=7E | sec=7·4 | page=7·74 | diff=2 | type=Numerical
+Q: A negative binomial variate (number of failures before the $r$-th success) has mean 6 and variance 9. Its parameters are
+A: $r=12,\ p=\tfrac23$
+B: $r=6,\ p=\tfrac13$
+C: $r=12,\ p=\tfrac13$
+D: $r=18,\ p=\tfrac23$
+ANS: A
+S: $p=\dfrac{\text{mean}}{\text{variance}}=\dfrac69=\dfrac23$, $q=\tfrac13$.
+S: $\dfrac{rq}p=6\Rightarrow r\cdot\dfrac{1/3}{2/3}=6\Rightarrow r=12$.
+SC: $p=\mu/\sigma^2$ and $r=\dfrac{\mu^2}{\sigma^2-\mu}=\dfrac{36}3=12$ — the moment estimators of the NB parameters.
+CHK: 12*R(1,3)/R(2,3) == 6
+CHK: 12*R(1,3)/R(2,3)**2 == 9
+
+@@ topic=7E | sec=7·4·4 | page=7·76 | diff=1 | type=Conceptual
+Q: The probability generating function of the negative binomial distribution $P(X=x)=\binom{x+r-1}{r-1}p^rq^x$, $x=0,1,2,\dots$ is
+A: $\left(\dfrac p{1-qs}\right)^r$
+B: $(q+ps)^r$
+C: $\left(\dfrac{ps}{1-qs}\right)^r$
+D: $e^{r(s-1)}$
+ANS: A
+S: $\sum_x\binom{x+r-1}{x}(qs)^xp^r=p^r(1-qs)^{-r}$ by the negative binomial series.
+SC: Failures version: $\left(\tfrac p{1-qs}\right)^r$; trials version multiplies by $s^r$ (option C). Hence the name "negative binomial": $p^r(1-qs)^{-r}$.
+
+@@ topic=7E | sec=7·4·3 | page=7·75 | diff=2 | type=Conceptual
+Q: The negative binomial distribution with parameters $r$ and $p$ tends to the Poisson distribution when
+A: $r\to\infty,\ q\to0$ with $rq=\lambda$ finite
+B: $r\to\infty$ with $p$ fixed
+C: $p\to0$ with $r$ fixed
+D: $r\to0,\ p\to1$ with $r/p$ fixed
+ANS: A
+S: $\left(\dfrac p{1-qs}\right)^r=\left(\dfrac{1-\lambda/r}{1-\lambda s/r}\right)^r\to\dfrac{e^{-\lambda}}{e^{-\lambda s}}=e^{\lambda(s-1)}$.
+SC: Like the binomial, the NB becomes Poisson when "many trials, each rare": $r$ large, failures rare, mean $rq/p\approx\lambda$.
+
+@@ topic=7E | sec=7·4 | page=7·75 | diff=2 | type=Statement
+Q: Consider the negative binomial distribution (failures before the $r$-th success):<br>1. Its variance always exceeds its mean<br>2. It is the distribution of the sum of $r$ independent geometric (failures) variates with the same $p$<br>3. Its mean and variance can be equal for suitable finite $r$ and $p$<br>Which are correct?
+A: 1 and 2 only
+B: 1 and 3 only
+C: 2 only
+D: 1, 2 and 3
+ANS: A
+S: $\sigma^2=\mu/p>\mu$ for $0<p<1$ — statement 1; hence 3 is false (equality only in the Poisson limit).
+S: P.g.f. $\left(\tfrac p{1-qs}\right)^r=\left[\tfrac p{1-qs}\right]^r$ is the $r$-fold product of geometric p.g.f.s — statement 2.
+SC: G&K objective: "mean and variance of NB cannot be the same"; they coincide only in the limiting (Poisson) case.
+
+@@ topic=7E | sec=7·4 | page=7·77 | diff=3 | type=Numerical
+Q: (Banach's match-box problem) A smoker carries two match-boxes, each initially with $N=2$ matches, and each time picks a box at random. When he first finds a box empty, the probability that the other box contains exactly one match is
+A: $\tfrac38$
+B: $\tfrac14$
+C: $\tfrac3{16}$
+D: $\tfrac12$
+ANS: A
+S: The other box has $r$ matches when the empty box is chosen for the $(N+1)$-th time after $N-r$ draws from the other: $P(r)=\dbinom{2N-r}{N}\left(\tfrac12\right)^{2N-r}$ (the factor 2 for either box cancels one $\tfrac12$).
+S: $N=2,\ r=1$: $\dbinom32\left(\tfrac12\right)^3=\tfrac38$.
+S: Check: $P(0)=\tfrac6{16},\ P(1)=\tfrac6{16},\ P(2)=\tfrac4{16}$ sum to 1.
+SC: Banach's problem is a negative-binomial count (G&K p. 7·77): successes = picks of the box that empties, $p=\tfrac12$.
+CHK: [binomial(4-r,2)*R(1,2)**(4-r) for r in range(3)] == [R(3,8),R(3,8),R(1,4)]
+
+@@ topic=7E | sec=7·4 | page=7·74 | diff=2 | type=Conceptual
+Q: For the negative binomial distribution $p(x)=\binom{x+r-1}{x}p^rq^x$, $x=0,1,\dots$, the recurrence relation between successive probabilities is
+A: $p(x+1)=\dfrac{(x+r)q}{x+1}\,p(x)$
+B: $p(x+1)=\dfrac{(r-x)q}{x+1}\,p(x)$
+C: $p(x+1)=\dfrac{q}{x+1}\,p(x)$
+D: $p(x+1)=\dfrac{(x+1)q}{x+r}\,p(x)$
+ANS: A
+S: $\dfrac{p(x+1)}{p(x)}=\dfrac{\binom{x+r}{x+1}}{\binom{x+r-1}{x}}q=\dfrac{x+r}{x+1}q$.
+S: Start from $p(0)=p^r$ and multiply successively.
+SC: Compare binomial $\tfrac{n-x}{x+1}\tfrac pq$ — the NB has $+$ where the binomial has $-$ ("negative" binomial).
+
+// ---------------------------------------------------------------- 7F
+@@ topic=7F | sec=7·5·1 | page=7·84 | diff=1 | type=Conceptual
+Q: $X$ has the geometric distribution $P(X=x)=q^xp$, $x=0,1,2,\dots$. For non-negative integers $m,n$, $P(X\ge m+n\mid X\ge m)$ equals
+A: $P(X\ge n)$
+B: $P(X\ge m)$
+C: $P(X\ge m)P(X\ge n)$
+D: $P(X=n)$
+ANS: A
+S: $P(X\ge k)=q^k$.
+S: $P(X\ge m+n\mid X\ge m)=\dfrac{q^{m+n}}{q^m}=q^n=P(X\ge n)$.
+SC: Lack of memory: the geometric (discrete) and exponential (continuous) are the <b>only</b> memoryless laws on their supports.
+
+@@ topic=7F | sec=7·5 | page=7·84 | diff=1 | type=Numerical
+Q: A fair die is thrown until a six appears. The variance of the number of throws required is
+A: $30$
+B: $36$
+C: $6$
+D: $25$
+ANS: A
+S: Trials to first success: mean $\tfrac1p=6$, variance $\tfrac q{p^2}=\tfrac{5/6}{1/36}=30$.
+SC: The variance $q/p^2$ is the same for the "trials" and "failures" versions (they differ by the constant 1).
+TR: $36=1/p^2$ forgets the factor $q$.
+CHK: R(5,6)/R(1,36) == 30
+
+@@ topic=7F | sec=7·5 | page=7·84 | diff=2 | type=Numerical
+Q: $X$ is geometric with $P(X=x)=(0.8)^x(0.2)$, $x=0,1,2,\dots$. Then $P(X\ge5\mid X\ge2)$ is
+A: $0.512$
+B: $0.32768$
+C: $0.8$
+D: $0.2$
+ANS: A
+S: By lack of memory, $P(X\ge5\mid X\ge2)=P(X\ge3)=q^3$.
+S: $=0.8^3=0.512$.
+SC: Subtract the conditioning threshold and raise $q$ to the remaining gap.
+TR: $0.32768=0.8^5=P(X\ge5)$, the unconditional value.
+CHK: close(0.8**5/0.8**2, 0.512)
+
+@@ topic=7F | sec=7·5 | page=7·84 | diff=3 | type=Conceptual
+Q: $X$ and $Y$ are independent geometric variates on $\{0,1,2,\dots\}$ with parameters $p_1,p_2$ (so $P(X\ge k)=q_1^k$). Then $\min(X,Y)$ is
+A: geometric with $q=q_1q_2$
+B: geometric with $p=p_1p_2$
+C: negative binomial with $r=2$
+D: geometric with $p=\dfrac{p_1+p_2}2$
+ANS: A
+S: $P(\min\ge k)=P(X\ge k)P(Y\ge k)=(q_1q_2)^k$.
+S: This is the geometric survival function with "failure" probability $q_1q_2$, i.e. $p=1-q_1q_2$.
+SC: Minimum of independent geometrics (or exponentials) stays in the family: multiply survival functions. Continuous analogue: rates add.
+
+@@ topic=7F | sec=7·5 | page=7·84 | diff=3 | type=Numerical
+Q: $X$ and $Y$ are i.i.d. geometric with $P(X=k)=q^kp$, $k=0,1,2,\dots$. Then $P(X=Y)$ equals
+A: $\dfrac p{1+q}$
+B: $p^2$
+C: $\dfrac q{1+q}$
+D: $\tfrac12$
+ANS: A
+S: $P(X=Y)=\sum_kp^2q^{2k}=\dfrac{p^2}{1-q^2}=\dfrac{p^2}{(1-q)(1+q)}=\dfrac p{1+q}$.
+SC: Squares of a geometric p.m.f. sum like a geometric series in $q^2$. By symmetry $P(X<Y)=\tfrac12\left(1-\tfrac p{1+q}\right)=\tfrac q{1+q}$.
+TR: $\tfrac q{1+q}$ is $P(X<Y)$.
+CHK: close(sum((0.3)**2*(0.7)**(2*j) for j in range(300)), 0.3/1.7)
+
+@@ topic=7F | sec=7·5 | page=7·85 | diff=1 | type=Statement
+Q: For the geometric distribution $P(X=x)=q^xp,\ x=0,1,2,\dots$:<br>1. The mode is 0 for every $p$<br>2. The m.g.f. is $\dfrac p{1-qe^t}$, $qe^t<1$<br>3. Mean $=\dfrac qp$ and variance $=\dfrac q{p^2}$<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 3 only
+C: 2 and 3 only
+D: 2 only
+ANS: A
+S: Probabilities $p,\ pq,\ pq^2,\dots$ decrease, so the mode is 0.
+S: $\sum(qe^t)^xp=\dfrac p{1-qe^t}$.
+S: Differentiating: mean $q/p$, variance $q/p^2$.
+SC: Geometric = NB with $r=1$. Put $r=1$ in every NB formula.
+
+@@ topic=7F | sec=7·5 | page=7·84 | diff=2 | type=Numerical
+Q: $X$ is geometric with $P(X=x)=q^xp$, $x=0,1,2,\dots$. The probability that $X$ is even is
+A: $\dfrac1{1+q}$
+B: $\dfrac q{1+q}$
+C: $\tfrac12$
+D: $\dfrac{p}{1-q}$
+ANS: A
+S: $P(\text{even})=\sum_{k\ge0}pq^{2k}=\dfrac p{1-q^2}=\dfrac{p}{(1-q)(1+q)}=\dfrac1{1+q}$.
+SC: Even values carry more mass than odd ones because 0 is the mode: $P(\text{even})=\tfrac1{1+q}>\tfrac12$.
+TR: Option D equals 1 — the total probability.
+CHK: close(sum(0.3*0.7**(2*j) for j in range(400)), 1/1.7)
+
+@@ topic=7F | sec=7·5·1 | page=7·84 | diff=2 | type=Numerical
+Q: $X$ is geometric with $P(X=x)=q^xp$, $x=0,1,2,\dots$. Then $E(X\mid X\ge3)$ equals
+A: $3+\dfrac qp$
+B: $\dfrac qp$
+C: $3+\dfrac1p$
+D: $\dfrac{3q}{p}$
+ANS: A
+S: By lack of memory, $X-3\mid X\ge3$ has the same geometric law as $X$.
+S: $E(X\mid X\ge3)=3+E(X)=3+\dfrac qp$.
+SC: Memoryless $\Rightarrow$ mean residual "life" is constant. Continuous analogue: $E(X\mid X>a)=a+\theta$.
+TR: $3+\tfrac1p$ uses the "trials" mean.
+
+// ---------------------------------------------------------------- 7G
+@@ topic=7G | sec=7·6 | page=7·90 | diff=2 | type=Numerical
+Q: A sample of 5 is drawn without replacement from a lot of 20 items of which 8 are defective. The variance of the number of defectives in the sample is
+A: $\tfrac{18}{19}$
+B: $\tfrac65$
+C: $1$
+D: $\tfrac{24}{25}$
+ANS: A
+S: Hypergeometric: $\text{Var}=n\dfrac MN\left(1-\dfrac MN\right)\dfrac{N-n}{N-1}=5\cdot\dfrac8{20}\cdot\dfrac{12}{20}\cdot\dfrac{15}{19}$.
+S: $=\dfrac65\cdot\dfrac{15}{19}=\dfrac{18}{19}$.
+SC: Hypergeometric variance = binomial variance $\times$ finite population correction $\dfrac{N-n}{N-1}$. Mean is unchanged ($nM/N=2$).
+TR: $\tfrac65$ is the with-replacement (binomial) variance.
+CHK: 5*R(8,20)*R(12,20)*R(15,19) == R(18,19)
+
+@@ topic=7G | sec=7·6·3 | page=7·91 | diff=1 | type=Conceptual
+Q: The hypergeometric distribution with parameters $N,M,n$ tends to the binomial distribution $B(n,p)$ when
+A: $N\to\infty$ with $M/N\to p$ and $n$ fixed
+B: $n\to\infty$ with $N$ fixed
+C: $M\to0$
+D: $n=N$
+ANS: A
+S: $\dfrac{\binom Mx\binom{N-M}{n-x}}{\binom Nn}\to\binom nxp^xq^{n-x}$ when the population is large relative to the sample.
+S: Then sampling without replacement is practically the same as with replacement.
+SC: Rule of thumb: use the binomial approximation when $n/N<0.05$ (the correction factor $\tfrac{N-n}{N-1}\approx1$).
+
+@@ topic=7G | sec=7·6 | page=7·89 | diff=2 | type=Numerical
+Q: Five cards are drawn from a well-shuffled pack of 52. The probability of exactly two aces is about
+A: $0.0399$
+B: $0.0659$
+C: $0.0018$
+D: $0.2995$
+ANS: A
+S: $P=\dfrac{\binom42\binom{48}3}{\binom{52}5}=\dfrac{6\times17296}{2598960}$.
+S: $=\dfrac{103776}{2598960}\approx0.0399$.
+SC: Hypergeometric: choose successes from $M$, failures from $N-M$, divide by $\binom Nn$. $\binom{52}5=2{,}598{,}960$ is worth remembering.
+TR: $0.2995\approx P(\text{exactly one ace})$.
+CHK: close(binomial(4,2)*binomial(48,3)/binomial(52,5), 0.0399, 1e-2)
+
+@@ topic=7G | sec=7·6 | page=7·93 | diff=1 | type=Numerical
+Q: 100 fish are caught, tagged and released. Later a catch of 50 fish contains 10 tagged ones. The maximum-likelihood (capture–recapture) estimate of the number of fish in the lake is
+A: $500$
+B: $1000$
+C: $250$
+D: $5000$
+ANS: A
+S: The number tagged in the second catch is hypergeometric with mean $n\dfrac MN$.
+S: Equating to the observation: $50\cdot\dfrac{100}N=10\Rightarrow\hat N=500$.
+SC: Lincoln–Petersen estimate $\hat N=\dfrac{Mn}x$ (integer part of it maximises the hypergeometric likelihood).
+CHK: 100*50/10 == 500
+
+@@ topic=7G | sec=7·6 | page=7·90 | diff=2 | type=Statement
+Q: $X$ is hypergeometric: $n$ draws without replacement from $N$ items of which $M$ are "successes", $p=M/N$.<br>1. $E(X)=np$, the same as with replacement<br>2. $\text{Var}(X)=npq\dfrac{N-n}{N-1}$<br>3. $\text{Var}(X)=0$ when $n=N$<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 2 only
+C: 2 and 3 only
+D: 1 only
+ANS: A
+S: Indicators: each draw is a success with probability $M/N$, so $E(X)=nM/N$.
+S: Negative covariances $-\dfrac{pq}{N-1}$ between draws give the factor $\dfrac{N-n}{N-1}$.
+S: $n=N$: every item drawn, $X=M$ with certainty; the factor is 0.
+SC: The finite-population correction vanishes for a census and is $\approx1$ for a tiny sampling fraction.
+
+@@ topic=7G | sec=7·6 | page=7·89 | diff=1 | type=Numerical
+Q: A committee of 5 is chosen at random from 6 men and 4 women. The expected number of women and the probability of at least one woman are
+A: $2,\ \tfrac{41}{42}$
+B: $2,\ \tfrac{5}{6}$
+C: $\tfrac52,\ \tfrac{41}{42}$
+D: $2,\ \tfrac1{42}$
+ANS: A
+S: Hypergeometric mean $=n\dfrac MN=5\cdot\dfrac4{10}=2$.
+S: $P(\text{no woman})=\dfrac{\binom65}{\binom{10}5}=\dfrac6{252}=\dfrac1{42}$, so $P(\text{at least one})=\dfrac{41}{42}$.
+SC: "At least one" in sampling without replacement: $1-\binom{N-M}{n}/\binom Nn$.
+TR: $\tfrac1{42}$ is the probability of an all-male committee.
+CHK: 1-R(binomial(6,5),binomial(10,5)) == R(41,42)
+
+@@ topic=7G | sec=7·6 | page=7·90 | diff=2 | type=Numerical
+Q: A box has 10 items of which 4 are defective. Items are drawn one by one without replacement. The expected number of defectives among the first 5 drawn, and the variance of that number, are
+A: $2,\ \tfrac23$
+B: $2,\ \tfrac65$
+C: $2,\ 1$
+D: $\tfrac52,\ \tfrac23$
+ANS: A
+S: Hypergeometric: mean $=5\cdot\tfrac4{10}=2$.
+S: Variance $=5\cdot\tfrac4{10}\cdot\tfrac6{10}\cdot\dfrac{10-5}{10-1}=\tfrac65\cdot\tfrac59=\tfrac23$.
+SC: Drawing half the population cuts the binomial variance by $\tfrac{N-n}{N-1}=\tfrac59$.
+TR: $\tfrac65$ is the binomial (with-replacement) variance.
+CHK: 5*R(4,10)*R(6,10)*R(5,9) == R(2,3)
+
+// ---------------------------------------------------------------- 7H
+@@ topic=7H | sec=7·7 | page=7·95 | diff=1 | type=Numerical
+Q: A fair die is thrown 6 times. The probability that each face appears exactly once is
+A: $\tfrac5{324}$
+B: $\tfrac1{46656}$
+C: $\tfrac16$
+D: $\tfrac{1}{720}$
+ANS: A
+S: Multinomial: $\dfrac{6!}{1!\cdots1!}\left(\tfrac16\right)^6=\dfrac{720}{46656}$.
+S: $=\dfrac5{324}\approx0.0154$.
+SC: Multinomial coefficient $\times$ product of probabilities. Equivalently, the number of permutations over $6^6$.
+TR: $\tfrac1{46656}$ is one particular order only.
+CHK: factorial(6)/R(6**6) == R(5,324)
+
+@@ topic=7H | sec=7·7·1 | page=7·96 | diff=2 | type=Numerical
+Q: $(X_1,X_2,X_3)$ is multinomial with $n=10$ and $p=(0.5,\ 0.3,\ 0.2)$. The correlation coefficient between $X_1$ and $X_2$ is
+A: $-\sqrt{\tfrac37}$
+B: $-0.15$
+C: $-\sqrt{\tfrac{3}{5}}$
+D: $0$
+ANS: A
+S: $\text{Cov}(X_1,X_2)=-np_1p_2=-1.5$; $\text{Var}(X_1)=2.5$, $\text{Var}(X_2)=2.1$.
+S: $\rho=\dfrac{-1.5}{\sqrt{2.5\times2.1}}=-\sqrt{\dfrac{p_1p_2}{q_1q_2}}=-\sqrt{\dfrac{0.15}{0.35}}=-\sqrt{\dfrac37}$.
+SC: Multinomial correlation $=-\sqrt{\dfrac{p_ip_j}{(1-p_i)(1-p_j)}}$ — free of $n$. Always negative (counts compete for the fixed total).
+CHK: close(-1.5/math.sqrt(2.5*2.1), -math.sqrt(3/7))
+
+@@ topic=7H | sec=7·7 | page=7·96 | diff=2 | type=Numerical
+Q: $(X_1,X_2,X_3)$ is multinomial with $n=10$ and $p=(0.5,\ 0.3,\ 0.2)$. Then $\text{Var}(X_1+X_2)$ equals
+A: $1.6$
+B: $4.6$
+C: $2.5$
+D: $7.6$
+ANS: A
+S: $X_1+X_2$ counts outcomes in the merged class with probability $0.8$: $X_1+X_2\sim B(10,0.8)$.
+S: $\text{Var}=10\times0.8\times0.2=1.6$. (Check: $2.5+2.1-2\times1.5=1.6$.)
+SC: Merging multinomial classes gives a multinomial with added probabilities. Equivalently $X_1+X_2=10-X_3$.
+TR: $4.6$ ignores the negative covariance.
+CHK: close(2.5+2.1-2*1.5, 10*0.8*0.2)
+
+@@ topic=7H | sec=7·7 | page=7·97 | diff=3 | type=Numerical
+Q: $(X_1,X_2,X_3)$ is multinomial with $n=10$ and $p=(0.5,\ 0.3,\ 0.2)$. Then $E(X_2\mid X_1=4)$ equals
+A: $3.6$
+B: $3$
+C: $1.8$
+D: $2.4$
+ANS: A
+S: Given $X_1=4$, the remaining 6 trials fall in classes 2 or 3 with probabilities proportional to $0.3:0.2$.
+S: $X_2\mid X_1=4\sim B\left(6,\ \tfrac{0.3}{0.5}\right)$, so $E=6\times0.6=3.6$.
+SC: Conditional multinomial: remove the known class, renormalise the remaining probabilities, and use the leftover trials. Note $E(X_2\mid X_1)$ is linear in $X_1$ with slope $-p_2/(1-p_1)$.
+TR: $3=np_2$ is the unconditional mean.
+CHK: close(6*0.3/0.5, 3.6)
+
+@@ topic=7H | sec=7·7·1 | page=7·96 | diff=2 | type=Numerical
+Q: Ten candidates are selected independently from states A, B, C; a candidate from A is twice as likely to be selected as one from B, and B and C are equally likely. If $X,Y$ are the numbers selected from A and B, $\text{Cov}(X,Y)$ equals
+A: $-\tfrac54$
+B: $-\tfrac58$
+C: $0$
+D: $\tfrac{15}8$
+ANS: A
+S: $p_A=2p_B$, $p_B=p_C$, $p_A+p_B+p_C=1\Rightarrow p_A=\tfrac12,\ p_B=p_C=\tfrac14$.
+S: $\text{Cov}(X,Y)=-np_Ap_B=-10\cdot\tfrac12\cdot\tfrac14=-\tfrac54$.
+SC: Multinomial covariance $-np_ip_j$. Get the probabilities from the ratio $2:1:1$.
+CHK: -10*R(1,2)*R(1,4) == R(-5,4)
+
+@@ topic=7H | sec=7·7·1 | page=7·96 | diff=1 | type=Conceptual
+Q: The joint m.g.f. of the multinomial distribution with parameters $n;\ p_1,\dots,p_k$ is
+A: $\left(p_1e^{t_1}+\cdots+p_ke^{t_k}\right)^n$
+B: $\prod_i\left(q_i+p_ie^{t_i}\right)^n$
+C: $\exp\left[n\sum p_i(e^{t_i}-1)\right]$
+D: $\left(p_1e^{t_1}\cdots p_ke^{t_k}\right)^n$
+ANS: A
+S: $E\left[e^{\sum t_iX_i}\right]=\sum\dfrac{n!}{\prod x_i!}\prod(p_ie^{t_i})^{x_i}=\left(\sum p_ie^{t_i}\right)^n$ by the multinomial theorem.
+SC: Setting all $t_j=0$ except $t_i$ gives $(q_i+p_ie^{t_i})^n$: each marginal is $B(n,p_i)$. Option B would mean independent marginals — wrong.
+
+@@ topic=7H | sec=7·7 | page=7·95 | diff=2 | type=Numerical
+Q: Twelve fair dice are thrown. The probability that each face appears exactly twice is
+A: $\dfrac{12!}{2^6\cdot6^{12}}$
+B: $\dfrac{12!}{6^{12}}$
+C: $\dfrac{1}{6^{12}}\dbinom{12}{2}$
+D: $\dfrac{6!}{6^{12}}$
+ANS: A
+S: Multinomial with $n=12$, six classes of probability $\tfrac16$, counts $(2,2,2,2,2,2)$.
+S: $P=\dfrac{12!}{(2!)^6}\left(\tfrac16\right)^{12}=\dfrac{12!}{2^6\,6^{12}}\approx0.0034$.
+SC: Multinomial coefficient divides $n!$ by the factorial of each count — six factors $2!$ here.
+
+// ---------------------------------------------------------------- 7I
+@@ topic=7I | sec=7·8 | page=7·101 | diff=1 | type=Numerical
+Q: $X$ is uniformly distributed on $\{1,2,\dots,n\}$ and $E(X)=5$. Then $\text{Var}(X)$ is
+A: $\tfrac{20}3$
+B: $\tfrac{25}3$
+C: $\tfrac{15}2$
+D: $5$
+ANS: A
+S: $\dfrac{n+1}2=5\Rightarrow n=9$.
+S: $\text{Var}=\dfrac{n^2-1}{12}=\dfrac{80}{12}=\dfrac{20}3$.
+SC: Discrete uniform on $1..n$: mean $\tfrac{n+1}2$, variance $\tfrac{n^2-1}{12}$ (continuous analogue $\tfrac{n^2}{12}$).
+CHK: R(9**2-1,12) == R(20,3)
+
+@@ topic=7I | sec=7·9 | page=7·101 | diff=2 | type=Conceptual
+Q: Which of the following is <b>not</b> a (generalised) power series distribution $p(x)=a_x\theta^x/f(\theta)$?
+A: Hypergeometric
+B: Binomial
+C: Poisson
+D: Negative binomial
+ANS: A
+S: Binomial: $\theta=p/q$, $f=(1+\theta)^n$; Poisson: $\theta=\lambda$, $f=e^\theta$; NB: $\theta=q$, $f=(1-\theta)^{-r}$; also the logarithmic series.
+S: The hypergeometric p.m.f. cannot be written as $a_x\theta^x/f(\theta)$ with a single parameter $\theta$ entering as a power.
+SC: PSD members: binomial, Poisson, NB, geometric, logarithmic. For a PSD, mean $\mu=\theta f'(\theta)/f(\theta)$ and $\mu_2=\theta\,d\mu/d\theta$.
+
+@@ topic=7I | sec=7·9 | page=7·102 | diff=3 | type=Numerical
+Q: For a power series distribution $p(x)=a_x\theta^x/f(\theta)$ with mean $\mu(\theta)$, the variance equals
+A: $\theta\dfrac{d\mu}{d\theta}$
+B: $\dfrac{d\mu}{d\theta}$
+C: $\theta^2\dfrac{d^2\mu}{d\theta^2}$
+D: $\mu\theta$
+ANS: A
+S: $\mu=\dfrac{\theta f'(\theta)}{f(\theta)}$. Differentiating $\sum(x-\mu)a_x\theta^x=0$ w.r.t. $\theta$ gives $\mu_2=\theta\,\mu'(\theta)$.
+S: Check Poisson: $\mu=\theta$, $\theta\cdot1=\theta$ ✓. Binomial ($\theta=p/q$): $\mu=\dfrac{n\theta}{1+\theta}$, $\theta\mu'=\dfrac{n\theta}{(1+\theta)^2}=npq$ ✓.
+SC: The cumulant recurrence for PSD: $\kappa_{r+1}=\theta\,\dfrac{d\kappa_r}{d\theta}$.
+CHK: eq(th*diff(n*th/(1+th),th), n*th/(1+th)**2)
+
+@@ topic=7I | sec=7·9 | page=7·114 | diff=2 | type=Numerical
+Q: A random variable has m.g.f. $M(t)=\left(\tfrac12+\tfrac12e^t\right)^4e^{2(e^t-1)}$. Its mean and variance are
+A: $4,\ 3$
+B: $4,\ 4$
+C: $2,\ 3$
+D: $4,\ 2$
+ANS: A
+S: The m.g.f. is a product: $X=U+V$ with $U\sim B(4,\tfrac12)$ and $V\sim P(2)$ independent.
+S: Mean $=2+2=4$; variance $=1+2=3$.
+SC: Factor a strange m.g.f. into known pieces; means and variances of independent pieces add.
+CHK: (lambda K: diff(K,t).subs(t,0)==4 and diff(K,t,2).subs(t,0)==3)(4*log(R(1,2)+exp(t)/2)+2*(exp(t)-1))
+
+@@ topic=7I | sec=7·9 | page=7·114 | diff=1 | type=Conceptual
+Q: By the uniqueness property, the m.g.f. $M(t)=\dfrac{(1+e^t)^5}{32}$ belongs to
+A: $B\left(5,\tfrac12\right)$
+B: Poisson with mean $\tfrac52$
+C: $B\left(32,\tfrac15\right)$
+D: Negative binomial with $r=5,\ p=\tfrac12$
+ANS: A
+S: $\dfrac{(1+e^t)^5}{2^5}=\left(\tfrac12+\tfrac12e^t\right)^5=(q+pe^t)^n$ with $n=5,\ p=\tfrac12$.
+SC: A polynomial in $e^t$ of degree $n$ raised to a power $\to$ binomial; $e^{\lambda(e^t-1)}\to$ Poisson; $(1-qe^t)^{-r}\to$ NB.
+
+@@ topic=7I | sec=7·9 | page=7·103 | diff=3 | type=Numerical
+Q: The logarithmic series distribution $P(X=x)=\dfrac{-\theta^x}{x\ln(1-\theta)}$, $x=1,2,\dots$, $0<\theta<1$, has mean
+A: $\dfrac{-\theta}{(1-\theta)\ln(1-\theta)}$
+B: $\dfrac{\theta}{1-\theta}$
+C: $-\ln(1-\theta)$
+D: $\dfrac{-1}{\ln(1-\theta)}$
+ANS: A
+S: $E(X)=\dfrac{-1}{\ln(1-\theta)}\sum_{x\ge1}\theta^x=\dfrac{-1}{\ln(1-\theta)}\cdot\dfrac\theta{1-\theta}$.
+S: As a PSD: $f(\theta)=-\ln(1-\theta)$ and $\mu=\dfrac{\theta f'}{f}=\dfrac{\theta/(1-\theta)}{-\ln(1-\theta)}$.
+SC: The $x$ in the denominator cancels with the $x$ in $E(X)$, leaving a geometric series.
+CHK: close(sum(-0.4**j/math.log(0.6) for j in range(1,200)), -0.4/(0.6*math.log(0.6)))
+
+@@ topic=7I | sec=7·2 | page=7·113 | diff=2 | type=Statement
+Q: Consider the relations between mean and variance:<br>1. Binomial: mean $>$ variance<br>2. Poisson: mean $=$ variance<br>3. Negative binomial: mean $<$ variance<br>4. Geometric (failures version): mean $>$ variance<br>Which are correct?
+A: 1, 2 and 3 only
+B: 1, 2, 3 and 4
+C: 1 and 2 only
+D: 2, 3 and 4 only
+ANS: A
+S: Binomial $npq<np$; Poisson $\lambda=\lambda$; NB $\tfrac{rq}{p^2}>\tfrac{rq}p$.
+S: Geometric is NB with $r=1$: variance $\tfrac q{p^2}>$ mean $\tfrac qp$ — statement 4 false.
+SC: Dispersion index $\sigma^2/\mu$: $<1$ binomial (under-dispersed), $=1$ Poisson, $>1$ NB/geometric (over-dispersed).
+
+@@ topic=7I | sec=7·8 | page=7·101 | diff=1 | type=Numerical
+Q: Two fair dice are thrown. The variance of the total score is
+A: $\tfrac{35}6$
+B: $\tfrac{35}{12}$
+C: $7$
+D: $\tfrac{91}6$
+ANS: A
+S: One die: discrete uniform on $1..6$ with variance $\tfrac{6^2-1}{12}=\tfrac{35}{12}$.
+S: Two independent dice: $2\cdot\tfrac{35}{12}=\tfrac{35}6$.
+SC: $\tfrac{91}6=E(X^2)$ for one die — do not confuse raw and central moments.
+CHK: 2*R(35,12) == R(35,6)

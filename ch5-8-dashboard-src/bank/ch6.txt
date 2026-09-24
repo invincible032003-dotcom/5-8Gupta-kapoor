@@ -1,0 +1,1212 @@
+#CHAPTER 6 | Mathematical Expectation, Generating Functions & Laws of Large Numbers
+#TOPIC 6A | Expectation: definition, existence, properties
+#TOPIC 6B | Classic expectation problems (games, indicators, sampling)
+#TOPIC 6C | Variance, covariance & correlation of combinations
+#TOPIC 6D | Conditional expectation & conditional variance
+#TOPIC 6E | Moment generating function
+#TOPIC 6F | Cumulants & cumulant generating function
+#TOPIC 6G | Characteristic function: properties, inversion, uniqueness
+#TOPIC 6H | Probability generating function
+#TOPIC 6I | Chebychev, Markov & moment inequalities
+#TOPIC 6J | Modes of convergence
+#TOPIC 6K | Laws of large numbers, Borel–Cantelli & 0–1 laws
+
+// ---------------------------------------------------------------- 6A
+@@ topic=6A | sec=6·1 | page=6·2 | diff=2 | type=Conceptual
+Q: $X$ has p.d.f. $f(x)=3x^{-4},\ x\ge1$ (zero otherwise). Which moments of $X$ exist?
+A: All moments
+B: Only $E(X)$ and $E(X^2)$
+C: Only $E(X)$
+D: None
+ANS: B
+S: $E(X^r)=\int_1^\infty 3x^{r-4}dx$ converges iff $r-4<-1$, i.e. $r<3$.
+S: $E(X)=\tfrac32$, $E(X^2)=3$ exist; $E(X^3)=\int_1^\infty 3x^{-1}dx=\infty$.
+S: So mean and variance exist ($\text{Var}=3-\tfrac94=\tfrac34$) but no moment of order $\ge3$.
+SC: Pareto index $\alpha$ (density $\propto x^{-\alpha-1}$): $E(X^r)<\infty\iff r<\alpha$. Here $\alpha=3$.
+TR: Option C would be the answer for $f(x)=2x^{-3}$ ($\alpha=2$).
+CHK: integrate(3*x**(-3),(x,1,oo)) == R(3,2)
+CHK: integrate(3*x**(-2),(x,1,oo)) == 3
+
+@@ topic=6A | sec=6·5 | page=6·9 | diff=1 | type=Statement
+Q: If $E(X^4)$ exists, consider:<br>1. $E|X|^3$ exists<br>2. $E(X^2)$ exists<br>3. $E(X^5)$ exists<br>Which are necessarily true?
+A: 1 and 2 only
+B: 2 only
+C: 1, 2 and 3
+D: 2 and 3 only
+ANS: A
+S: Theorem 6·7: if $E|X|^r<\infty$ then $E|X|^s<\infty$ for every $0<s\le r$.
+S: Reason: $|x|^s\le1+|x|^r$ for all $x$ when $s\le r$.
+S: Higher moments need not exist — e.g. Pareto with index $4.5$ has $E(X^4)<\infty$ but $E(X^5)=\infty$.
+SC: Moments exist "downwards", never automatically "upwards".
+
+@@ topic=6A | sec=6·5 | page=6·9 | diff=2 | type=Statement
+Q: Consider the following for random variables with the relevant expectations finite:<br>1. $|E(X)|\le E|X|$<br>2. For $X>0$: $E(1/X)\ge 1/E(X)$<br>3. $[E(XY)]^2\le E(X^2)E(Y^2)$<br>Which are correct?
+A: 1 and 2 only
+B: 1 and 3 only
+C: 2 and 3 only
+D: 1, 2 and 3
+ANS: D
+S: (1) $-|X|\le X\le|X|$; take expectations (Theorem 6·6).
+S: (2) $g(x)=1/x$ is convex on $(0,\infty)$; Jensen gives $E\,g(X)\ge g(EX)$. Equality iff $X$ is degenerate.
+S: (3) Cauchy–Schwarz (Theorem 6·11): $E(X-\lambda Y)^2\ge0$ for all $\lambda$ gives a non-positive discriminant.
+SC: Jensen for convex $g$: $E\,g(X)\ge g(EX)$. Instances: $E X^2\ge(EX)^2$, $E e^X\ge e^{EX}$, $E(1/X)\ge1/EX$, $E\ln X\le\ln EX$ (concave).
+
+@@ topic=6A | sec=6·5 | page=6·47 | diff=1 | type=Conceptual
+Q: For a continuous random variable $X$ with finite mean, $E|X-c|$ is minimum when $c$ equals the
+A: mean
+B: median
+C: mode
+D: mid-range
+ANS: B
+S: $\dfrac{d}{dc}E|X-c|=\dfrac{d}{dc}\left[\int_{-\infty}^c(c-x)f\,dx+\int_c^\infty(x-c)f\,dx\right]=F(c)-[1-F(c)]$.
+S: Setting this to $0$: $F(c)=\tfrac12$, i.e. $c=$ median. The second derivative $2f(c)\ge0$ confirms a minimum.
+SC: Squared loss $\to$ mean; absolute loss $\to$ median; 0–1 loss $\to$ mode.
+TR: $E(X-c)^2$ is minimised at the mean — do not mix the two.
+
+@@ topic=6A | sec=6·5 | page=6·51 | diff=2 | type=Numerical
+Q: A non-negative integer-valued random variable $X$ satisfies $P(X>n)=\dfrac1{(n+1)^2}$, $n=0,1,2,\dots$. Then $E(X)$ equals
+A: $\dfrac{\pi^2}6$
+B: $1$
+C: $\infty$
+D: $\dfrac{\pi^2}{12}$
+ANS: A
+S: Tail-sum formula (Example 6·28): $E(X)=\sum_{n=0}^\infty P(X>n)$.
+S: $=\sum_{n=0}^\infty\dfrac1{(n+1)^2}=\sum_{m=1}^\infty\dfrac1{m^2}=\dfrac{\pi^2}6$.
+SC: For $X\in\{0,1,2,\dots\}$: $E(X)=\sum P(X>n)=\sum P(X\ge n+1)$. For $X\ge0$ continuous: $E(X)=\int_0^\infty[1-F(x)]dx$.
+CHK: summation(1/(k+1)**2,(k,0,oo)) == pi**2/6
+
+@@ topic=6A | sec=6·5 | page=6·48 | diff=1 | type=Numerical
+Q: A non-negative random variable has survival function $P(X>x)=\dfrac1{(1+x)^2}$, $x\ge0$. Its mean is
+A: $1$
+B: $\tfrac12$
+C: $2$
+D: $\infty$
+ANS: A
+S: $E(X)=\int_0^\infty P(X>x)\,dx=\int_0^\infty(1+x)^{-2}dx=\left[-\tfrac1{1+x}\right]_0^\infty=1$.
+SC: Integrate the survival function — no density needed.
+CHK: integrate((1+x)**-2,(x,0,oo)) == 1
+
+@@ topic=6A | sec=6·5 | page=6·51 | diff=3 | type=Numerical
+Q: For a random variable $X$ taking values $0,1,2,\dots$ with $E(X^2)<\infty$, the sum $\displaystyle\sum_{x=0}^{\infty}(2x+1)P(X>x)$ equals
+A: $E(X^2)$
+B: $E(X)$
+C: $E[X(X-1)]$
+D: $\text{Var}(X)$
+ANS: A
+S: $\sum_{x\ge0}(2x+1)\sum_{k>x}p_k=\sum_k p_k\sum_{x=0}^{k-1}(2x+1)$ (interchange the sums).
+S: $\sum_{x=0}^{k-1}(2x+1)=k^2$ (sum of the first $k$ odd numbers).
+S: Hence the sum $=\sum_k k^2p_k=E(X^2)$.
+SC: General tail-sum: $E[g(X)]=g(0)+\sum_{x\ge0}[g(x+1)-g(x)]P(X>x)$. With $g(x)=x^2$ the increments are $2x+1$; with $g(x)=x(x-1)$ they are $2x$ (the 2023 PYQ form).
+CHK: (lambda L: sum((2*xx+1)*sum(L[j] for j in range(xx+1,4)) for xx in range(4)) == sum(j**2*L[j] for j in range(4)))([R(1,10),R(2,10),R(3,10),R(4,10)])
+
+@@ topic=6A | sec=6·5 | page=6·47 | diff=2 | type=Numerical
+Q: $X$ and $Y$ are independent and identically distributed positive random variables. Then $E\left[\dfrac X{X+Y}\right]$ equals
+A: $\tfrac12$
+B: $\tfrac14$
+C: $1$
+D: Cannot be determined without the distribution
+ANS: A
+S: By symmetry (exchangeability) $E\left[\dfrac X{X+Y}\right]=E\left[\dfrac Y{X+Y}\right]$.
+S: Their sum is $E\left[\dfrac{X+Y}{X+Y}\right]=1$, so each equals $\tfrac12$.
+SC: Exchangeability arguments: $E\left[\dfrac{X_1}{X_1+\cdots+X_n}\right]=\dfrac1n$ for i.i.d. positive $X_i$, whatever the distribution.
+TR: Do not write $E(X/(X+Y))=E(X)/E(X+Y)$ — expectation of a ratio is not a ratio of expectations (it only happens to agree here).
+
+@@ topic=6A | sec=6·2 | page=6·3 | diff=3 | type=Numerical
+Q: If $X\sim$ Poisson$(\lambda)$, then $E\left[\dfrac1{X+1}\right]$ equals
+A: $\dfrac{1-e^{-\lambda}}\lambda$
+B: $\dfrac1{\lambda+1}$
+C: $\dfrac{e^{-\lambda}}\lambda$
+D: $\dfrac{1-e^{-\lambda}}{\lambda+1}$
+ANS: A
+S: $E\left[\dfrac1{X+1}\right]=\sum_{x\ge0}\dfrac{e^{-\lambda}\lambda^x}{(x+1)!}=\dfrac{e^{-\lambda}}\lambda\sum_{y\ge1}\dfrac{\lambda^y}{y!}$.
+S: $=\dfrac{e^{-\lambda}}\lambda\left(e^\lambda-1\right)=\dfrac{1-e^{-\lambda}}\lambda$.
+SC: Absorb $\tfrac1{x+1}$ into the factorial: $\tfrac{\lambda^x}{(x+1)!}=\tfrac1\lambda\cdot\tfrac{\lambda^{x+1}}{(x+1)!}$, then the sum misses only the $y=0$ term. Binomial analogue: $E\left[\tfrac1{X+1}\right]=\tfrac{1-q^{n+1}}{(n+1)p}$.
+TR: $\tfrac1{\lambda+1}=\tfrac1{E(X)+1}$ — Jensen says the true value is larger.
+CHK: eq(summation(exp(-lam)*lam**k/factorial(k+1),(k,0,oo)), (1-exp(-lam))/lam)
+
+// ---------------------------------------------------------------- 6B
+@@ topic=6B | sec=6·1 | page=6·48 | diff=2 | type=Numerical
+Q: $A$ and $B$ throw a fair die alternately, $A$ first, for a stake of Rs. 44 which goes to whoever first throws a six. Their respective expectations are
+A: Rs. 24 and Rs. 20
+B: Rs. 22 and Rs. 22
+C: Rs. 26 and Rs. 18
+D: Rs. 20 and Rs. 24
+ANS: A
+S: $P(A\text{ wins})=\tfrac16+\left(\tfrac56\right)^2\tfrac16+\cdots=\dfrac{1/6}{1-25/36}=\dfrac6{11}$.
+S: $P(B\text{ wins})=\dfrac5{11}$.
+S: Expectations: $44\cdot\tfrac6{11}=24$ and $44\cdot\tfrac5{11}=20$.
+SC: Alternating first-success game: first player's chance $=\dfrac{p}{1-q^2}=\dfrac1{1+q}$. With $q=\tfrac56$: $\tfrac6{11}$.
+CHK: 44*R(6,11) == 24
+
+@@ topic=6B | sec=6·1 | page=6·49 | diff=1 | type=Numerical
+Q: A player tosses 3 fair coins. He wins Rs. 8 for three heads, Rs. 3 for two heads and Re. 1 for one head. For the game to be fair, what should he lose if no head appears?
+A: Rs. 20
+B: Rs. 12
+C: Rs. 8
+D: Rs. 4
+ANS: A
+S: $E(\text{gain})=\tfrac18(8)+\tfrac38(3)+\tfrac38(1)+\tfrac18(a)=\tfrac{20+a}8$.
+S: Fair game $\Rightarrow E=0\Rightarrow a=-20$: he must lose Rs. 20.
+SC: Fair game: weighted sum of payoffs $=0$. Work with numerators over 8: $8+9+3+a=0$.
+CHK: solve(8+9+3+k,k)[0] == -20
+
+@@ topic=6B | sec=6·1 | page=6·48 | diff=1 | type=Numerical
+Q: A random variable $X$ takes each positive integer $n$ with probability proportional to $3^{-n}$. Then $E(X)$ is
+A: $\tfrac32$
+B: $\tfrac12$
+C: $2$
+D: $3$
+ANS: A
+S: $\sum_{n\ge1}3^{-n}=\tfrac12$, so $P(X=n)=2\cdot3^{-n}=\left(\tfrac23\right)\left(\tfrac13\right)^{n-1}$ — geometric with $p=\tfrac23$.
+S: $E(X)=\tfrac1p=\tfrac32$.
+SC: Recognise the geometric form $p\,q^{n-1}$ on $\{1,2,\dots\}$: mean $1/p$. Here $q=\tfrac13$.
+CHK: summation(k*2*R(1,3)**k,(k,1,oo)) == R(3,2)
+
+@@ topic=6B | sec=6·7 | page=6·32 | diff=3 | type=Numerical
+Q: In a lottery, $m$ tickets are drawn at random without replacement from $n$ tickets numbered $1,2,\dots,n$. The variance of the sum $S$ of the numbers drawn is
+A: $\dfrac{m(n+1)(n-m)}{12}$
+B: $\dfrac{m(n^2-1)}{12}$
+C: $\dfrac{m(n+1)(n+m)}{12}$
+D: $\dfrac{m(n-1)(n-m)}{12}$
+ANS: A
+S: Each draw $X_i$ is uniform on $\{1,\dots,n\}$: $\text{Var}(X_i)=\dfrac{n^2-1}{12}$.
+S: $\text{Cov}(X_i,X_j)=-\dfrac{n+1}{12}$ for $i\ne j$ (sampling without replacement).
+S: $\text{Var}(S)=m\dfrac{n^2-1}{12}-m(m-1)\dfrac{n+1}{12}=\dfrac{m(n+1)}{12}\left[(n-1)-(m-1)\right]=\dfrac{m(n+1)(n-m)}{12}$.
+SC: Finite-population correction: $\text{Var}(S)=m\sigma^2\cdot\dfrac{n-m}{n-1}$ with $\sigma^2=\dfrac{n^2-1}{12}$. Sanity check: $m=n$ gives 0.
+TR: Option B is the with-replacement answer (no correction).
+CHK: (lambda N,M: eq(M*(N**2-1)/12*(N-M)/(N-1), M*(N+1)*(N-M)/12))(Symbol('N',positive=True),Symbol('M',positive=True))
+
+@@ topic=6B | sec=6·3 | page=6·49 | diff=1 | type=Numerical
+Q: Three urns contain respectively 3 green and 2 white, 5 green and 6 white, and 2 green and 4 white balls. One ball is drawn from each urn. The expected number of white balls drawn is
+A: $\tfrac{266}{165}$
+B: $\tfrac32$
+C: $1$
+D: $\tfrac{12}{11}$
+ANS: A
+S: Indicators $X_i=1$ if the ball from urn $i$ is white: $E(X_i)=\tfrac25,\ \tfrac6{11},\ \tfrac46$.
+S: $E(S)=\tfrac25+\tfrac6{11}+\tfrac23=\dfrac{66+90+110}{165}=\dfrac{266}{165}$.
+SC: Expectation of a count = sum of the individual probabilities (linearity needs no independence).
+CHK: R(2,5)+R(6,11)+R(4,6) == R(266,165)
+
+@@ topic=6B | sec=6·3 | page=6·49 | diff=2 | type=Numerical
+Q: Thirteen cards are drawn at random from a full pack. Aces count 1, face cards 10 and other cards their face value. The expected total score is
+A: $85$
+B: $91$
+C: $65$
+D: $80$
+ANS: A
+S: Values in one suit: $1+2+\cdots+10+10+10+10=55+30=85$ over 13 cards.
+S: Average value per card $=\tfrac{85}{13}$.
+S: By linearity, $E(\text{total of 13 cards})=13\cdot\tfrac{85}{13}=85$.
+SC: With/without replacement does not matter for an expected sum: $E=(\text{sample size})\times(\text{population mean})$.
+CHK: 13*R(sum(list(range(1,11))+[10,10,10]),13) == 85
+
+@@ topic=6B | sec=6·3 | page=6·50 | diff=2 | type=Numerical
+Q: Balls are drawn one by one without replacement from an urn containing $w$ white and $b$ black balls until the first white ball appears. The expected number of black balls drawn before the first white ball is
+A: $\dfrac b{w+1}$
+B: $\dfrac bw$
+C: $\dfrac{b}{w+b}$
+D: $\dfrac{b+1}{w+1}$
+ANS: A
+S: For each black ball define $I_j=1$ if it comes before all $w$ white balls.
+S: Among that black ball and the $w$ whites, each is equally likely to be first: $P(I_j=1)=\dfrac1{w+1}$.
+S: $E\left(\sum I_j\right)=\dfrac b{w+1}$.
+SC: Indicator trick: "black ball precedes every white" has probability $\tfrac1{w+1}$ by symmetry. Answer independent of how many blacks follow.
+CHK: (lambda W,B: sum(j*binomial(B,j)*factorial(j)*W*factorial(W+B-j-1)/factorial(W+B) for j in range(B+1)) == R(B,W+1))(3,4)
+
+@@ topic=6B | sec=6·3 | page=6·50 | diff=3 | type=Numerical
+Q: A bag contains $n$ white and 2 black balls. Balls are drawn one by one without replacement until a black ball appears. If $k$ white balls are drawn before the first black, a man receives $k^2$ rupees. His expectation is
+A: $\dfrac{n(n+1)}6$
+B: $\dfrac n3$
+C: $\dfrac{n^2}3$
+D: $\dfrac{n(n+1)}3$
+ANS: A
+S: The two black positions form a random 2-subset of $\{1,\dots,n+2\}$; $K=$ (first black position) $-1$: $P(K=k)=\dfrac{2(n+1-k)}{(n+1)(n+2)}$, $k=0,\dots,n$.
+S: $\sum_{k=0}^nk^2(n+1-k)=(n+1)\dfrac{n(n+1)(2n+1)}6-\dfrac{n^2(n+1)^2}4=\dfrac{n(n+1)^2(n+2)}{12}$.
+S: $E(K^2)=\dfrac{2}{(n+1)(n+2)}\cdot\dfrac{n(n+1)^2(n+2)}{12}=\dfrac{n(n+1)}6$.
+SC: Check with $n=1$: arrangements $WBB,BWB,BBW$ give $K=1,0,0$: $E(K^2)=\tfrac13=\tfrac{1\cdot2}6$ ✓. Plugging a small $n$ into the options is fastest.
+TR: $\tfrac n3=E(K)$, the expected number of whites, not of its square.
+CHK: all(sum(kk**2*R(2*(nn+1-kk),(nn+1)*(nn+2)) for kk in range(nn+1)) == R(nn*(nn+1),6) for nn in range(1,9))
+
+@@ topic=6B | sec=6·7 | page=6·51 | diff=2 | type=Numerical
+Q: A fair coin is tossed four times. Let $X$ be the number of times a head is immediately followed by a tail. The mean and variance of $X$ are
+A: $\tfrac34,\ \tfrac5{16}$
+B: $\tfrac34,\ \tfrac9{16}$
+C: $1,\ \tfrac12$
+D: $\tfrac34,\ \tfrac3{16}$
+ANS: A
+S: $X=I_1+I_2+I_3$, $I_j=1$ if tosses $(j,j+1)$ are $HT$; $P(I_j=1)=\tfrac14$, so $E(X)=\tfrac34$.
+S: $\text{Var}(I_j)=\tfrac3{16}$. Adjacent pairs cannot both be $HT$: $\text{Cov}(I_1,I_2)=0-\tfrac1{16}$, same for $(I_2,I_3)$; $I_1,I_3$ are independent.
+S: $\text{Var}(X)=3\cdot\tfrac3{16}+2\left(-\tfrac1{16}-\tfrac1{16}\right)=\tfrac9{16}-\tfrac4{16}=\tfrac5{16}$.
+SC: Overlapping-pattern indicators: adjacent ones are negatively correlated (they conflict), distant ones independent.
+TR: $\tfrac9{16}$ ignores the covariances.
+CHK: (lambda L: R(sum(L),16)==R(3,4) and R(sum(v*v for v in L),16)-R(9,16)==R(5,16))([sum(1 for j in range(3) if w[j]=='H' and w[j+1]=='T') for w in [''.join(c) for c in __import__('itertools').product('HT',repeat=4)]])
+
+@@ topic=6B | sec=6·9 | page=6·51 | diff=1 | type=Numerical
+Q: An urn contains balls numbered 1, 2, 3. A ball is drawn and a fair coin is then tossed as many times as the number on the ball. The expected number of heads is
+A: $1$
+B: $\tfrac32$
+C: $\tfrac12$
+D: $2$
+ANS: A
+S: Given $N$, heads $\sim B(N,\tfrac12)$, so $E(X\mid N)=\tfrac N2$.
+S: $E(X)=E\left(\tfrac N2\right)=\tfrac12\cdot2=1$.
+SC: Law of total expectation: $E(X)=E[E(X\mid N)]$. Random sums: $E=E(N)\cdot E(\text{per trial})$.
+CHK: R(1,2)*R(1+2+3,3) == 1
+
+@@ topic=6B | sec=6·5 | page=6·34 | diff=2 | type=Numerical
+Q: From a point on the circumference of a circle of radius $a$, a chord is drawn in a random direction (all directions equally likely). The expected length of the chord is
+A: $\dfrac{4a}\pi$
+B: $\dfrac{\pi a}2$
+C: $a\sqrt3$
+D: $\dfrac{2a}\pi$
+ANS: A
+S: If the chord makes angle $\theta$ with the diameter through the point, its length is $2a\cos\theta$, $\theta\sim U\left(-\tfrac\pi2,\tfrac\pi2\right)$.
+S: $E=\dfrac1\pi\int_{-\pi/2}^{\pi/2}2a\cos\theta\,d\theta=\dfrac{4a}\pi$.
+S: (Also $P(\text{length}>a\sqrt3)=P(|\theta|<\tfrac\pi6)=\tfrac13$.)
+SC: Random direction from the rim $\Rightarrow$ length $2a\cos\theta$; random distance from the centre $\Rightarrow$ length $2\sqrt{a^2-x^2}$ with mean $\pi a/2$ (Example 6·22). Know both.
+TR: $\pi a/2$ is the parallel-chord (random distance) answer.
+CHK: eq(integrate(2*a*cos(y),(y,-pi/2,pi/2))/pi, 4*a/pi)
+
+@@ topic=6B | sec=6·5 | page=6·52 | diff=2 | type=Numerical
+Q: A point $P$ is taken at random on a line $AB$ of length $2a$. The expected area of the rectangle with sides $AP$ and $PB$ is
+A: $\dfrac{2a^2}3$
+B: $\dfrac{a^2}2$
+C: $a^2$
+D: $\dfrac{a^2}3$
+ANS: A
+S: $AP=X\sim U(0,2a)$; area $=X(2a-X)$.
+S: $E(X)=a$, $E(X^2)=\tfrac{(2a)^2}3=\tfrac{4a^2}3$.
+S: $E[X(2a-X)]=2a\cdot a-\tfrac{4a^2}3=\tfrac{2a^2}3$.
+SC: $E[X(L-X)]=L\cdot\tfrac L2-\tfrac{L^2}3=\tfrac{L^2}6$ for $X\sim U(0,L)$. With $L=2a$: $\tfrac{4a^2}6$.
+TR: $a^2$ is the <i>maximum</i> area (at the midpoint), not the mean.
+CHK: eq(integrate(x*(2*a-x)/(2*a),(x,0,2*a)), 2*a**2/3)
+
+@@ topic=6B | sec=6·7 | page=6·33 | diff=3 | type=Numerical
+Q: A die is thrown $n+2$ times; a '+' is recorded for 4, 5, 6 and a '$-$' for 1, 2, 3. To each sign except the first and last, attach $X_i=1$ if both its neighbours differ from it, else $0$. The variance of $X=\sum_{i=1}^nX_i$ is
+A: $\dfrac{5n-2}{16}$
+B: $\dfrac{3n}{16}$
+C: $\dfrac n4$
+D: $\dfrac{5n+2}{16}$
+ANS: A
+S: $P(X_i=1)=P(+-+)+P(-+-)=\tfrac14$, $\text{Var}(X_i)=\tfrac3{16}$.
+S: Adjacent: $P(X_i=X_{i+1}=1)=P(+-+-)+P(-+-+)=\tfrac18$, so $\text{Cov}=\tfrac18-\tfrac1{16}=\tfrac1{16}$; non-adjacent pairs are independent.
+S: $\text{Var}(X)=\tfrac{3n}{16}+2(n-1)\tfrac1{16}=\dfrac{5n-2}{16}$.
+SC: Only the $n-1$ adjacent covariances survive. Here they are <i>positive</i> (alternating patterns reinforce each other).
+CHK: all((lambda v: R(sum(x*x for x in v),len(v))-R(sum(v),len(v))**2 == R(5*N-2,16))([sum(1 for i in range(1,N+1) if w[i-1]!=w[i] and w[i+1]!=w[i]) for w in __import__('itertools').product('+-',repeat=N+2)]) for N in range(1,7))
+
+@@ topic=6B | sec=6·5 | page=6·47 | diff=3 | type=Numerical
+Q: A stick of unit length is broken at a uniformly random point. The expected value of the ratio (shorter piece)/(longer piece) is
+A: $2\ln2-1$
+B: $\tfrac13$
+C: $\tfrac12$
+D: $\ln2$
+ANS: A
+S: By symmetry the shorter piece $X\sim U\left(0,\tfrac12\right)$; ratio $R=\dfrac X{1-X}$.
+S: $E(R)=2\int_0^{1/2}\dfrac x{1-x}dx=2\left[-x-\ln(1-x)\right]_0^{1/2}=2\left(\ln2-\tfrac12\right)$.
+S: $=2\ln2-1\approx0.386$.
+SC: Shorter piece of a broken unit stick is $U(0,\tfrac12)$: mean $\tfrac14$, variance $\tfrac1{48}$. Ratios need an integral — $E(\text{short})/E(\text{long})=\tfrac13$ is the trap.
+TR: $\tfrac13=\dfrac{E(\text{shorter})}{E(\text{longer})}=\dfrac{1/4}{3/4}$.
+CHK: eq(2*integrate(x/(1-x),(x,0,R(1,2))), 2*log(2)-1)
+
+// ---------------------------------------------------------------- 6C
+@@ topic=6C | sec=6·7 | page=6·50 | diff=1 | type=Numerical
+Q: $X$ and $Y$ are independent with means 10 and 20 and variances 2 and 3. The variance of $3X+4Y$ is
+A: $66$
+B: $18$
+C: $17$
+D: $110$
+ANS: A
+S: For independent variables $\text{Var}(aX+bY)=a^2\text{Var}X+b^2\text{Var}Y$.
+S: $=9\cdot2+16\cdot3=18+48=66$.
+SC: Square the coefficients; means are irrelevant for variance.
+TR: $17=3\cdot2+4\cdot3$ forgets to square.
+CHK: 9*2+16*3 == 66
+
+@@ topic=6C | sec=6·7 | page=6·50 | diff=2 | type=Numerical
+Q: $X_1,X_2,X_3$ have variances 10, 20, 30, with $\text{Cov}(X_1,X_2)=\text{Cov}(X_2,X_3)=0$ and $\text{Cov}(X_1,X_3)=5$. The variance of $Y=2X_1+3X_2+4X_3$ is
+A: $780$
+B: $700$
+C: $740$
+D: $820$
+ANS: A
+S: $\text{Var}(Y)=4(10)+9(20)+16(30)+2\cdot2\cdot4\cdot\text{Cov}(X_1,X_3)$.
+S: $=40+180+480+80=780$.
+SC: $\text{Var}(\sum a_iX_i)=\sum a_i^2\sigma_i^2+2\sum_{i<j}a_ia_j\sigma_{ij}$ — each covariance appears <b>twice</b>.
+TR: $740$ counts the covariance term only once.
+CHK: 4*10+9*20+16*30+2*2*4*5 == 780
+
+@@ topic=6C | sec=6·7 | page=6·50 | diff=1 | type=Numerical
+Q: $E(X)=10$ and $\text{Var}(X)=25$. The positive constants $a,b$ for which $Y=aX-b$ has mean 0 and variance 1 are
+A: $a=\tfrac15,\ b=2$
+B: $a=\tfrac1{25},\ b=\tfrac25$
+C: $a=5,\ b=50$
+D: $a=\tfrac15,\ b=10$
+ANS: A
+S: $\text{Var}(Y)=a^2\cdot25=1\Rightarrow a=\tfrac15$.
+S: $E(Y)=\tfrac{10}5-b=0\Rightarrow b=2$.
+SC: Standardisation $Y=\dfrac{X-\mu}\sigma=\dfrac X\sigma-\dfrac\mu\sigma$: $a=\tfrac1\sigma,\ b=\tfrac\mu\sigma$.
+CHK: R(1,5)**2*25 == 1
+
+@@ topic=6C | sec=6·7 | page=6·52 | diff=2 | type=Numerical
+Q: $X$ and $Y$ are independent with $E(X)=2,\ \text{Var}(X)=1,\ E(Y)=3,\ \text{Var}(Y)=4$. Then $\text{Var}(XY)$ equals
+A: $29$
+B: $4$
+C: $13$
+D: $25$
+ANS: A
+S: $\text{Var}(XY)=E(X^2)E(Y^2)-[E(X)E(Y)]^2=(1+4)(4+9)-36=65-36$.
+S: $=29$. Equivalently $\sigma_1^2\sigma_2^2+\mu_1^2\sigma_2^2+\mu_2^2\sigma_1^2=4+16+9$.
+SC: $\text{Var}(XY)=\sigma_1^2\sigma_2^2+\mu_1^2\sigma_2^2+\mu_2^2\sigma_1^2$ for independent $X,Y$ (G&K Ex. 6(a) Q29).
+TR: $4=\sigma_1^2\sigma_2^2$ alone — true only when both means are 0.
+CHK: (1+4)*(4+9)-36 == 29
+
+@@ topic=6C | sec=6·7 | page=6·47 | diff=2 | type=Numerical
+Q: $\text{Var}(X)=4$, $\text{Var}(Y)=9$ and $\text{Cov}(X,Y)=2$. Then $\text{Cov}(2X+Y,\ X-3Y)$ equals
+A: $-29$
+B: $-19$
+C: $-9$
+D: $29$
+ANS: A
+S: $\text{Cov}(aX+bY,cX+dY)=ac\,\text{Var}X+bd\,\text{Var}Y+(ad+bc)\text{Cov}(X,Y)$.
+S: $a=2,b=1,c=1,d=-3$: $2(4)+(-3)(9)+(-6+1)(2)=8-27-10=-29$.
+SC: Expand like $(2X+Y)(X-3Y)=2X^2-5XY-3Y^2$ and replace $X^2\to\text{Var}X$, $XY\to\text{Cov}$, $Y^2\to\text{Var}Y$.
+CHK: 2*4-3*9+(-6+1)*2 == -29
+
+@@ topic=6C | sec=6·6 | page=6·53 | diff=1 | type=Statement
+Q: $X\sim U(-1,1)$ and $Y=X^2$.<br>1. $\text{Cov}(X,Y)=0$<br>2. $X$ and $Y$ are independent<br>3. The correlation coefficient $\rho_{XY}=0$<br>Which are correct?
+A: 1 and 3 only
+B: 1, 2 and 3
+C: 2 only
+D: 3 only
+ANS: A
+S: $\text{Cov}(X,X^2)=E(X^3)-E(X)E(X^2)=0-0=0$, so $\rho=0$.
+S: But $Y$ is a function of $X$: e.g. $P\left(|X|<\tfrac12,\ Y>\tfrac14\right)=0\ne P\left(|X|<\tfrac12\right)P\left(Y>\tfrac14\right)=\tfrac14$. Dependent.
+SC: Independence $\Rightarrow$ uncorrelated, never the converse (except for the bivariate normal). Symmetric $X$ with $Y=X^2$ is the standard counterexample.
+
+@@ topic=6C | sec=6·7 | page=6·53 | diff=2 | type=Statement
+Q: For random variables $X,Y$ with finite variances:<br>1. $\text{Cov}(X+Y,\ X-Y)=\text{Var}(X)-\text{Var}(Y)$<br>2. If $\text{Var}(X)>\text{Var}(Y)$ then $X+Y$ and $X-Y$ are dependent<br>3. If $X+Y$ and $X-Y$ are independent then $X$ and $Y$ must be dependent<br>Which are correct?
+A: 1 and 2 only
+B: 1 only
+C: 2 and 3 only
+D: 1, 2 and 3
+ANS: A
+S: (1) Bilinearity: $\text{Cov}(X,X)-\text{Cov}(X,Y)+\text{Cov}(Y,X)-\text{Cov}(Y,Y)=\text{Var}X-\text{Var}Y$.
+S: (2) Then the covariance is non-zero, so they are correlated, hence dependent.
+S: (3) False: for i.i.d. $N(0,1)$ variables $X,Y$, the sum and difference are independent while $X,Y$ are independent too.
+SC: Equal variances make $X+Y$ and $X-Y$ uncorrelated; independent normals make them independent.
+
+@@ topic=6C | sec=6·6 | page=6·11 | diff=3 | type=Conceptual
+Q: Three random variables have a common pairwise correlation coefficient $\rho$. Then necessarily
+A: $\rho\ge-\tfrac12$
+B: $\rho\ge0$
+C: $\rho\ge-\tfrac13$
+D: $\rho$ can be any value in $[-1,1]$
+ANS: A
+S: Standardise each variable. $\text{Var}(Z_1+Z_2+Z_3)=3+6\rho\ge0$.
+S: Hence $\rho\ge-\tfrac12$; the bound is attained, e.g. by $Z_3=-(Z_1+Z_2)$ scaled appropriately.
+SC: $n$ equicorrelated variables: $\rho\ge-\dfrac1{n-1}$ (variance of the sum must be non-negative).
+TR: $-\tfrac13$ is the bound for four variables.
+
+@@ topic=6C | sec=6·7 | page=6·47 | diff=1 | type=Numerical
+Q: The variance of the total score obtained on throwing 10 fair dice is
+A: $\tfrac{175}6$
+B: $\tfrac{35}{12}$
+C: $35$
+D: $\tfrac{350}{6}$
+ANS: A
+S: One die: $\text{Var}=\dfrac{6^2-1}{12}=\dfrac{35}{12}$.
+S: Ten independent dice: $10\cdot\dfrac{35}{12}=\dfrac{350}{12}=\dfrac{175}6$.
+SC: Discrete uniform on $\{1,\dots,n\}$: variance $\dfrac{n^2-1}{12}$. Sums of independent dice add variances.
+CHK: 10*R(35,12) == R(175,6)
+
+@@ topic=6C | sec=6·7 | page=6·47 | diff=2 | type=Numerical
+Q: If $Y$ and $Z$ are independent observations on a variable $X$ with variance $\sigma^2$, then $E(Y-Z)^2$ equals
+A: $2\sigma^2$
+B: $\sigma^2$
+C: $0$
+D: $4\sigma^2$
+ANS: A
+S: $E(Y-Z)=0$, so $E(Y-Z)^2=\text{Var}(Y-Z)=\sigma^2+\sigma^2=2\sigma^2$.
+SC: Differences of independent copies double the variance — the basis of the "mean square successive difference" estimator.
+CHK: 1+1 == 2
+
+// ---------------------------------------------------------------- 6D
+@@ topic=6D | sec=6·9 | page=6·56 | diff=2 | type=Numerical
+Q: $X\sim U(0,1)$ and, given $X=x$, $Y\sim U(0,x)$. The variance of $Y$ is
+A: $\tfrac7{144}$
+B: $\tfrac1{48}$
+C: $\tfrac1{36}$
+D: $\tfrac1{12}$
+ANS: A
+S: $E(Y\mid X)=\tfrac X2$, $\text{Var}(Y\mid X)=\tfrac{X^2}{12}$.
+S: $\text{Var}(Y)=E[\text{Var}(Y\mid X)]+\text{Var}[E(Y\mid X)]=\dfrac{E(X^2)}{12}+\dfrac{\text{Var}X}4=\dfrac1{36}+\dfrac1{48}$.
+S: $=\dfrac{4+3}{144}=\dfrac7{144}$.
+SC: EVE's law: total variance = mean of conditional variances + variance of conditional means (Theorem 6·14).
+TR: $\tfrac1{36}$ and $\tfrac1{48}$ are the two components separately.
+CHK: integrate(integrate(y**2/x,(y,0,x)),(x,0,1)) - integrate(integrate(y/x,(y,0,x)),(x,0,1))**2 == R(7,144)
+
+@@ topic=6D | sec=6·9 | page=6·57 | diff=3 | type=Numerical
+Q: $N\sim$ Poisson$(\lambda)$ and $X_1,X_2,\dots$ are i.i.d., independent of $N$, with mean $\mu$ and variance $\sigma^2$. The variance of $S=X_1+\cdots+X_N$ is
+A: $\lambda(\sigma^2+\mu^2)$
+B: $\lambda\sigma^2$
+C: $\lambda\sigma^2+\lambda^2\mu^2$
+D: $\lambda^2\sigma^2$
+ANS: A
+S: $E(S\mid N)=N\mu$, $\text{Var}(S\mid N)=N\sigma^2$.
+S: $\text{Var}(S)=E(N)\sigma^2+\text{Var}(N)\mu^2=\lambda\sigma^2+\lambda\mu^2$.
+SC: Random sum: $\text{Var}(S)=E(N)\sigma^2+\text{Var}(N)\mu^2$. For Poisson $N$ this becomes $\lambda E(X^2)$.
+TR: Option C uses $\text{Var}(N)=\lambda^2$ — the Poisson variance is $\lambda$.
+
+@@ topic=6D | sec=6·9 | page=6·55 | diff=2 | type=Numerical
+Q: $X,Y$ have joint p.d.f. $f(x,y)=x+y,\ 0<x<1,\ 0<y<1$. Then $E(Y\mid X=x)$ is
+A: $\dfrac{3x+2}{6x+3}$
+B: $\dfrac{x+1}2$
+C: $\dfrac{2x+3}{6x+3}$
+D: $\dfrac7{12}$
+ANS: A
+S: $f_X(x)=x+\tfrac12$.
+S: $\int_0^1y(x+y)dy=\tfrac x2+\tfrac13$.
+S: $E(Y\mid X=x)=\dfrac{x/2+1/3}{x+1/2}=\dfrac{3x+2}{6x+3}$.
+SC: Check a point: at $x=0$ the conditional density is $2y$, mean $\tfrac23$ — only option A gives $\tfrac23$.
+TR: $\tfrac7{12}=E(Y)$, the unconditional mean.
+CHK: eq(integrate(y*(x+y),(y,0,1))/(x+R(1,2)), (3*x+2)/(6*x+3))
+
+@@ topic=6D | sec=6·9 | page=6·55 | diff=2 | type=Numerical
+Q: $X\sim N(0,1)$ and, given $X=x$, $Y\sim U(x-1,\ x+1)$. Then $\text{Var}(Y)$ equals
+A: $\tfrac43$
+B: $1$
+C: $\tfrac13$
+D: $2$
+ANS: A
+S: $E(Y\mid X)=X$ and $\text{Var}(Y\mid X)=\dfrac{2^2}{12}=\dfrac13$.
+S: $\text{Var}(Y)=E\left(\tfrac13\right)+\text{Var}(X)=\tfrac13+1=\tfrac43$.
+SC: $Y=X+U$ with $U\sim U(-1,1)$ independent of $X$: variances add, $1+\tfrac13$.
+CHK: R(1,3)+1 == R(4,3)
+
+@@ topic=6D | sec=6·9 | page=6·55 | diff=1 | type=Conceptual
+Q: Among all functions $g$, $E[Y-g(X)]^2$ is minimised by
+A: $g(X)=E(Y\mid X)$
+B: $g(X)=E(Y)$
+C: the least-squares line of $Y$ on $X$ only
+D: $g(X)=\text{median}(Y\mid X)$
+ANS: A
+S: $E[Y-g(X)]^2=E[Y-m(X)]^2+E[m(X)-g(X)]^2$ where $m(X)=E(Y\mid X)$ (the cross term vanishes by conditioning).
+S: The second term is $\ge0$ and equals $0$ iff $g=m$.
+SC: The regression function $E(Y\mid X)$ is the best predictor in mean square; the linear regression line is best only among linear predictors.
+TR: The median minimises absolute error, not squared error.
+
+@@ topic=6D | sec=6·9 | page=6·55 | diff=2 | type=Conceptual
+Q: $X$ and $Y$ are i.i.d. with finite mean. Then $E(X\mid X+Y)$ equals
+A: $\dfrac{X+Y}2$
+B: $E(X)$
+C: $X$
+D: $\dfrac{E(X)+Y}2$
+ANS: A
+S: By symmetry $E(X\mid X+Y)=E(Y\mid X+Y)$.
+S: Their sum is $E(X+Y\mid X+Y)=X+Y$; hence each is $\dfrac{X+Y}2$.
+SC: For i.i.d. $X_1,\dots,X_n$: $E(X_1\mid X_1+\cdots+X_n)=\bar X$. Example: Poissons give $X\mid X+Y=n\sim B(n,\tfrac12)$, mean $n/2$.
+
+@@ topic=6D | sec=6·9 | page=6·55 | diff=2 | type=Statement
+Q: $(X,Y)$ is uniform on the triangle $0<x<y<1$ (density 2).<br>1. $E(X\mid Y=y)=\dfrac y2$<br>2. $E(Y\mid X=x)=\dfrac{1+x}2$<br>3. $E(X)=\tfrac13$<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 2 only
+C: 1 and 3 only
+D: 2 and 3 only
+ANS: A
+S: Given $Y=y$, $X$ is uniform on $(0,y)$: mean $y/2$.
+S: Given $X=x$, $Y$ is uniform on $(x,1)$: mean $(1+x)/2$.
+S: $f_X(x)=2(1-x)$: $E(X)=\tfrac13$. (Check: $E(X)=E[E(X\mid Y)]=E(Y)/2=\tfrac23\cdot\tfrac12$.)
+SC: $(X,Y)$ = (min, max) of two i.i.d. $U(0,1)$: means $\tfrac13,\tfrac23$.
+CHK: integrate(integrate(2*x,(x,0,y)),(y,0,1)) == R(1,3)
+
+// ---------------------------------------------------------------- 6E
+@@ topic=6E | sec=6·10 | page=6·67 | diff=1 | type=Numerical
+Q: The m.g.f. of $X$ is $M(t)=(1-t)^{-2}$, $t<1$. The mean and variance of $X$ are
+A: $2,\ 2$
+B: $2,\ 4$
+C: $1,\ 2$
+D: $2,\ 1$
+ANS: A
+S: $M'(t)=2(1-t)^{-3}\Rightarrow E(X)=2$; $M''(t)=6(1-t)^{-4}\Rightarrow E(X^2)=6$.
+S: $\text{Var}=6-4=2$.
+SC: $(1-t)^{-\lambda}$ is Gamma$(\lambda)$ with mean $=$ variance $=\lambda$. Better: cumulant g.f. $K=-\lambda\ln(1-t)=\lambda\sum t^r/r$ gives $\kappa_r=\lambda(r-1)!$.
+CHK: diff((1-t)**-2,t).subs(t,0) == 2
+CHK: diff((1-t)**-2,t,2).subs(t,0)-4 == 2
+
+@@ topic=6E | sec=6·10 | page=6·72 | diff=3 | type=Conceptual
+Q: The m.g.f. $M(t)=4\left(3e^{-t}-1\right)^{-2}$ corresponds to
+A: the number of trials needed to get the 2nd success, with success probability $\tfrac23$
+B: the number of failures before the 2nd success, with success probability $\tfrac23$
+C: a binomial variate with $n=2,\ p=\tfrac13$
+D: the number of trials needed to get the 2nd success, with success probability $\tfrac13$
+ANS: A
+S: $4(3e^{-t}-1)^{-2}=\dfrac{4e^{2t}}{(3-e^t)^2}=e^{2t}\left(\tfrac23\right)^2\left(1-\tfrac13e^t\right)^{-2}$.
+S: $p^r(1-qe^t)^{-r}$ with $p=\tfrac23,\ r=2$ is the m.g.f. of failures before the $r$-th success; the extra factor $e^{2t}$ shifts by $r=2$.
+S: So $X=$ failures $+\,2=$ number of trials to the 2nd success, $p=\tfrac23$.
+SC: Factor out $e^{rt}$ to decide "trials" (shifted) vs "failures" (unshifted) versions of the negative binomial.
+TR: Option B misses the $e^{2t}$ shift.
+CHK: eq(4*(3*exp(-t)-1)**-2, exp(2*t)*R(2,3)**2*(1-exp(t)/3)**-2)
+
+@@ topic=6E | sec=6·10 | page=6·72 | diff=2 | type=Numerical
+Q: A random variable has m.g.f. $M(t)=\dfrac{\tfrac13e^t}{1-\tfrac23e^t}$. Its mean is
+A: $3$
+B: $2$
+C: $\tfrac13$
+D: $\tfrac32$
+ANS: A
+S: $\dfrac{pe^t}{1-qe^t}$ is the m.g.f. of the geometric law $P(X=x)=q^{x-1}p$, $x=1,2,\dots$.
+S: Here $p=\tfrac13$: $E(X)=\tfrac1p=3$.
+SC: Geometric (trials): m.g.f. $\dfrac{pe^t}{1-qe^t}$, mean $\tfrac1p$. Geometric (failures): $\dfrac p{1-qe^t}$, mean $\tfrac qp$.
+TR: $2=q/p$ is the mean of the failures version.
+CHK: simplify(diff((exp(t)/3)/(1-2*exp(t)/3),t).subs(t,0)) == 3
+
+@@ topic=6E | sec=6·10 | page=6·68 | diff=2 | type=Numerical
+Q: $X$ and $Y$ are independent with $M_X(t)=\left(\tfrac12+\tfrac12e^t\right)^2$ and $M_Y(t)=e^{(e^t-1)}$. Then $P(X+Y\le1)$ equals
+A: $e^{-1}$
+B: $\tfrac34e^{-1}$
+C: $\tfrac14e^{-1}$
+D: $2e^{-1}$
+ANS: A
+S: $X\sim B\left(2,\tfrac12\right)$, $Y\sim P(1)$.
+S: $P(X+Y=0)=\tfrac14e^{-1}$; $P(X+Y=1)=P(X=1)P(Y=0)+P(X=0)P(Y=1)=\tfrac12e^{-1}+\tfrac14e^{-1}$.
+S: Total $=\left(\tfrac14+\tfrac12+\tfrac14\right)e^{-1}=e^{-1}$.
+SC: Identify each law from its m.g.f. (uniqueness), then convolve only the few terms needed.
+CHK: R(1,4)+R(1,2)+R(1,4) == 1
+
+@@ topic=6E | sec=6·10 | page=6·67 | diff=2 | type=Statement
+Q: Consider the following statements:<br>1. The m.g.f. of every random variable exists in some neighbourhood of $t=0$.<br>2. The characteristic function of every random variable exists for all real $t$.<br>3. If all moments of $X$ are finite then its m.g.f. exists.<br>Which is/are correct?
+A: 2 only
+B: 1 and 2 only
+C: 2 and 3 only
+D: 1, 2 and 3
+ANS: A
+S: (1) False: the Cauchy law has no m.g.f. for any $t\ne0$.
+S: (2) True: $|e^{itX}|=1$, so $E(e^{itX})$ always exists.
+S: (3) False: the log-normal has all moments $E(X^r)=e^{r\mu+r^2\sigma^2/2}$ but $E(e^{tX})=\infty$ for every $t>0$.
+SC: Counterexamples to remember: Cauchy (no moments, no m.g.f.), log-normal (all moments, no m.g.f.), Pareto (finitely many moments).
+
+@@ topic=6E | sec=6·10 | page=6·68 | diff=1 | type=Numerical
+Q: $X$ has m.g.f. $M(t)=\dfrac1{1-t^2}$, $|t|<1$. The variance of $X$ is
+A: $2$
+B: $1$
+C: $\tfrac12$
+D: $4$
+ANS: A
+S: $\dfrac1{1-t^2}=1+t^2+t^4+\cdots$, so $E(X)=0$ and $\dfrac{E(X^2)}{2!}=1\Rightarrow E(X^2)=2$.
+S: $\text{Var}(X)=2$. (This is the standard Laplace law $\tfrac12e^{-|x|}$.)
+SC: Read moments from the power series: coefficient of $t^r$ is $\mu_r'/r!$.
+TR: $1$ is the coefficient of $t^2$ itself — multiply by $2!$.
+CHK: diff(1/(1-t**2),t,2).subs(t,0) == 2
+
+@@ topic=6E | sec=6·10 | page=6·68 | diff=1 | type=Numerical
+Q: $X$ has m.g.f. $M(t)=e^{3t+8t^2}$. The variance of $X$ is
+A: $16$
+B: $8$
+C: $4$
+D: $64$
+ANS: A
+S: $N(\mu,\sigma^2)$ has m.g.f. $e^{\mu t+\sigma^2t^2/2}$.
+S: $\tfrac{\sigma^2}2=8\Rightarrow\sigma^2=16$ (and $\mu=3$).
+SC: Coefficient of $t^2$ in the exponent is $\sigma^2/2$ — double it.
+TR: $8$ forgets the factor $\tfrac12$.
+CHK: diff(3*t+8*t**2,t,2) == 16
+
+@@ topic=6E | sec=6·10 | page=6·68 | diff=2 | type=Numerical
+Q: $X$ has m.g.f. $(1-2t)^{-5}$, $t<\tfrac12$. Then $E(X^2)$ equals
+A: $120$
+B: $100$
+C: $20$
+D: $110$
+ANS: A
+S: $(1-2t)^{-n/2}$ is the $\chi^2_n$ m.g.f.; here $n=10$: mean $10$, variance $20$.
+S: $E(X^2)=20+10^2=120$.
+SC: $\chi^2_n$: mean $n$, variance $2n$. Raw second moment $=2n+n^2=n(n+2)$.
+CHK: diff((1-2*t)**-5,t,2).subs(t,0) == 120
+
+@@ topic=6E | sec=6·10 | page=6·69 | diff=1 | type=Conceptual
+Q: If $M_X(t)$ is the m.g.f. of $X$, the m.g.f. of $U=\dfrac{X-a}h$ is
+A: $e^{-at/h}M_X\left(\dfrac th\right)$
+B: $e^{-at}M_X(ht)$
+C: $e^{at/h}M_X\left(\dfrac th\right)$
+D: $\dfrac1hM_X(t)-a$
+ANS: A
+S: $M_U(t)=E\left[e^{t(X-a)/h}\right]=e^{-at/h}E\left[e^{(t/h)X}\right]=e^{-at/h}M_X(t/h)$.
+SC: Shift by $b$: multiply by $e^{bt}$. Scale by $c$: replace $t$ by $ct$. So the m.g.f. is <b>not</b> invariant to change of origin or scale.
+
+@@ topic=6E | sec=6·10 | page=6·68 | diff=3 | type=Numerical
+Q: $X$ has m.g.f. $U(t)$ with $E(X)=2$ and $\text{Var}(X)=1$. $Y$ has m.g.f. $V(t)=\exp\left[3\left(U(t)-1\right)\right]$. Then $\text{Var}(Y)$ equals
+A: $15$
+B: $3$
+C: $12$
+D: $6$
+ANS: A
+S: $V$ is the m.g.f. of a compound Poisson sum $Y=X_1+\cdots+X_N$, $N\sim P(3)$.
+S: Cumulant g.f. $\ln V=3(U(t)-1)$, so $\kappa_r(Y)=3\,E(X^r)$.
+S: $\text{Var}(Y)=\kappa_2=3E(X^2)=3(1+4)=15$.
+SC: $\ln M_Y=\lambda(M_X-1)\Rightarrow$ every cumulant of $Y$ is $\lambda\times$ the matching <i>raw</i> moment of $X$.
+TR: $3=\lambda\,\text{Var}(X)$ uses the central moment instead of the raw one.
+CHK: (lambda U: eq(diff(3*(U-1),t,2).subs(t,0), 15))(exp(2*t+t**2/2))
+
+@@ topic=6E | sec=6·10 | page=6·69 | diff=2 | type=Numerical
+Q: $X_1,\dots,X_n$ are i.i.d. with m.g.f. $M(t)$. The m.g.f. of $\bar X=\tfrac1n\sum X_i$ is
+A: $\left[M\left(\tfrac tn\right)\right]^n$
+B: $\left[M(t)\right]^n$
+C: $n\,M\left(\tfrac tn\right)$
+D: $M(nt)^{1/n}$
+ANS: A
+S: $M_{\bar X}(t)=E\left[e^{(t/n)\sum X_i}\right]=\prod_iE\left[e^{(t/n)X_i}\right]=\left[M(t/n)\right]^n$.
+SC: Independence turns sums into products; the $\tfrac1n$ scales the argument.
+
+// ---------------------------------------------------------------- 6F
+@@ topic=6F | sec=6·11 | page=6·72 | diff=2 | type=Numerical
+Q: For a Poisson distribution with mean 2, the fourth central moment $\mu_4$ is
+A: $14$
+B: $2$
+C: $12$
+D: $8$
+ANS: A
+S: All cumulants of $P(\lambda)$ equal $\lambda$.
+S: $\mu_4=\kappa_4+3\kappa_2^2=\lambda+3\lambda^2=2+12=14$.
+SC: $\mu_2=\kappa_2,\ \mu_3=\kappa_3,\ \mu_4=\kappa_4+3\kappa_2^2$. Poisson: $\mu_4=\lambda+3\lambda^2$, $\beta_2=3+\tfrac1\lambda$.
+TR: $12=3\lambda^2$ drops $\kappa_4$.
+CHK: 2+3*2**2 == 14
+
+@@ topic=6F | sec=6·11 | page=6·73 | diff=2 | type=Numerical
+Q: $X\sim$ Poisson$(3)$ and $Y=2X+5$. The third cumulant of $Y$ is
+A: $24$
+B: $29$
+C: $6$
+D: $3$
+ANS: A
+S: $\kappa_r(aX+b)=a^r\kappa_r(X)$ for $r\ge2$ (origin affects only $\kappa_1$).
+S: $\kappa_3(Y)=2^3\cdot\kappa_3(X)=8\cdot3=24$.
+SC: Cumulants beyond the first are shift-invariant and scale like $a^r$. Sign matters: $Y=c-X$ flips the sign of odd cumulants.
+TR: $29$ adds the shift, which only affects the mean.
+CHK: 2**3*3 == 24
+
+@@ topic=6F | sec=6·11 | page=6·72 | diff=1 | type=Numerical
+Q: The cumulant generating function of $X$ is $K(t)=2t+3t^2$. The distribution of $X$ is
+A: $N(2,\ 6)$
+B: $N(2,\ 3)$
+C: $N(2,\ \sqrt6)$
+D: Poisson with mean 2
+ANS: A
+S: $K(t)=\mu t+\tfrac12\sigma^2t^2$ for $N(\mu,\sigma^2)$.
+S: $\mu=2$, $\tfrac12\sigma^2=3\Rightarrow\sigma^2=6$.
+SC: A quadratic c.g.f. means normal; all cumulants beyond $\kappa_2$ vanish. Notation $N(\mu,\sigma^2)$ lists the variance.
+CHK: diff(2*t+3*t**2,t,2) == 6
+
+@@ topic=6F | sec=6·11 | page=6·73 | diff=2 | type=Statement
+Q: Consider the following about cumulants $\kappa_r$:<br>1. For independent $X,Y$: $\kappa_r(X+Y)=\kappa_r(X)+\kappa_r(Y)$ for all $r$<br>2. $\kappa_3=\mu_3$ and $\kappa_4=\mu_4-3\mu_2^2$<br>3. For the normal distribution, $\kappa_r=0$ for all $r\ge3$<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 2 only
+C: 2 and 3 only
+D: 1 and 3 only
+ANS: A
+S: $K_{X+Y}(t)=\ln M_XM_Y=K_X+K_Y$ gives additivity (hence the name "semi-invariants").
+S: Expanding $K=\ln M$ gives $\kappa_2=\mu_2,\ \kappa_3=\mu_3,\ \kappa_4=\mu_4-3\mu_2^2$.
+S: Normal: $K(t)=\mu t+\sigma^2t^2/2$ — no terms beyond $t^2$.
+SC: Excess kurtosis $\gamma_2=\kappa_4/\kappa_2^2$ and skewness $\gamma_1=\kappa_3/\kappa_2^{3/2}$ — cumulants give them directly.
+
+@@ topic=6F | sec=6·11 | page=6·72 | diff=3 | type=Numerical
+Q: $X\sim B\left(10,\tfrac14\right)$ and $Y=10-X$. The third cumulant of $Y$ is
+A: $-\tfrac{15}{16}$
+B: $\tfrac{15}{16}$
+C: $\tfrac58$
+D: $-\tfrac5{16}$
+ANS: A
+S: For $B(n,p)$: $\kappa_3=npq(q-p)=10\cdot\tfrac14\cdot\tfrac34\cdot\tfrac12=\tfrac{15}{16}$.
+S: $Y=-X+10$: $\kappa_3(Y)=(-1)^3\kappa_3(X)=-\tfrac{15}{16}$.
+SC: Alternatively $Y\sim B\left(10,\tfrac34\right)$: $\kappa_3=npq(q-p)=\tfrac{30}{16}\left(\tfrac14-\tfrac34\right)=-\tfrac{15}{16}$. Two routes, same answer.
+CHK: -(10*R(1,4)*R(3,4)*(R(3,4)-R(1,4))) == R(-15,16)
+
+// ---------------------------------------------------------------- 6G
+@@ topic=6G | sec=6·12·1 | page=6·78 | diff=2 | type=Statement
+Q: For the characteristic function $\phi(t)=E(e^{itX})$ of any random variable $X$:<br>1. $\phi(0)=1$ and $|\phi(t)|\le1$<br>2. $\phi(-t)=\overline{\phi(t)}$<br>3. $\phi$ is uniformly continuous on $\mathbb R$<br>4. $\phi$ is real-valued for every $X$<br>Which are correct?
+A: 1, 2 and 3 only
+B: 1 and 2 only
+C: 1, 2, 3 and 4
+D: 2, 3 and 4 only
+ANS: A
+S: $|e^{itX}|=1$ gives existence, $\phi(0)=1$ and $|\phi|\le1$.
+S: $\phi(-t)=E(\cos tX-i\sin tX)=\overline{\phi(t)}$.
+S: $|\phi(t+h)-\phi(t)|\le E|e^{ihX}-1|\to0$ as $h\to0$, uniformly in $t$.
+S: $\phi$ is real iff $X$ is symmetric about $0$ (Theorem 6·20) — so 4 is false in general.
+SC: Real and even $\iff$ symmetric distribution. Everything else (1–3) holds for every $\phi$.
+
+@@ topic=6G | sec=6·12·3 | page=6·96 | diff=2 | type=Conceptual
+Q: Which one of the following is a characteristic function?
+A: $\cos t$
+B: $e^{-t^4}$
+C: $\log(1+t)$
+D: $\dfrac1{1+t^4}$
+ANS: A
+S: $\cos t=\tfrac12e^{it}+\tfrac12e^{-it}$ is the c.f. of $X=\pm1$ with probability $\tfrac12$ each.
+S: $e^{-t^4}$ and $\tfrac1{1+t^4}$ have $\phi''(0)=0$, which would force $E(X^2)=0$, i.e. $X\equiv0$ with $\phi\equiv1$ — contradiction.
+S: $\log(1+t)$ has $\phi(0)=0\ne1$.
+SC: Quick killers: $\phi(0)=1$? $|\phi|\le1$? If $\phi(t)=1+o(t^2)$ near $0$ it must be identically 1. Hence $e^{-|t|^\alpha}$ is a c.f. only for $0<\alpha\le2$.
+
+@@ topic=6G | sec=6·12·3 | page=6·96 | diff=3 | type=Conceptual
+Q: $\phi(t)=e^{-|t|^\alpha}$ is a characteristic function if and only if
+A: $0<\alpha\le2$
+B: $\alpha=2$ only
+C: $\alpha\ge1$
+D: $\alpha=1$ or $\alpha=2$ only
+ANS: A
+S: $\alpha=2$: normal; $\alpha=1$: Cauchy; in general these are the symmetric stable laws, which exist for every $\alpha\in(0,2]$.
+S: For $\alpha>2$, $\phi(t)=1-|t|^\alpha+\cdots$ gives $\phi''(0)=0\Rightarrow\text{Var}=0\Rightarrow\phi\equiv1$, contradiction.
+SC: Symmetric stable family: c.f. $e^{-c|t|^\alpha}$, $0<\alpha\le2$. Only $\alpha=2$ has a finite variance, only $\alpha>1$ a finite mean.
+TR: "Unless $\alpha=2$" in older texts refers to even integer powers $t^{2m}$; for $|t|^\alpha$ the full range $(0,2]$ is admissible.
+
+@@ topic=6G | sec=6·12·2 | page=6·80 | diff=2 | type=Numerical
+Q: If $X$ and $Y$ are i.i.d. with characteristic function $\phi(t)$, the characteristic function of $X-Y$ is
+A: $|\phi(t)|^2$
+B: $\phi(t)^2$
+C: $2\,\text{Re}\,\phi(t)$
+D: $\phi(2t)$
+ANS: A
+S: $\phi_{X-Y}(t)=\phi_X(t)\phi_Y(-t)=\phi(t)\overline{\phi(t)}=|\phi(t)|^2$.
+SC: Symmetrisation: $X-Y$ is symmetric, so its c.f. is real and non-negative. $\phi(t)^2$ is the c.f. of $X+Y$.
+
+@@ topic=6G | sec=6·12 | page=6·87 | diff=2 | type=Conceptual
+Q: The distribution whose characteristic function is $\dfrac1{1+t^2}$ has density
+A: $\tfrac12e^{-|x|},\ -\infty<x<\infty$
+B: $\dfrac1{\pi(1+x^2)},\ -\infty<x<\infty$
+C: $e^{-x},\ x>0$
+D: $\dfrac1{\sqrt{2\pi}}e^{-x^2/2}$
+ANS: A
+S: Laplace: $\int\tfrac12e^{-|x|}e^{itx}dx=\text{Re}\int_0^\infty e^{-x(1-it)}dx=\text{Re}\dfrac1{1-it}=\dfrac1{1+t^2}$.
+S: By the uniqueness/inversion theorem the density is $\tfrac12e^{-|x|}$.
+SC: Duality pair: Laplace $\leftrightarrow$ c.f. $\tfrac1{1+t^2}$; Cauchy $\leftrightarrow$ c.f. $e^{-|t|}$. Each is (up to $2\pi$) the Fourier transform of the other.
+TR: The Cauchy density is the one whose c.f. is $e^{-|t|}$.
+CHK: simplify(integrate(exp(-x)*cos(t*x),(x,0,oo),conds='none')) == 1/(1+t**2)
+
+@@ topic=6G | sec=6·12 | page=6·80 | diff=1 | type=Numerical
+Q: $X$ has characteristic function $\phi(t)=e^{2it-3t^2}$. The variance of $X$ is
+A: $6$
+B: $3$
+C: $2$
+D: $9$
+ANS: A
+S: $N(\mu,\sigma^2)$ has c.f. $e^{i\mu t-\sigma^2t^2/2}$.
+S: $\sigma^2/2=3\Rightarrow\sigma^2=6$; $\mu=2$.
+SC: Read $\mu$ from the $it$ coefficient and $\sigma^2$ as twice the $t^2$ coefficient.
+TR: $3$ misses the factor 2.
+CHK: -diff(2*I*t-3*t**2,t,2) == 6
+
+@@ topic=6G | sec=6·12·2 | page=6·81 | diff=3 | type=Statement
+Q: For random variables $X,Y$ with c.f.s $\phi_X,\phi_Y$ and joint c.f. $\phi_{X,Y}(t_1,t_2)$:<br>1. If $X,Y$ are independent then $\phi_{X+Y}(t)=\phi_X(t)\phi_Y(t)$<br>2. If $\phi_{X+Y}(t)=\phi_X(t)\phi_Y(t)$ for all $t$ then $X,Y$ are independent<br>3. $X,Y$ are independent iff $\phi_{X,Y}(t_1,t_2)=\phi_X(t_1)\phi_Y(t_2)$ for all $t_1,t_2$<br>Which are correct?
+A: 1 and 3 only
+B: 1 only
+C: 1 and 2 only
+D: 1, 2 and 3
+ANS: A
+S: (1) Independence factorises $E(e^{itX}e^{itY})$.
+S: (2) False: take $X=Y$ standard Cauchy. Then $\phi_{2X}(t)=e^{-2|t|}=e^{-|t|}e^{-|t|}$, yet $X,Y$ are totally dependent.
+S: (3) True: factorisation of the <i>joint</i> c.f. characterises independence (Theorem 6·23 and remark).
+SC: The Cauchy "$X=Y$" example is G&K's standard counterexample for the converse of the product rule.
+
+@@ topic=6G | sec=6·12 | page=6·80 | diff=2 | type=Numerical
+Q: A random variable has characteristic function $\phi(t)=\tfrac13\left(1+2\cos t\right)$. Its variance is
+A: $\tfrac23$
+B: $\tfrac13$
+C: $1$
+D: $0$
+ANS: A
+S: $\tfrac13(1+e^{it}+e^{-it})$: $X$ takes $-1,0,1$ with probability $\tfrac13$ each.
+S: $E(X)=0$, $E(X^2)=\tfrac23$.
+SC: Or $\text{Var}=-\phi''(0)=\tfrac23\cos0=\tfrac23$ (mean zero since $\phi$ is real).
+CHK: -diff((1+2*cos(t))/3,t,2).subs(t,0) == R(2,3)
+
+@@ topic=6G | sec=6·12 | page=6·80 | diff=2 | type=Numerical
+Q: The characteristic function of $X^2$, where $X\sim N(0,1)$, is
+A: $(1-2it)^{-1/2}$
+B: $e^{-t^2}$
+C: $(1-it)^{-1}$
+D: $(1+t^2)^{-1/2}$
+ANS: A
+S: $E(e^{itX^2})=\dfrac1{\sqrt{2\pi}}\int e^{-x^2(1-2it)/2}dx=(1-2it)^{-1/2}$.
+S: $X^2\sim\chi^2_1=$ Gamma$(\tfrac12,\tfrac12)$.
+SC: $\chi^2_n$: c.f. $(1-2it)^{-n/2}$, m.g.f. $(1-2t)^{-n/2}$. The product $X_1X_2$ of independent normals has c.f. $(1+t^2)^{-1/2}$ — a common distractor.
+
+@@ topic=6G | sec=6·12 | page=6·91 | diff=2 | type=Conceptual
+Q: Lévy's continuity theorem states that if $\phi_n(t)\to\phi(t)$ for every $t$, then $F_n$ converges weakly to a distribution function $F$ with c.f. $\phi$ provided
+A: $\phi$ is continuous at $t=0$
+B: each $\phi_n$ is real
+C: $\phi$ is differentiable everywhere
+D: the $F_n$ all have finite variance
+ANS: A
+S: The pointwise limit of c.f.s need not be a c.f. (e.g. $X_n\sim N(0,n)$: $\phi_n\to\mathbb 1_{\{t=0\}}$).
+S: Continuity of the limit at $0$ guarantees tightness, hence a genuine limiting distribution.
+SC: Continuity at the origin is the only extra condition. It is how the CLT is proved: $\left[\phi(t/\sqrt n)\right]^n\to e^{-t^2/2}$.
+TR: $N(0,n)$ c.f.s converge to a function discontinuous at 0 — mass escapes to infinity.
+
+@@ topic=6G | sec=6·12 | page=6·87 | diff=2 | type=Numerical
+Q: The characteristic function of the uniform distribution on $(-a,a)$ is
+A: $\dfrac{\sin at}{at}$
+B: $\dfrac{e^{iat}-1}{iat}$
+C: $\cos at$
+D: $\dfrac{\sin at}{t}$
+ANS: A
+S: $\phi(t)=\dfrac1{2a}\int_{-a}^ae^{itx}dx=\dfrac{e^{iat}-e^{-iat}}{2iat}=\dfrac{\sin at}{at}$.
+SC: Symmetric law $\Rightarrow$ real c.f.; $\phi(0)$ must be 1, which rules out $\tfrac{\sin at}t$. Option B is the c.f. of $U(0,a)$.
+CHK: close(si.quad(lambda w: math.cos(0.7*w),-2,2)[0]/4, math.sin(1.4)/1.4)
+
+// ---------------------------------------------------------------- 6H
+@@ topic=6H | sec=6·18 | page=6·124 | diff=1 | type=Numerical
+Q: A fair die is rolled until a six appears. If $X$ is the number of rolls, its probability generating function is
+A: $\dfrac s{6-5s}$
+B: $\dfrac{5s}{6-s}$
+C: $\dfrac s{5-6s}$
+D: $\dfrac1{6-5s}$
+ANS: A
+S: $P(X=k)=\left(\tfrac56\right)^{k-1}\tfrac16$, $k\ge1$.
+S: $P(s)=\sum_{k\ge1}\tfrac16\left(\tfrac56\right)^{k-1}s^k=\dfrac{s/6}{1-5s/6}=\dfrac s{6-5s}$.
+SC: Geometric (trials): $P(s)=\dfrac{ps}{1-qs}$. Check $P(1)=1$: only option A and option D satisfy it, and option D would give $P(X=0)>0$.
+CHK: close(sum((1/6)*(5/6)**(j-1)*0.7**j for j in range(1,400)), 0.7/(6-5*0.7))
+
+@@ topic=6H | sec=6·18 | page=6·125 | diff=2 | type=Numerical
+Q: A random variable has p.g.f. $P(s)=\dfrac s{3-2s}$. Its variance is
+A: $6$
+B: $3$
+C: $2$
+D: $9$
+ANS: A
+S: Geometric (trials) with $p=\tfrac13$: $P(s)=\dfrac{ps}{1-qs}$.
+S: $\text{Var}=\dfrac q{p^2}=\dfrac{2/3}{1/9}=6$.
+SC: Via p.g.f.: $\text{Var}=P''(1)+P'(1)-[P'(1)]^2$. Here $P'(1)=3,\ P''(1)=12$: $12+3-9=6$.
+TR: $3$ is the mean.
+CHK: (lambda G: diff(G,s,2).subs(s,1)+diff(G,s).subs(s,1)-diff(G,s).subs(s,1)**2 == 6)(s/(3-2*s))
+
+@@ topic=6H | sec=6·18 | page=6·125 | diff=3 | type=Numerical
+Q: $X$ takes non-negative integer values with p.g.f. $P(s)$. The generating function $\displaystyle\sum_{n=0}^\infty P(X\le n)\,s^n$ equals
+A: $\dfrac{P(s)}{1-s}$
+B: $\dfrac{1-P(s)}{1-s}$
+C: $\dfrac{P(s)}{1-s^2}$
+D: $\dfrac{sP(s)}{1-s}$
+ANS: A
+S: $P(X\le n)=\sum_{k=0}^np_k$ is the convolution of $(p_k)$ with the all-ones sequence, whose g.f. is $\tfrac1{1-s}$.
+S: Hence $\sum_nP(X\le n)s^n=P(s)\cdot\dfrac1{1-s}$.
+SC: Tails: $\sum P(X>n)s^n=\dfrac{1-P(s)}{1-s}$ (option B) and letting $s\to1$ gives $E(X)$. Cumulative: $\dfrac{P(s)}{1-s}$.
+TR: Option B is the tail-probability generating function.
+
+@@ topic=6H | sec=6·18 | page=6·126 | diff=3 | type=Numerical
+Q: $X\sim$ Poisson$(\lambda)$. Using the p.g.f., $P(X\text{ is even})$ equals
+A: $\dfrac{1+e^{-2\lambda}}2$
+B: $\dfrac{1-e^{-2\lambda}}2$
+C: $\dfrac{e^{-\lambda}}2$
+D: $e^{-2\lambda}$
+ANS: A
+S: $P(1)+P(-1)=\sum p_k(1+(-1)^k)=2P(X\text{ even})$.
+S: $P(s)=e^{\lambda(s-1)}$: $P(-1)=e^{-2\lambda}$.
+S: $P(X\text{ even})=\dfrac{1+e^{-2\lambda}}2$.
+SC: Even/odd split: $P(\text{even})=\tfrac12[1+P(-1)]$. Binomial: $\tfrac12[1+(q-p)^n]$.
+CHK: close(sum(math.exp(-1.3)*1.3**(2*j)/math.factorial(2*j) for j in range(40)), (1+math.exp(-2.6))/2)
+
+@@ topic=6H | sec=6·18 | page=6·125 | diff=2 | type=Numerical
+Q: For $X\sim$ Poisson$(\lambda)$, the third factorial moment $E[X(X-1)(X-2)]$ equals
+A: $\lambda^3$
+B: $\lambda$
+C: $\lambda^3+3\lambda^2+\lambda$
+D: $\lambda^2$
+ANS: A
+S: $P(s)=e^{\lambda(s-1)}$, $P'''(s)=\lambda^3e^{\lambda(s-1)}$.
+S: $E[X(X-1)(X-2)]=P'''(1)=\lambda^3$.
+SC: $r$-th factorial moment $=P^{(r)}(1)$. Poisson: $\lambda^r$; Binomial: $n^{(r)}p^r$.
+TR: Option C is the raw moment $E(X^3)$.
+CHK: diff(exp(lam*(s-1)),s,3).subs(s,1) == lam**3
+
+// ---------------------------------------------------------------- 6I
+@@ topic=6I | sec=6·13 | page=6·97 | diff=1 | type=Numerical
+Q: $X$ has mean 20 and standard deviation 2. By Chebychev's inequality, a lower bound for $P(14<X<26)$ is
+A: $\tfrac89$
+B: $\tfrac34$
+C: $\tfrac19$
+D: $0.997$
+ANS: A
+S: $14<X<26\iff|X-20|<6=3\sigma$.
+S: $P(|X-\mu|<k\sigma)\ge1-\tfrac1{k^2}=1-\tfrac19=\tfrac89$.
+SC: Convert the half-width to multiples of $\sigma$ ($k=6/2=3$), then $1-1/k^2$.
+TR: $0.997$ is the normal-curve value, not a distribution-free bound.
+CHK: 1-R(1,9) == R(8,9)
+
+@@ topic=6I | sec=6·13 | page=6·97 | diff=1 | type=Numerical
+Q: The smallest $k$ for which Chebychev's inequality guarantees $P(\mu-k\sigma<X<\mu+k\sigma)\ge0.96$ is
+A: $5$
+B: $25$
+C: $2.5$
+D: $4$
+ANS: A
+S: $1-\tfrac1{k^2}\ge0.96\Rightarrow\tfrac1{k^2}\le0.04\Rightarrow k^2\ge25\Rightarrow k\ge5$.
+SC: $k=1/\sqrt{1-P}$. For 0.75, 0.89, 0.96, 0.99: $k=2,3,5,10$.
+CHK: 1/sqrt(1-R(96,100)) == 5
+
+@@ topic=6I | sec=6·13 | page=6·99 | diff=2 | type=Numerical
+Q: A population has standard deviation 2. How large a sample is needed so that, by Chebychev's inequality, $P\left(|\bar X-\mu|<0.5\right)\ge0.9$?
+A: $160$
+B: $40$
+C: $16$
+D: $400$
+ANS: A
+S: $\text{Var}(\bar X)=\tfrac4n$. Chebychev: $P(|\bar X-\mu|\ge0.5)\le\dfrac{4/n}{0.25}=\dfrac{16}n$.
+S: Need $\tfrac{16}n\le0.1\Rightarrow n\ge160$.
+SC: $n\ge\dfrac{\sigma^2}{\varepsilon^2(1-P)}=\dfrac4{0.25\times0.1}=160$.
+TR: $16$ forgets the $1-P=0.1$ in the denominator.
+CHK: 4/(R(1,4)*R(1,10)) == 160
+
+@@ topic=6I | sec=6·13 | page=6·99 | diff=2 | type=Numerical
+Q: A fair die is thrown 600 times and $X$ is the number of sixes. Chebychev's inequality gives a lower bound for $P(80<X<120)$ equal to
+A: $\tfrac{19}{24}$
+B: $\tfrac34$
+C: $\tfrac5{24}$
+D: $0.95$
+ANS: A
+S: $E(X)=100$, $\text{Var}(X)=600\cdot\tfrac16\cdot\tfrac56=\tfrac{250}3$.
+S: $P(|X-100|<20)\ge1-\dfrac{250/3}{400}=1-\dfrac5{24}=\dfrac{19}{24}$.
+SC: Use the form $1-\sigma^2/c^2$ with $c=20$ — no need to find $k$.
+TR: $\tfrac5{24}$ is the upper bound on the complementary probability.
+CHK: 1-R(250,3)/400 == R(19,24)
+
+@@ topic=6I | sec=6·13·1 | page=6·99 | diff=1 | type=Numerical
+Q: $X$ is a non-negative random variable with $E(X)=5$. Markov's inequality gives
+A: $P(X\ge20)\le\tfrac14$
+B: $P(X\ge20)\ge\tfrac14$
+C: $P(X\ge20)\le\tfrac1{16}$
+D: $P(X\le20)\le\tfrac14$
+ANS: A
+S: Markov: $P(X\ge a)\le\dfrac{E(X)}a$ for $X\ge0$, $a>0$.
+S: $P(X\ge20)\le\tfrac5{20}=\tfrac14$.
+SC: Markov needs only non-negativity and the mean; Chebychev is Markov applied to $(X-\mu)^2$.
+TR: $\tfrac1{16}$ would need the variance (Chebychev-type squaring).
+
+@@ topic=6I | sec=6·13 | page=6·97 | diff=2 | type=Numerical
+Q: $X\sim$ Exp(1) (mean 1, variance 1). The exact value of $P(|X-1|\ge2)$ and the Chebychev upper bound are respectively
+A: $e^{-3},\ \tfrac14$
+B: $e^{-3}+e^{1},\ \tfrac14$
+C: $e^{-2},\ \tfrac12$
+D: $1-e^{-3},\ \tfrac34$
+ANS: A
+S: $|X-1|\ge2\iff X\ge3$ or $X\le-1$; the second is impossible.
+S: Exact: $P(X\ge3)=e^{-3}\approx0.0498$. Chebychev: $\le\tfrac1{2^2}=\tfrac14$.
+SC: Chebychev is usually very conservative — here the true probability is five times smaller than the bound.
+CHK: close(math.exp(-3), 0.049787, 1e-4)
+
+@@ topic=6I | sec=6·13 | page=6·97 | diff=3 | type=Conceptual
+Q: For a random variable with mean 0 and variance 1, Chebychev's inequality $P(|X|\ge2)\le\tfrac14$ holds with equality for
+A: $P(X=\pm2)=\tfrac18$ each, $P(X=0)=\tfrac34$
+B: $X\sim N(0,1)$
+C: $P(X=\pm1)=\tfrac12$ each
+D: $X\sim U(-\sqrt3,\sqrt3)$
+ANS: A
+S: For A: $E(X)=0$, $E(X^2)=2\cdot4\cdot\tfrac18=1$, and $P(|X|\ge2)=\tfrac14$ — equality.
+S: B gives $0.0455$, C gives $0$, D gives $0$ — all strictly below $\tfrac14$.
+SC: Chebychev is sharp: the extremal law puts mass $\tfrac1{2k^2}$ at $\mu\pm k\sigma$ and the rest at $\mu$.
+CHK: 2*4*R(1,8) == 1
+
+@@ topic=6I | sec=6·13 | page=6·97 | diff=2 | type=Numerical
+Q: $E(X)=10$ and Chebychev's inequality gives $P(|X-10|<6)\ge\tfrac59$. Then $\text{Var}(X)$ is
+A: $16$
+B: $4$
+C: $20$
+D: $9$
+ANS: A
+S: $1-\dfrac{\sigma^2}{36}=\dfrac59\Rightarrow\dfrac{\sigma^2}{36}=\dfrac49\Rightarrow\sigma^2=16$.
+SC: Reverse Chebychev: $\sigma^2=c^2(1-P)$ with $c=6$, $1-P=\tfrac49$.
+CHK: 36*R(4,9) == 16
+
+@@ topic=6I | sec=6·5 | page=6·13 | diff=2 | type=Conceptual
+Q: For any random variable with $E(X^2)<\infty$, which inequality always holds?
+A: $E|X|\le\sqrt{E(X^2)}$
+B: $E|X|\ge\sqrt{E(X^2)}$
+C: $E(X^2)\le[E(X)]^2$
+D: $E|X|^3\le\left(E|X|\right)^3$
+ANS: A
+S: Lyapunov: $\left(E|X|^r\right)^{1/r}$ is non-decreasing in $r$.
+S: With $r=1,2$: $E|X|\le\left(E X^2\right)^{1/2}$. Equivalently $\text{Var}(|X|)\ge0$.
+SC: $\beta_1\le\beta_2^{1/2}\le\beta_3^{1/3}\le\cdots$ where $\beta_r=E|X|^r$ (the 2022 PYQ).
+TR: C and D reverse Jensen's inequality.
+
+@@ topic=6I | sec=6·13·1 | page=6·98 | diff=2 | type=Conceptual
+Q: The generalised Bienaymé–Chebychev inequality states that for a non-negative function $g$ and $k>0$
+A: $P\{g(X)\ge k\}\le\dfrac{E\,g(X)}k$
+B: $P\{g(X)\ge k\}\ge1-\dfrac{E\,g(X)}k$
+C: $P\{g(X)\le k\}\le\dfrac{E\,g(X)}k$
+D: $P\{g(X)\ge k\}\le\dfrac{\text{Var}\,g(X)}{k^2}$
+ANS: A
+S: $E\,g(X)\ge\int_{g\ge k}g\,dF\ge k\,P\{g(X)\ge k\}$ (eq. 6·74).
+S: $g(x)=(x-\mu)^2,\ k=c^2$ gives the usual Chebychev; $g(x)=|x|$ gives Markov.
+SC: One inequality, many corollaries: choose $g$ to suit the moment you know.
+
+// ---------------------------------------------------------------- 6J
+@@ topic=6J | sec=6·14 | page=6·99 | diff=1 | type=Statement
+Q: Consider the following implications between modes of convergence:<br>1. Almost sure convergence $\Rightarrow$ convergence in probability<br>2. Convergence in mean square $\Rightarrow$ convergence in probability<br>3. Convergence in probability $\Rightarrow$ almost sure convergence<br>4. Convergence in probability $\Rightarrow$ convergence in distribution<br>Which are correct?
+A: 1, 2 and 4 only
+B: 1 and 2 only
+C: 1, 2, 3 and 4
+D: 2 and 4 only
+ANS: A
+S: a.s. $\Rightarrow$ in probability (dominated convergence of indicators).
+S: $P(|X_n-X|>\varepsilon)\le E|X_n-X|^2/\varepsilon^2$ (Chebychev/Markov) gives 2.
+S: In probability $\Rightarrow$ in distribution always; the reverse holds only for a constant limit.
+S: 3 is false: independent $X_n\sim$ Bernoulli$(1/n)$ converge in probability to 0 but not a.s.
+SC: Chain: $L^r\Rightarrow P\Rightarrow D$ and a.s. $\Rightarrow P$. No arrow between a.s. and $L^r$ in general.
+
+@@ topic=6J | sec=6·16 | page=6·115 | diff=3 | type=Conceptual
+Q: $X_1,X_2,\dots$ are independent with $P(X_n=1)=\tfrac1n$ and $P(X_n=0)=1-\tfrac1n$. Then $X_n$
+A: converges to 0 in probability and in mean square, but not almost surely
+B: converges to 0 almost surely
+C: converges to 0 almost surely but not in probability
+D: does not converge in probability
+ANS: A
+S: $P(|X_n|>\varepsilon)=\tfrac1n\to0$ and $E(X_n^2)=\tfrac1n\to0$: convergence in probability and in mean square.
+S: $\sum P(X_n=1)=\sum\tfrac1n=\infty$ with independent events: by the second Borel–Cantelli lemma $X_n=1$ infinitely often a.s.
+S: So $X_n$ does not converge to 0 almost surely.
+SC: Use Borel–Cantelli: $\sum p_n<\infty\Rightarrow$ a.s. convergence; $\sum p_n=\infty$ (independent) $\Rightarrow$ no a.s. convergence. With $p_n=1/n^2$ you would get a.s. convergence.
+
+@@ topic=6J | sec=6·14 | page=6·100 | diff=2 | type=Conceptual
+Q: $X_n$ takes the value $n$ with probability $\tfrac1n$ and $0$ with probability $1-\tfrac1n$. Then
+A: $X_n\to0$ in probability, but $E(X_n)=1$ for all $n$
+B: $X_n\to0$ in mean
+C: $X_n\to0$ in mean square
+D: $X_n$ does not converge in probability
+ANS: A
+S: $P(|X_n|>\varepsilon)=\tfrac1n\to0$: convergence in probability.
+S: $E(X_n)=n\cdot\tfrac1n=1$ and $E(X_n^2)=n\to\infty$: no convergence in mean or mean square.
+SC: Convergence in probability does not carry moments with it — rare but huge values keep the mean fixed.
+
+@@ topic=6J | sec=6·14 | page=6·101 | diff=2 | type=Conceptual
+Q: If $X_n\xrightarrow{d}X$ and $Y_n\xrightarrow{P}c$ (a constant), then by Slutsky's theorem
+A: $X_n+Y_n\xrightarrow{d}X+c$ and $X_nY_n\xrightarrow{d}cX$
+B: $X_n+Y_n\xrightarrow{P}X+c$
+C: $X_nY_n\xrightarrow{d}X\cdot Y$ where $Y$ is independent of $X$
+D: No conclusion can be drawn without independence
+ANS: A
+S: Slutsky: sums, products and (for $c\ne0$) ratios with a sequence converging in probability to a constant behave like the constant.
+S: Convergence remains "in distribution" — it cannot be upgraded to "in probability".
+SC: This is why $\dfrac{\sqrt n(\bar X-\mu)}{S}\xrightarrow{d}N(0,1)$: $S\xrightarrow{P}\sigma$.
+
+@@ topic=6J | sec=6·14 | page=6·101 | diff=2 | type=Conceptual
+Q: $X_n\sim U\left(-\tfrac1n,\tfrac1n\right)$ with d.f. $F_n$. Which statement is correct?
+A: $X_n\xrightarrow{d}0$, although $F_n(0)=\tfrac12$ does not converge to $F(0)=1$
+B: $X_n$ does not converge in distribution because $F_n(0)\not\to1$
+C: $X_n\xrightarrow{d}U(-1,1)$
+D: The limit law is uniform on $(0,1)$
+ANS: A
+S: For $x<0$: $F_n(x)\to0$; for $x>0$: $F_n(x)\to1$. So $F_n\to F$ = d.f. of the constant 0 at every $x\ne0$.
+S: $x=0$ is a discontinuity point of the limit $F$, where convergence is not required.
+SC: Convergence in distribution is checked only at continuity points of the limiting d.f.
+
+@@ topic=6J | sec=6·14 | page=6·101 | diff=1 | type=Conceptual
+Q: If $X_n\xrightarrow{d}c$ where $c$ is a constant, then
+A: $X_n\xrightarrow{P}c$
+B: $X_n\to c$ almost surely
+C: $X_n\to c$ in mean square
+D: $E(X_n)\to c$
+ANS: A
+S: $P(|X_n-c|>\varepsilon)=1-F_n(c+\varepsilon)+F_n(c-\varepsilon-0)\to1-1+0=0$.
+SC: The only case where "in distribution" upgrades to "in probability" is a degenerate limit. Moments need not converge (see the $n$ w.p. $1/n$ example).
+
+// ---------------------------------------------------------------- 6K
+@@ topic=6K | sec=6·15 | page=6·101 | diff=3 | type=Numerical
+Q: $X_1,X_2,\dots$ are independent with $P(X_k=k^\alpha)=P(X_k=-k^\alpha)=\tfrac12$. The weak law of large numbers holds for $\{X_k\}$ (via Chebychev's condition $B_n/n^2\to0$) if
+A: $\alpha<\tfrac12$
+B: $\alpha<1$
+C: $\alpha\le1$
+D: $\alpha>\tfrac12$
+ANS: A
+S: $E(X_k)=0$, $\text{Var}(X_k)=k^{2\alpha}$; $B_n=\sum_{k=1}^nk^{2\alpha}\sim\dfrac{n^{2\alpha+1}}{2\alpha+1}$.
+S: $\dfrac{B_n}{n^2}\sim\dfrac{n^{2\alpha-1}}{2\alpha+1}\to0\iff2\alpha-1<0\iff\alpha<\tfrac12$.
+SC: Compare powers: $B_n\approx n^{2\alpha+1}$ must grow slower than $n^2$.
+
+@@ topic=6K | sec=6·15·3 | page=6·104 | diff=2 | type=Conceptual
+Q: Khinchin's weak law of large numbers asserts that $\bar X_n\xrightarrow{P}\mu$ whenever $X_1,X_2,\dots$ are
+A: i.i.d. with finite mean $\mu$ (finite variance not needed)
+B: independent with finite variances
+C: i.i.d. with finite variance
+D: independent with finite means, not necessarily identically distributed
+ANS: A
+S: Khinchin's theorem (§6·15·3) requires identical distribution and $E|X_1|<\infty$; no second moment is needed.
+S: Chebychev's WLLN instead needs finite variances with $B_n/n^2\to0$ (independence not even essential — Markov's theorem).
+SC: i.i.d. + finite mean: WLLN (Khinchin) and even SLLN (Kolmogorov). Cauchy (no mean) is the classic failure.
+TR: Option C is sufficient but not the statement of Khinchin's theorem — it adds an unnecessary condition.
+
+@@ topic=6K | sec=6·15 | page=6·101 | diff=2 | type=Statement
+Q: Let $X_1,X_2,\dots$ be i.i.d. standard Cauchy variables and $\bar X_n=\tfrac1n\sum_{i=1}^nX_i$.<br>1. $\bar X_n$ has the standard Cauchy distribution for every $n$<br>2. $\bar X_n\xrightarrow{P}0$<br>3. The weak law of large numbers fails because $E|X_1|=\infty$<br>Which are correct?
+A: 1 and 3 only
+B: 1 and 2 only
+C: 2 and 3 only
+D: 1, 2 and 3
+ANS: A
+S: c.f. of $\bar X_n$: $\left[e^{-|t|/n}\right]^n=e^{-|t|}$ — standard Cauchy for every $n$.
+S: Hence $P(|\bar X_n|>\varepsilon)$ is constant in $n$ and does not tend to 0 — statement 2 false.
+S: The mean does not exist, so Khinchin's condition fails — statement 3 true.
+SC: Averaging Cauchy observations gains nothing: the mean of $n$ Cauchys is as spread out as one observation.
+
+@@ topic=6K | sec=6·16 | page=6·115 | diff=2 | type=Statement
+Q: Let $A_1,A_2,\dots$ be independent events.<br>1. If $P(A_n)=\tfrac1{n^2}$, then $P(A_n\text{ infinitely often})=0$<br>2. If $P(A_n)=\tfrac1n$, then $P(A_n\text{ infinitely often})=1$<br>3. If $\sum P(A_n)<\infty$, independence is needed to conclude $P(\limsup A_n)=0$<br>Which are correct?
+A: 1 and 2 only
+B: 1, 2 and 3
+C: 2 and 3 only
+D: 1 only
+ANS: A
+S: First Borel–Cantelli lemma: $\sum P(A_n)<\infty\Rightarrow P(\limsup A_n)=0$ — no independence needed. So 1 true, 3 false.
+S: Second lemma (converse, Theorem 6·35): independent events with $\sum P(A_n)=\infty\Rightarrow P(\limsup A_n)=1$. $\sum\tfrac1n=\infty$, so 2 true.
+SC: The "zero" half is free; only the "one" half needs independence. Together they form a 0–1 law.
+
+@@ topic=6K | sec=6·16 | page=6·116 | diff=2 | type=Numerical
+Q: A fair die is thrown infinitely often. The probability that three consecutive sixes occur infinitely often is
+A: $1$
+B: $0$
+C: $\tfrac1{216}$
+D: $\tfrac{215}{216}$
+ANS: A
+S: Let $B_k$ = "throws $3k-2,3k-1,3k$ are all sixes". These are independent with $P(B_k)=\tfrac1{216}$.
+S: $\sum P(B_k)=\infty$, so by the second Borel–Cantelli lemma $B_k$ occurs infinitely often with probability 1.
+SC: Any fixed finite pattern with positive probability occurs infinitely often a.s. — use disjoint blocks to get independence.
+
+@@ topic=6K | sec=6·16 | page=6·116 | diff=3 | type=Conceptual
+Q: $X_1,X_2,\dots$ are independent random variables. The probability that $\sum_nX_n$ converges
+A: is either 0 or 1
+B: is always 1
+C: can be any number in $[0,1]$
+D: is $\tfrac12$ when the $X_n$ are symmetric
+ANS: A
+S: Convergence of $\sum X_n$ does not depend on any finite number of terms, so it is a tail event.
+S: Kolmogorov's 0–1 law: every tail event of an independent sequence has probability 0 or 1.
+SC: Tail events: convergence of $\sum X_n$, of $\bar X_n$, $\limsup X_n>c$. Their probability is always 0 or 1 under independence.
+
+@@ topic=6K | sec=6·15·1 | page=6·103 | diff=1 | type=Conceptual
+Q: In $n$ Bernoulli trials with success probability $p$, the relative frequency $S_n/n$ converges in probability to $p$. This result is known as
+A: Bernoulli's law of large numbers
+B: the Lindeberg–Lévy central limit theorem
+C: the Borel–Cantelli lemma
+D: Kolmogorov's inequality
+ANS: A
+S: $\text{Var}(S_n/n)=\tfrac{pq}n\le\tfrac1{4n}$; Chebychev gives $P(|S_n/n-p|\ge\varepsilon)\le\tfrac{1}{4n\varepsilon^2}\to0$.
+S: This is Bernoulli's law (§6·15·1) — the first law of large numbers, a special case of Chebychev's WLLN.
+SC: It justifies $S_n/n$ as a consistent estimator of $p$. Its a.s. version is Borel's strong law.
+
+@@ topic=6K | sec=6·15 | page=6·102 | diff=3 | type=Numerical
+Q: $X_k$ are independent with $P(X_k=\pm2^k)=2^{-(2k+1)}$ each and $P(X_k=0)=1-2^{-2k}$. Which statement is correct?
+A: The WLLN holds since $\text{Var}(X_k)=1$ for all $k$
+B: The WLLN fails since the values grow like $2^k$
+C: The WLLN fails since $E(X_k)$ does not exist
+D: The WLLN holds only for even $k$
+ANS: A
+S: $E(X_k)=0$ by symmetry; $E(X_k^2)=2\cdot2^{2k}\cdot2^{-(2k+1)}=1$.
+S: $B_n=\sum\text{Var}(X_k)=n$ and $\dfrac{B_n}{n^2}=\dfrac1n\to0$: Chebychev's condition holds.
+SC: Large values with tiny probabilities can still have bounded variance — compute $\text{Var}(X_k)$ before judging.
+CHK: all(2*4**kk*R(1,2**(2*kk+1)) == 1 for kk in range(1,10))
+
+@@ topic=6K | sec=6·15 | page=6·104 | diff=2 | type=Conceptual
+Q: Kolmogorov's strong law of large numbers for i.i.d. variables states that $\bar X_n\to\mu$ almost surely if and only if
+A: $E|X_1|<\infty$ (and then $\mu=E(X_1)$)
+B: $\text{Var}(X_1)<\infty$
+C: $E(X_1^4)<\infty$
+D: $X_1$ is bounded
+ANS: A
+S: For i.i.d. sequences the SLLN holds iff the first absolute moment is finite.
+S: Stronger moment conditions (finite variance or fourth moment) are only used in simpler proofs.
+SC: i.i.d.: finite mean is necessary <b>and</b> sufficient for the SLLN. (2022 PYQ: "obeys SLLN if $E(X_k)<\infty$".)
+TR: Finite variance is sufficient but not necessary.

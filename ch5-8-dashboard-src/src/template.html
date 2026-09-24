@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>G&amp;K Ch 5–8 ISS Bank</title>
+<script>
+/* Apply a stored theme choice before first paint (falls back to the OS setting). */
+(function () {
+  try {
+    var s = JSON.parse(localStorage.getItem('gk58.iss.v1') || '{}');
+    var t = s.prefs && s.prefs.theme;
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+})();
+</script>
+<!-- KaTeX 0.16.22 (MIT licence, https://katex.org): stylesheet, fonts (as data URIs) and
+     script are inlined below, so the page works with no network connection. -->
+<style id="katex-css">
+{{KATEX_CSS}}
+</style>
+<style>
+{{APP_CSS}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="#/home" aria-label="Home">
+      <span class="brand-mark" aria-hidden="true">Σ</span>
+      <span class="brand-text"><b>G&amp;K Ch 5–8</b><small>ISS Objective Problem Bank</small></span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#/home" data-nav="home">Dashboard</a>
+      <a href="#/practice" data-nav="practice">Practice</a>
+      <a href="#/mock" data-nav="mock">Mock test</a>
+      <a href="#/sheets" data-nav="sheets">Formula sheets</a>
+      <a href="#/review" data-nav="review">Review</a>
+      <a href="#/search" data-nav="search">Search</a>
+    </nav>
+    <button type="button" class="icon-btn" id="theme-btn" title="Toggle light / dark theme" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<main id="main" class="wrap" tabindex="-1"></main>
+<footer class="foot wrap">
+  <p>Problems are original exam-style items built on the topics, worked examples and exercises of <i>Fundamentals of Mathematical Statistics</i> (S.C. Gupta &amp; V.K. Kapoor), Chapters 5–8. Section and page references point to that book. Works fully offline; progress is saved only in this browser.</p>
+</footer>
+<noscript><div class="wrap"><div class="card"><h2>JavaScript is required</h2><p>This dashboard runs entirely in your browser. Please enable JavaScript.</p></div></div></noscript>
+<script id="katex-js">
+{{KATEX_JS}}
+</script>
+<script>
+{{DATA_JS}}
+</script>
+<script>
+{{APP_JS}}
+</script>
+</body>
+</html>

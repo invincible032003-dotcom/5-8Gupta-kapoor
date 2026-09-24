@@ -1,0 +1,1000 @@
+#CHAPTER 5 | Random Variables & Distribution Functions
+#TOPIC 5A | Random variable & distribution function (properties)
+#TOPIC 5B | Discrete r.v.: p.m.f. and c.d.f.
+#TOPIC 5C | Continuous r.v.: p.d.f., c.d.f. and probabilities
+#TOPIC 5D | Measures from a density: mean, median, mode, moments
+#TOPIC 5E | Joint discrete & mixed: marginal, conditional, independence
+#TOPIC 5F | Joint continuous: marginal, conditional, independence
+#TOPIC 5G | Transformation of one random variable
+#TOPIC 5H | Transformation of two variables, Jacobian, convolution
+
+// ---------------------------------------------------------------- 5A
+@@ topic=5A | sec=5·2·1 | page=5·4 | diff=1 | type=Conceptual
+Q: Which of the following is <b>not</b> necessarily a property of the distribution function $F(x)=P(X\le x)$ of a random variable $X$?
+A: $F$ is monotonic non-decreasing
+B: $F$ is continuous from the right at every point
+C: $F(-\infty)=0$ and $F(\infty)=1$
+D: $F$ is continuous at every point
+ANS: D
+S: For $a<b$: $F(b)-F(a)=P(a<X\le b)\ge 0$, so $F$ is non-decreasing — always true.
+S: $F(a+0)=\lim_{h\downarrow 0}P(X\le a+h)=P(X\le a)=F(a)$ by continuity of $P$ on decreasing sequences, so $F$ is always right-continuous.
+S: The limits $F(-\infty)=0,\ F(\infty)=1$ hold for every distribution function.
+S: But $F(a)-F(a-0)=P(X=a)$, which is positive at every mass point of a discrete (or mixed) r.v.; so $F$ need not be continuous (left-continuity fails at jumps).
+SC: Memorise the trio: <b>non-decreasing, right-continuous, 0 at $-\infty$ and 1 at $+\infty$</b>. Jump at $a$ $=P(X=a)$. "Continuous everywhere" holds only for continuous r.v.s.
+TR: Students confuse right-continuity (always) with left-continuity (fails at atoms).
+
+@@ topic=5A | sec=5·2 | page=5·4 | diff=1 | type=Conceptual
+Q: For any random variable $X$ with distribution function $F$, $P(a\le X<b)$ equals
+A: $F(b)-F(a)$
+B: $F(b-0)-F(a-0)$
+C: $F(b)-F(a-0)$
+D: $F(b-0)-F(a)$
+ANS: B
+S: $P(X<b)=F(b-0)$ (left limit) and $P(X<a)=F(a-0)$.
+S: $\{a\le X<b\}=\{X<b\}\setminus\{X<a\}$, hence $P(a\le X<b)=F(b-0)-F(a-0)$.
+S: Check with the four cases: $(a,b]\to F(b)-F(a)$; $[a,b]\to F(b)-F(a-0)$; $(a,b)\to F(b-0)-F(a)$; $[a,b)\to F(b-0)-F(a-0)$.
+SC: Rule: an <b>included</b> left end uses $F(a-0)$; an <b>excluded</b> right end uses $F(b-0)$. For a continuous r.v. all four are equal.
+TR: Option A is correct only for $(a,b]$ or for a continuous r.v.
+
+@@ topic=5A | sec=5·2 | page=5·38 | diff=2 | type=Numerical
+Q: The distribution function of $X$ is $F(x)=0$ for $x<0$ and $F(x)=1-\tfrac14 e^{-x}$ for $x\ge 0$. Then $P(X=0)$ and $P(X>0)$ are respectively
+A: $\tfrac34,\ \tfrac14$
+B: $\tfrac14,\ \tfrac34$
+C: $0,\ 1$
+D: $\tfrac34,\ 1$
+ANS: A
+S: Jump at $0$: $P(X=0)=F(0)-F(0-0)=\left(1-\tfrac14\right)-0=\tfrac34$.
+S: $P(X>0)=1-F(0)=1-\tfrac34=\tfrac14$ (the continuous part carries the remaining mass).
+S: So $X$ is a <b>mixed</b> random variable: an atom of $3/4$ at $0$ plus density $\tfrac14e^{-x}$ on $(0,\infty)$.
+SC: Mass at a point = height of the jump of $F$ there. Always check $F(0)$ vs $F(0-)$ when a formula "starts" at $0$ with a non-zero value.
+TR: Option C treats $X$ as continuous and ignores the jump.
+CHK: R(1)-R(1,4) == R(3,4)
+
+@@ topic=5A | sec=5·2 | page=5·4 | diff=2 | type=Statement
+Q: $F(x)=0$ for $x<0$; $F(x)=\dfrac{x+1}{4}$ for $0\le x<1$; $F(x)=1$ for $x\ge 1$.<br>1. $P(X=1)=\tfrac12$<br>2. $P(0<X<1)=\tfrac14$<br>3. $X$ is a continuous random variable<br>Which of the above is/are correct?
+A: 1 and 2 only
+B: 2 and 3 only
+C: 1 only
+D: 1, 2 and 3
+ANS: A
+S: Jump at $0$: $F(0)-F(0-)=\tfrac14-0=\tfrac14$, so $P(X=0)=\tfrac14$.
+S: Jump at $1$: $F(1)-F(1-)=1-\tfrac24=\tfrac12$, so $P(X=1)=\tfrac12$ — statement 1 true.
+S: $P(0<X<1)=F(1-)-F(0)=\tfrac12-\tfrac14=\tfrac14$ — statement 2 true.
+S: $F$ has jumps, so $X$ is mixed, not continuous — statement 3 false. (Check: $\tfrac14+\tfrac14+\tfrac12=1$.)
+SC: Split total mass = (sum of jumps) + (continuous rise). Here $\tfrac14+\tfrac12$ in jumps and $\tfrac14$ spread uniformly on $(0,1)$.
+CHK: R(1,4)+R(1,4)+R(1,2) == 1
+
+@@ topic=5A | sec=5·2 | page=5·5 | diff=2 | type=Statement
+Q: Consider the following statements about distribution functions:<br>1. The set of discontinuity points of any distribution function is at most countable.<br>2. A distribution function can have at most one jump of size greater than $\tfrac12$.<br>3. A distribution function can have infinitely many jumps each of size at least $0.01$.<br>Which of the above is/are correct?
+A: 1 and 2 only
+B: 1 only
+C: 2 and 3 only
+D: 1, 2 and 3
+ANS: A
+S: Jumps are probabilities of atoms and all jumps add to at most $1$.
+S: Number of jumps of size $>1/n$ is less than $n$; taking the union over $n=1,2,\dots$ gives a countable set — statement 1 true.
+S: Two jumps each $>\tfrac12$ would total more than $1$ — statement 2 true.
+S: Infinitely many jumps each $\ge 0.01$ would total $\infty$ — statement 3 false (at most 100 such jumps).
+SC: "Jumps of size $\ge 1/n$: at most $n$." That single counting argument answers every question of this type.
+
+@@ topic=5A | sec=5·2 | page=5·38 | diff=2 | type=Numerical
+Q: $X$ is a continuous random variable with distribution function $F$. What is $P\left[0.2\le F(X)\le 0.7\right]$?
+A: $0.5$
+B: $0.9$
+C: $0.14$
+D: Depends on $F$
+ANS: A
+S: For continuous $F$, $U=F(X)$ satisfies $P(U\le u)=P(X\le F^{-1}(u))=F(F^{-1}(u))=u$, $0<u<1$.
+S: Hence $F(X)\sim U(0,1)$ — the probability integral transform.
+S: $P(0.2\le U\le 0.7)=0.7-0.2=0.5$.
+SC: $P[a\le F(X)\le b]=b-a$ for every continuous $F$ (G&K Exercise 5(d), Q3). No computation needed.
+TR: "Depends on $F$" is the trap — the answer is distribution-free.
+
+@@ topic=5A | sec=5·1 | page=5·3 | diff=1 | type=Statement
+Q: Let $X_1,X_2,\dots$ be random variables on a probability space $(S,\mathcal B,P)$.<br>1. $X_1X_2$ is a random variable.<br>2. $\max(X_1,X_2)$ is a random variable.<br>3. $\sup_n X_n$ is a random variable whenever it is finite for all outcomes.<br>Which of the above are correct?
+A: 1 and 2 only
+B: 2 and 3 only
+C: 1 and 3 only
+D: 1, 2 and 3
+ANS: D
+S: A function $X:S\to\mathbb R$ is a r.v. iff $\{\omega: X(\omega)\le a\}\in\mathcal B$ for every real $a$ (Theorem 5·1).
+S: Sums, products and scalar multiples of r.v.s are r.v.s (Theorem 5·2).
+S: $\{\max(X_1,X_2)\le a\}=\{X_1\le a\}\cap\{X_2\le a\}\in\mathcal B$ (Theorem 5·5).
+S: $\{\sup_n X_n\le a\}=\bigcap_n\{X_n\le a\}\in\mathcal B$ (Theorem 5·3). All three are true.
+SC: Measurability is preserved by every "reasonable" operation: $+,\times$, max, min, sup, inf, lim sup, continuous or monotone functions.
+
+@@ topic=5A | sec=5·4 | page=5·28 | diff=1 | type=Conceptual
+Q: If $f_1$ and $f_2$ are probability density functions, then $g(x)=\theta f_1(x)+(1-\theta)f_2(x)$ is a p.d.f. for every such pair $f_1,f_2$ if and only if
+A: $\theta$ is any real number
+B: $0\le\theta\le 1$
+C: $\theta>0$
+D: $\theta=\tfrac12$
+ANS: B
+S: $\int g=\theta+(1-\theta)=1$ for every $\theta$, so normalisation is automatic.
+S: Non-negativity is the binding condition: if $\theta>1$, choose $f_1=0$ where $f_2>0$; then $g=(1-\theta)f_2<0$ there. If $\theta<0$ the symmetric argument applies.
+S: For $0\le\theta\le1$ both weights are non-negative, so $g\ge0$. Hence $0\le\theta\le1$.
+SC: A mixture is a density when weights are <b>non-negative and add to 1</b>. Integration alone never catches negative weights.
+
+// ---------------------------------------------------------------- 5B
+@@ topic=5B | sec=5·3 | page=5·10 | diff=1 | type=Numerical
+Q: A random variable $X$ has the probability distribution $$\begin{array}{c|cccccccc} x&0&1&2&3&4&5&6&7\\\hline p(x)&0&k&2k&2k&3k&k^2&2k^2&7k^2+k\end{array}$$ The value of $k$ is
+A: $\tfrac1{10}$
+B: $-1$
+C: $\tfrac19$
+D: $\tfrac15$
+ANS: A
+S: $\sum p(x)=1\Rightarrow 9k+10k^2=1\Rightarrow 10k^2+9k-1=0$.
+S: $(10k-1)(k+1)=0\Rightarrow k=\tfrac1{10}$ or $k=-1$.
+S: $k=-1$ makes $p(1)<0$, so it is rejected: $k=\tfrac1{10}$.
+SC: Add linear and quadratic parts separately ($9k$ and $10k^2$), solve the quadratic, then reject the root giving negative probabilities.
+TR: $-1$ is a genuine root of the equation — it is there to catch students who do not apply $p(x)\ge 0$.
+CHK: set(solve(10*k**2+9*k-1,k)) == {R(1,10),-1}
+
+@@ topic=5B | sec=5·3 | page=5·10 | diff=2 | type=Numerical
+Q: For the distribution $$\begin{array}{c|cccccccc} x&0&1&2&3&4&5&6&7\\\hline p(x)&0&k&2k&2k&3k&k^2&2k^2&7k^2+k\end{array}$$ the smallest value of $c$ for which $P(X\le c)>\tfrac12$ is
+A: $3$
+B: $4$
+C: $5$
+D: $6$
+ANS: B
+S: From $\sum p=1$: $k=\tfrac1{10}$.
+S: Cumulative: $F(0)=0,\ F(1)=\tfrac1{10},\ F(2)=\tfrac3{10},\ F(3)=\tfrac5{10},\ F(4)=\tfrac8{10}$.
+S: $F(3)=0.5$ is <b>not</b> greater than $\tfrac12$; $F(4)=0.8>\tfrac12$. Hence $c=4$.
+SC: Write the running total of the $k$-coefficients: $0,1,3,5,8$ (times $k=0.1$). The strict inequality kills $c=3$.
+TR: $c=3$ gives exactly $0.5$ — the classic strict-vs-non-strict trap.
+CHK: [sum([0,1,2,2,3][:i+1])*R(1,10) for i in range(5)] == [0,R(1,10),R(3,10),R(1,2),R(4,5)]
+
+@@ topic=5B | sec=5·3 | page=5·11 | diff=1 | type=Numerical
+Q: A random variable $X$ has $P(X=j)=\dfrac1{2^j}$, $j=1,2,3,\dots$. The probability that $X$ is divisible by $3$ is
+A: $\tfrac17$
+B: $\tfrac18$
+C: $\tfrac13$
+D: $\tfrac16$
+ANS: A
+S: $P(X\in\{3,6,9,\dots\})=\sum_{m\ge1}2^{-3m}=\sum_{m\ge1}\left(\tfrac18\right)^m$.
+S: $=\dfrac{1/8}{1-1/8}=\dfrac17$.
+SC: $P(X\text{ divisible by }r)=\dfrac{1}{2^r-1}$ for this law: $r=2\Rightarrow\tfrac13$ (even), $r=3\Rightarrow\tfrac17$.
+TR: $\tfrac18=P(X=3)$ only; $\tfrac13$ is $P(X \text{ even})$.
+CHK: summation((R(1,2))**(3*k),(k,1,oo)) == R(1,7)
+
+@@ topic=5B | sec=5·3 | page=5·11 | diff=2 | type=Numerical
+Q: $X$ takes values $-2,-1,0,1,2$ with $P(X=-2)=P(X=-1)$, $P(X=2)=P(X=1)$ and $P(X>0)=P(X<0)=P(X=0)$. Then $E(X^2)$ equals
+A: $\tfrac53$
+B: $\tfrac{10}3$
+C: $0$
+D: $\tfrac56$
+ANS: A
+S: The three events $X<0,\ X=0,\ X>0$ are equally likely: each has probability $\tfrac13$.
+S: So $P(X=0)=\tfrac13$ and each of $\pm1,\pm2$ has probability $\tfrac16$.
+S: $E(X^2)=\tfrac16(4+1+1+4)=\tfrac{10}6=\tfrac53$.
+SC: "Equal thirds, then halve" gives the pmf in one line: $\left(\tfrac16,\tfrac16,\tfrac13,\tfrac16,\tfrac16\right)$.
+CHK: R(1,6)*(4+1+1+4) == R(5,3)
+
+@@ topic=5B | sec=5·3 | page=5·11 | diff=2 | type=Numerical
+Q: $X$ takes values $-3,-2,-1,0,1,2,3$ with $P(X=-3)=P(X=-2)=P(X=-1)$, $P(X=1)=P(X=2)=P(X=3)$ and $P(X=0)=P(X>0)=P(X<0)$. If $Y=2X^2+3X+4$, then $E(Y)$ is
+A: $\tfrac{92}9$
+B: $\tfrac{56}9$
+C: $4$
+D: $\tfrac{100}9$
+ANS: A
+S: $P(X=0)=\tfrac13$; each of the six non-zero values has probability $\tfrac19$.
+S: By symmetry $E(X)=0$; $E(X^2)=\tfrac19(9+4+1+1+4+9)=\tfrac{28}9$.
+S: $E(Y)=2E(X^2)+3E(X)+4=\tfrac{56}9+0+4=\tfrac{92}9$.
+SC: Never tabulate $Y$ — use linearity: $E(aX^2+bX+c)=aE(X^2)+bE(X)+c$.
+TR: $\tfrac{56}9$ forgets the constant $4$.
+CHK: 2*R(28,9)+4 == R(92,9)
+
+@@ topic=5B | sec=5·3 | page=5·12 | diff=2 | type=Numerical
+Q: $P(X=x)=(2x+1)a$ for $x=0,1,2,\dots,8$. The smallest $x$ for which $P(X\le x)>0.5$ is
+A: $4$
+B: $5$
+C: $6$
+D: $7$
+ANS: C
+S: $\sum_{x=0}^{8}(2x+1)=81$, so $a=\tfrac1{81}$.
+S: Sum of the first $m$ odd numbers is $m^2$: $F(x)=\dfrac{(x+1)^2}{81}$.
+S: Need $(x+1)^2>40.5$: $x+1=6$ gives $36$ (too small), $x+1=7$ gives $49$. So $x=6$.
+SC: Odd-number weights $\Rightarrow F(x)=(x+1)^2/(\text{total})$. Solve $(x+1)^2>81/2$ mentally.
+CHK: min(xx for xx in range(9) if R((xx+1)**2,81) > R(1,2)) == 6
+
+@@ topic=5B | sec=5·3 | page=5·12 | diff=2 | type=Numerical
+Q: A discrete random variable has distribution function $$\begin{array}{c|cccccccc} x&-3&-1&0&1&2&3&5&8\\\hline F(x)&0.10&0.30&0.45&0.50&0.75&0.90&0.95&1.00\end{array}$$ What is $P(X\ge 3\mid X>0)$?
+A: $\tfrac5{11}$
+B: $\tfrac12$
+C: $\tfrac59$
+D: $\tfrac14$
+ANS: A
+S: $P(X>0)=1-F(0)=1-0.45=0.55$.
+S: $P(X\ge3)=1-F(2)=1-0.75=0.25$ (the event $X\ge3$ lies inside $X>0$).
+S: $P(X\ge 3\mid X>0)=\dfrac{0.25}{0.55}=\dfrac5{11}$.
+SC: For a step d.f., $P(X\ge c)=1-F(\text{previous support point})$. Two subtractions and one division.
+TR: $0.25$ is the unconditional probability.
+CHK: R(25,55) == R(5,11)
+
+@@ topic=5B | sec=5·3 | page=5·13 | diff=2 | type=Numerical
+Q: A random variable $X$ takes only the values $0,1,2$ with $p(0)=3c^3$, $p(1)=4c-10c^2$, $p(2)=5c-1$, where $c>0$. Then $P(X<2)$ equals
+A: $\tfrac13$
+B: $\tfrac23$
+C: $\tfrac19$
+D: $\tfrac29$
+ANS: A
+S: $\sum p=1\Rightarrow 3c^3-10c^2+9c-2=0\Rightarrow(3c-1)(c-1)(c-2)=0$.
+S: $c=1$ gives $p(1)=-6$ and $c=2$ gives $p(1)=-32$; so $c=\tfrac13$.
+S: $p(0)=\tfrac19,\ p(1)=\tfrac43-\tfrac{10}9=\tfrac29,\ p(2)=\tfrac23$.
+S: $P(X<2)=\tfrac19+\tfrac29=\tfrac13$.
+SC: Try "nice" fractions ($\tfrac12,\tfrac13$) in the cubic first — setters design it to factor. Then $P(X<2)=1-p(2)=2-5c$.
+CHK: set(solve(3*k**3-10*k**2+9*k-2,k)) == {R(1,3),1,2}
+CHK: 1-(5*R(1,3)-1) == R(1,3)
+
+@@ topic=5B | sec=5·3 | page=5·10 | diff=2 | type=Statement
+Q: A student matches three historical events with three years purely at random. Let $X$ be the number of correct matches.<br>1. $P(X=2)=0$<br>2. $E(X)=1$<br>3. $P(X=0)=\tfrac13$<br>Which of the above are correct?
+A: 1 and 2 only
+B: 2 and 3 only
+C: 1 and 3 only
+D: 1, 2 and 3
+ANS: D
+S: There are $3!=6$ equally likely matchings. Exactly 3 correct: 1 way; exactly 1 correct: 3 ways (fix one, swap the other two); exactly 0 correct: 2 derangements.
+S: Exactly 2 correct is impossible (the third is then forced correct), so $P(X=2)=0$.
+S: $P(X=0)=\tfrac26=\tfrac13$, $P(X=1)=\tfrac36$, $P(X=3)=\tfrac16$.
+S: $E(X)=\tfrac12+\tfrac36=1$. All three statements hold.
+SC: For the matching problem $E(X)=1$ for every $n$ (sum of $n$ indicators each with probability $1/n$), and "exactly $n-1$ matches" is always impossible.
+CHK: R(1,2)+3*R(1,6) == 1
+
+@@ topic=5B | sec=5·3 | page=5·10 | diff=1 | type=Numerical
+Q: From a lot of 10 items containing 3 defectives, a sample of 4 is drawn without replacement. If $X$ is the number of defectives in the sample, $P(X\le1)$ is
+A: $\tfrac23$
+B: $\tfrac12$
+C: $\tfrac56$
+D: $\tfrac16$
+ANS: A
+S: $X$ is hypergeometric: $P(X=x)=\dbinom3x\dbinom7{4-x}\Big/\dbinom{10}4$, $\dbinom{10}4=210$.
+S: $P(X=0)=\dfrac{35}{210}=\tfrac16$, $P(X=1)=\dfrac{3\cdot35}{210}=\tfrac12$.
+S: $P(X\le1)=\tfrac16+\tfrac12=\tfrac23$.
+SC: Keep $\binom{10}{4}=210$ and $\binom73=\binom74=35$ ready — they recur in hypergeometric questions.
+TR: $\tfrac12$ is $P(X=1)$ alone and $\tfrac56$ is $P(X\ge1)$.
+CHK: R(binomial(7,4)+3*binomial(7,3),binomial(10,4)) == R(2,3)
+
+// ---------------------------------------------------------------- 5C
+@@ topic=5C | sec=5·4·1 | page=5·28 | diff=2 | type=Numerical
+Q: $X$ has p.d.f. $f(x)=Ax^2,\ 0\le x\le 1$. The value of $P\left(X>\tfrac34\ \middle|\ X>\tfrac12\right)$ is
+A: $\tfrac{37}{56}$
+B: $\tfrac{27}{56}$
+C: $\tfrac{37}{64}$
+D: $\tfrac78$
+ANS: A
+S: $\int_0^1Ax^2\,dx=\tfrac A3=1\Rightarrow A=3$, so $F(x)=x^3$.
+S: $P(X>\tfrac34)=1-\tfrac{27}{64}=\tfrac{37}{64}$; $P(X>\tfrac12)=1-\tfrac18=\tfrac78$.
+S: Required $=\dfrac{37/64}{7/8}=\dfrac{37}{56}$.
+SC: With $F(x)=x^3$: answer $=\dfrac{1-(3/4)^3}{1-(1/2)^3}$. Convert to the common base 64: $\dfrac{37}{56}$.
+TR: $\tfrac{27}{56}$ uses $F(3/4)$ instead of $1-F(3/4)$ in the numerator.
+CHK: (1-R(27,64))/(1-R(1,8)) == R(37,56)
+
+@@ topic=5C | sec=5·4·1 | page=5·28 | diff=1 | type=Numerical
+Q: $X$ has p.d.f. $f(x)=\tfrac14,\ -2<x<2$. The values of $P(|X|>1)$ and $P(2X+3>5)$ are respectively
+A: $\tfrac12,\ \tfrac14$
+B: $\tfrac14,\ \tfrac12$
+C: $\tfrac12,\ \tfrac12$
+D: $\tfrac34,\ \tfrac14$
+ANS: A
+S: $P(|X|>1)=1-P(-1\le X\le1)=1-\tfrac24=\tfrac12$.
+S: $2X+3>5\iff X>1$, so $P=\tfrac{2-1}4=\tfrac14$.
+SC: Uniform probability = (length of favourable interval) / (total length).
+
+@@ topic=5C | sec=5·4·1 | page=5·29 | diff=1 | type=Numerical
+Q: $X$ has p.d.f. $f(x)=A+Bx,\ 0\le x\le1$, and $E(X)=\tfrac7{12}$. Then $(A,B)$ is
+A: $\left(\tfrac12,\ 1\right)$
+B: $(1,\ 0)$
+C: $\left(\tfrac13,\ \tfrac43\right)$
+D: $(0,\ 2)$
+ANS: A
+S: Normalisation: $A+\tfrac B2=1$.
+S: Mean: $\tfrac A2+\tfrac B3=\tfrac7{12}$.
+S: Substituting $A=1-\tfrac B2$: $\tfrac12-\tfrac B4+\tfrac B3=\tfrac7{12}\Rightarrow\tfrac B{12}=\tfrac1{12}\Rightarrow B=1,\ A=\tfrac12$.
+SC: Test options in the two linear equations; only one satisfies both. $(1,0)$ gives mean $\tfrac12$, $(0,2)$ gives $\tfrac23$.
+CHK: solve([a+b/2-1, a/2+b/3-R(7,12)],[a,b]) == {a:R(1,2), b:1}
+
+@@ topic=5C | sec=5·4·2 | page=5·29 | diff=1 | type=Numerical
+Q: For the density $f(x)=cx^2(1-x),\ 0<x<1$, the constant $c$ and the mean are respectively
+A: $12,\ \tfrac35$
+B: $6,\ \tfrac12$
+C: $12,\ \tfrac23$
+D: $20,\ \tfrac35$
+ANS: A
+S: $\int_0^1x^2(1-x)\,dx=B(3,2)=\dfrac{2!\,1!}{4!}=\tfrac1{12}\Rightarrow c=12$.
+S: $E(X)=12\int_0^1x^3(1-x)\,dx=12\,B(4,2)=12\cdot\dfrac{3!\,1!}{5!}=\tfrac{12}{20}=\tfrac35$.
+SC: Recognise Beta$(3,2)$: mean $=\dfrac{m}{m+n}=\dfrac35$, constant $=1/B(3,2)=12$. No integration.
+CHK: integrate(x**2*(1-x),(x,0,1)) == R(1,12)
+CHK: integrate(12*x**3*(1-x),(x,0,1)) == R(3,5)
+
+@@ topic=5C | sec=5·4·1 | page=5·39 | diff=2 | type=Numerical
+Q: $X$ has p.d.f. $f(x)=ax$ on $[0,1]$, $a$ on $[1,2]$, $3a-ax$ on $[2,3]$ and $0$ elsewhere. If three independent observations are made on $X$, the probability that exactly one of them exceeds $1.5$ is
+A: $\tfrac38$
+B: $\tfrac18$
+C: $\tfrac12$
+D: $\tfrac34$
+ANS: A
+S: Area $=\tfrac a2+a+\tfrac a2=2a=1\Rightarrow a=\tfrac12$.
+S: The density is symmetric about $1.5$, so $P(X>1.5)=\tfrac12$.
+S: Number exceeding $1.5$ among 3 is $B(3,\tfrac12)$: $P(\text{exactly one})=3\cdot\tfrac12\cdot\tfrac14=\tfrac38$.
+SC: Spot the symmetry (trapezium symmetric about the middle of $[0,3]$) — then it is a fair-coin binomial.
+CHK: 3*R(1,2)**3 == R(3,8)
+
+@@ topic=5C | sec=5·4·1 | page=5·40 | diff=2 | type=Numerical
+Q: Points of impact of a bomb have density $f(x)=\dfrac{100+x}{10^4}$ for $-100\le x\le0$ and $\dfrac{100-x}{10^4}$ for $0\le x\le100$ ($x$ in feet from the track). A bomb within 40 ft of the track disrupts traffic. If three bombs are dropped independently, the probability that the track is damaged is
+A: $0.953344$
+B: $0.64$
+C: $0.046656$
+D: $0.784$
+ANS: A
+S: $P(|X|\ge40)=2\int_{40}^{100}\dfrac{100-x}{10^4}dx=2\cdot\dfrac{60^2/2}{10^4}=0.36$, so one bomb damages with probability $0.64$.
+S: $P(\text{no bomb damages})=0.36^3=0.046656$.
+S: $P(\text{track damaged})=1-0.046656=0.953344$.
+SC: Triangular density: tail area beyond distance $d$ from the edge $=\tfrac12(\text{remaining width})^2\times\text{slope}$. Then "at least one" $=1-(\text{miss})^3$.
+TR: $0.046656$ is the probability of no damage; $0.64$ is for a single bomb.
+CHK: close(1-(1-integrate((100+x)/10**4,(x,-40,0))-integrate((100-x)/10**4,(x,0,40)))**3, 0.953344)
+
+@@ topic=5C | sec=5·4·3 | page=5·39 | diff=2 | type=Numerical
+Q: $X$ has distribution function $F(x)=0$ for $x\le1$, $k(x-1)^4$ for $1<x\le3$, and $1$ for $x>3$. Then $k$ and $E(X)$ are
+A: $\tfrac1{16},\ \tfrac{13}5$
+B: $\tfrac1{16},\ \tfrac{11}5$
+C: $\tfrac18,\ \tfrac{13}5$
+D: $\tfrac14,\ 2$
+ANS: A
+S: Continuity at $3$: $k\cdot2^4=1\Rightarrow k=\tfrac1{16}$.
+S: $f(x)=\tfrac14(x-1)^3$ on $(1,3)$. Put $u=x-1\in(0,2)$: $E(U)=\tfrac14\int_0^2u^4\,du=\tfrac14\cdot\tfrac{32}5=\tfrac85$.
+S: $E(X)=1+\tfrac85=\tfrac{13}5$.
+SC: $U=X-1$ has $F_U(u)=(u/2)^4$ on $(0,2)$, i.e. $U=2V$ with $V\sim$ Beta$(4,1)$: $E(U)=2\cdot\tfrac45=\tfrac85$.
+CHK: integrate(x*diff(R(1,16)*(x-1)**4,x),(x,1,3)) == R(13,5)
+
+@@ topic=5C | sec=5·4·1 | page=5·31 | diff=3 | type=Numerical
+Q: The distance $X$ (feet) of an impact point from the centre of a target has density $f(x)=k\,2xe^{-x^2},\ 0<x<3$. A batch is accepted if none of five independent shots falls more than 2 ft from the centre. The probability of acceptance is
+A: $\left(\dfrac{1-e^{-4}}{1-e^{-9}}\right)^5$
+B: $\left(1-e^{-4}\right)^5$
+C: $1-e^{-20}$
+D: $\left(\dfrac{1-e^{-2}}{1-e^{-3}}\right)^5$
+ANS: A
+S: $\int_0^3 2xe^{-x^2}dx=1-e^{-9}\Rightarrow k=\dfrac1{1-e^{-9}}$.
+S: $P(X\le2)=k\int_0^2 2xe^{-x^2}dx=\dfrac{1-e^{-4}}{1-e^{-9}}$.
+S: Five independent shots all within 2 ft: $\left(\dfrac{1-e^{-4}}{1-e^{-9}}\right)^5$.
+SC: $\dfrac{d}{dx}\left(-e^{-x^2}\right)=2xe^{-x^2}$, so $F(x)\propto1-e^{-x^2}$; a truncated density just divides by the total mass.
+TR: Option B forgets the normalising constant $k$ (truncation at 3).
+CHK: close(((1-math.exp(-4))/(1-math.exp(-9)))**5, (si.quad(lambda w: 2*w*math.exp(-w*w),0,2)[0]/si.quad(lambda w: 2*w*math.exp(-w*w),0,3)[0])**5)
+
+@@ topic=5C | sec=5·4·1 | page=5·28 | diff=1 | type=Statement
+Q: Consider the following functions:<br>1. $f(x)=x$ for $x=\tfrac1{16},\tfrac3{16},\tfrac14,\tfrac12$<br>2. $f(x)=\lambda e^{-\lambda x},\ x\ge0,\ \lambda>0$<br>3. $f(x)=2x$ for $0<x<1$, $4-2x$ for $1<x<2$, $0$ elsewhere<br>Which of these are valid probability mass/density functions?
+A: 1 and 2 only
+B: 2 and 3 only
+C: 1 and 3 only
+D: 1, 2 and 3
+ANS: A
+S: (1) Values are non-negative and $\tfrac1{16}+\tfrac3{16}+\tfrac4{16}+\tfrac8{16}=1$ — valid p.m.f.
+S: (2) $\int_0^\infty\lambda e^{-\lambda x}dx=1$ — valid (exponential).
+S: (3) $\int_0^1 2x\,dx+\int_1^2(4-2x)dx=1+1=2\ne1$ — not a density.
+SC: Two checks only: non-negativity and total mass 1. A total of 2 means you must halve the function.
+CHK: integrate(2*x,(x,0,1))+integrate(4-2*x,(x,1,2)) == 2
+
+@@ topic=5C | sec=5·4·1 | page=5·69 | diff=1 | type=Statement
+Q: Consider the following statements:<br>1. A probability density function can never exceed $1$.<br>2. $f(x)=|x|,\ -1<x<1$ (zero elsewhere) is a probability density function.<br>3. $f(x)=x,\ 0<x<1$ (zero elsewhere) is a probability density function.<br>Which of the above is/are correct?
+A: 1 only
+B: 2 only
+C: 2 and 3 only
+D: 1 and 3 only
+ANS: B
+S: (1) False: $f(x)=3x^2$ on $(0,1)$ equals $3$ at $x=1$. A density is not a probability; only its integrals are.
+S: (2) $\int_{-1}^1|x|\,dx=2\cdot\tfrac12=1$ and $|x|\ge0$ — valid.
+S: (3) $\int_0^1x\,dx=\tfrac12\ne1$ — invalid.
+SC: A density may be arbitrarily large (e.g. $U(0,\varepsilon)$ has height $1/\varepsilon$); a p.m.f. can never exceed 1.
+
+@@ topic=5C | sec=5·4·1 | page=5·82 | diff=3 | type=Numerical
+Q: The time $X$ (hours) to repair a car has p.d.f. $f(x)=\tfrac34x(2-x),\ 0\le x\le2$. The owner leaves for an engagement of duration $Y$, independent of $X$, with p.d.f. $g(y)=\tfrac y2,\ 0\le y\le2$. The probability that the car is <b>not</b> ready when the owner returns is
+A: $\tfrac3{10}$
+B: $\tfrac7{10}$
+C: $\tfrac12$
+D: $\tfrac25$
+ANS: A
+S: Required $=P(X>Y)=\int_0^2 f(x)\,P(Y<x)\,dx$ and $P(Y<x)=\tfrac{x^2}4$.
+S: $=\int_0^2\tfrac34x(2-x)\cdot\tfrac{x^2}4\,dx=\tfrac3{16}\int_0^2(2x^3-x^4)\,dx$.
+S: $=\tfrac3{16}\left(8-\tfrac{32}5\right)=\tfrac3{16}\cdot\tfrac85=\tfrac3{10}$.
+SC: Condition on the variable whose c.d.f. is simpler: $P(X>Y)=E\left[F_Y(X)\right]=E(X^2)/4$. With $E(X^2)=\tfrac65$ for this symmetric Beta-type law, answer $=\tfrac{3}{10}$.
+TR: $\tfrac7{10}$ is $P(X<Y)$, the probability the car <i>is</i> ready.
+CHK: integrate(R(3,4)*x*(2-x)*x**2/4,(x,0,2)) == R(3,10)
+
+// ---------------------------------------------------------------- 5D
+@@ topic=5D | sec=5·4·2 | page=5·29 | diff=3 | type=Numerical
+Q: $X$ has p.d.f. $f(x)=6x(1-x),\ 0\le x\le1$, with mean $\mu$ and s.d. $\sigma$. The value of $P(\mu-2\sigma<X<\mu+2\sigma)$ is approximately
+A: $0.984$
+B: $0.954$
+C: $0.750$
+D: $0.960$
+ANS: A
+S: Beta$(2,2)$: $\mu=\tfrac12$, $\sigma^2=\dfrac{2\cdot2}{4^2\cdot5}=\tfrac1{20}$, $\sigma=0.2236$.
+S: $F(x)=3x^2-2x^3$. Interval: $(0.0528,\ 0.9472)$.
+S: $F(0.0528)=3(0.00279)-2(0.000147)\approx0.00807$; by symmetry the interval probability is $1-2(0.00807)\approx0.984$.
+SC: Symmetric law $\Rightarrow P=1-2F(\mu-2\sigma)$. Compare with Chebyshev's floor $0.75$ and the normal $0.954$ — both are distractors.
+TR: $0.954$ is the normal-curve figure; $0.75$ is Chebyshev's lower bound.
+CHK: close(1-2*(3*(0.5-2*math.sqrt(0.05))**2-2*(0.5-2*math.sqrt(0.05))**3), 0.984, 1e-3)
+
+@@ topic=5D | sec=5·4·2 | page=5·30 | diff=2 | type=Numerical
+Q: For the distribution $dF(x)=\sin x\,dx,\ 0\le x\le\tfrac\pi2$, the mean, median and mode are respectively
+A: $1,\ \tfrac\pi3,\ \tfrac\pi2$
+B: $\tfrac\pi3,\ 1,\ \tfrac\pi2$
+C: $1,\ \tfrac\pi4,\ \tfrac\pi2$
+D: $\tfrac\pi4,\ \tfrac\pi3,\ 0$
+ANS: A
+S: Mean $=\int_0^{\pi/2}x\sin x\,dx=\left[-x\cos x+\sin x\right]_0^{\pi/2}=1$.
+S: Median $m$: $1-\cos m=\tfrac12\Rightarrow\cos m=\tfrac12\Rightarrow m=\tfrac\pi3$.
+S: $f(x)=\sin x$ increases on $[0,\pi/2]$, so the mode is the right end point $\tfrac\pi2$.
+SC: Mean $\approx1.00<$ median $\approx1.047<$ mode $\approx1.571$: a negatively skewed law — the order confirms your answer.
+CHK: integrate(x*sin(x),(x,0,pi/2)) == 1
+CHK: solve(Eq(1-cos(x),R(1,2)),x)[0] == pi/3
+
+@@ topic=5D | sec=5·4·2 | page=5·29 | diff=3 | type=Numerical
+Q: $X$ has p.d.f. $f(x)=\tfrac12(x+1),\ -1<x<1$. The moment coefficient of skewness $\beta_1$ and the nature of skewness are
+A: $\beta_1=\tfrac8{25}$, negatively skewed
+B: $\beta_1=\tfrac8{25}$, positively skewed
+C: $\beta_1=\tfrac25$, negatively skewed
+D: $\beta_1=0$, symmetric
+ANS: A
+S: Raw moments: $\mu_1'=\tfrac13$, $\mu_2'=\tfrac13$, $\mu_3'=\tfrac15$.
+S: $\mu_2=\tfrac13-\tfrac19=\tfrac29$; $\mu_3=\mu_3'-3\mu_1'\mu_2'+2\mu_1'^3=\tfrac15-\tfrac13+\tfrac2{27}=-\tfrac8{135}$.
+S: $\beta_1=\dfrac{\mu_3^2}{\mu_2^3}=\dfrac{64/18225}{8/729}=\dfrac8{25}$; $\mu_3<0\Rightarrow$ negatively skewed.
+SC: Density rising to the right piles mass on the right with a long left tail — negative skew. $\beta_1$ never tells the sign; $\mu_3$ (or $\gamma_1$) does.
+TR: Option B gets $\beta_1$ right but reads the sign from the slope the wrong way.
+CHK: (lambda m1,m2,m3: eq(((m3-3*m1*m2+2*m1**3)**2)/((m2-m1**2)**3), R(8,25)))(integrate(x*(x+1)/2,(x,-1,1)),integrate(x**2*(x+1)/2,(x,-1,1)),integrate(x**3*(x+1)/2,(x,-1,1)))
+
+@@ topic=5D | sec=5·4·2 | page=5·29 | diff=3 | type=Numerical
+Q: For the p.d.f. $f(x)=\tfrac12(x+1),\ -1<x<1$, the kurtosis coefficient $\beta_2$ is
+A: $\tfrac{12}5$, platykurtic
+B: $3$, mesokurtic
+C: $\tfrac{18}5$, leptokurtic
+D: $\tfrac95$, platykurtic
+ANS: A
+S: $\mu=\tfrac13,\ \mu_2=\tfrac29$ and raw moments $\mu_2'=\tfrac13,\ \mu_3'=\tfrac15,\ \mu_4'=\tfrac15$.
+S: $\mu_4=\mu_4'-4\mu\mu_3'+6\mu^2\mu_2'-3\mu^4=\tfrac15-\tfrac4{15}+\tfrac29-\tfrac1{27}=\tfrac{16}{135}$.
+S: $\beta_2=\dfrac{16/135}{(2/9)^2}=\dfrac{16\cdot81}{135\cdot4}=\tfrac{12}5=2.4<3$: platykurtic.
+SC: This is a triangular law; bounded, flat-ish laws are platykurtic ($\beta_2<3$). Uniform has $1.8$, symmetric triangular $2.4$.
+CHK: (lambda m: eq((m[4]-4*m[1]*m[3]+6*m[1]**2*m[2]-3*m[1]**4)/(m[2]-m[1]**2)**2, R(12,5)))([integrate(x**r*(x+1)/2,(x,-1,1)) for r in range(5)])
+
+@@ topic=5D | sec=5·4·2 | page=5·30 | diff=2 | type=Numerical
+Q: The harmonic mean $H=\left[E(1/X)\right]^{-1}$ of a variable with density $f(x)=\tfrac16x^3e^{-x},\ 0<x<\infty$, is
+A: $3$
+B: $4$
+C: $2$
+D: $\tfrac13$
+ANS: A
+S: $E(1/X)=\tfrac16\int_0^\infty x^2e^{-x}\,dx=\tfrac{\Gamma(3)}6=\tfrac26=\tfrac13$.
+S: $H=3$.
+SC: For Gamma$(\lambda)$ (shape $\lambda$, scale 1): mean $=\lambda$, harmonic mean $=\lambda-1$. Here $\lambda=4$.
+TR: $4$ is the arithmetic mean; $\tfrac13$ is $E(1/X)$ itself.
+CHK: 1/integrate(x**2*exp(-x)/6,(x,0,oo)) == 3
+
+@@ topic=5D | sec=5·4·2 | page=5·29 | diff=2 | type=Numerical
+Q: For $dF=y_0(x-x^2)\,dx,\ 0\le x\le1$, the harmonic mean of the distribution is
+A: $\tfrac13$
+B: $\tfrac12$
+C: $\tfrac23$
+D: $\tfrac16$
+ANS: A
+S: $y_0\int_0^1(x-x^2)dx=\tfrac{y_0}6=1\Rightarrow y_0=6$.
+S: $E(1/X)=6\int_0^1(1-x)\,dx=3$, so $H=\tfrac13$.
+SC: Beta$(m,n)$: $E(1/X)=\dfrac{m+n-1}{m-1}$. Here $m=n=2$: $E(1/X)=3$, $H=\tfrac13$ — while mean = median = mode $=\tfrac12$.
+CHK: 1/integrate(6*(1-x),(x,0,1)) == R(1,3)
+
+@@ topic=5D | sec=5·4·2 | page=5·30 | diff=3 | type=Numerical
+Q: $X$ has density $f(x)=\dfrac{2(b+x)}{b(a+b)}$ for $-b\le x<0$ and $\dfrac{2(a-x)}{a(a+b)}$ for $0\le x\le a$. The mean and variance of $X$ are
+A: $\dfrac{a-b}3,\ \dfrac{a^2+ab+b^2}{18}$
+B: $\dfrac{a-b}2,\ \dfrac{a^2+ab+b^2}{12}$
+C: $\dfrac{a-b}3,\ \dfrac{a^2+b^2}{18}$
+D: $0,\ \dfrac{(a+b)^2}{24}$
+ANS: A
+S: This is a triangular law on $[-b,a]$ with mode $0$.
+S: Triangular$(\alpha,\beta,c)$: mean $=\dfrac{\alpha+\beta+c}3=\dfrac{-b+a+0}3$.
+S: Variance $=\dfrac{\alpha^2+\beta^2+c^2-\alpha\beta-\alpha c-\beta c}{18}=\dfrac{b^2+a^2+ab}{18}$.
+SC: Triangular law with ends $\alpha,\beta$ and mode $c$: mean $=\tfrac{\alpha+\beta+c}3$, variance $=\tfrac{\alpha^2+\beta^2+c^2-\alpha\beta-\beta c-c\alpha}{18}$. Symmetric case $a=b$: variance $a^2/6$.
+CHK: (lambda f1,f2: eq(integrate(x*f1,(x,-b,0))+integrate(x*f2,(x,0,a)),(a-b)/3) and eq(integrate(x**2*f1,(x,-b,0))+integrate(x**2*f2,(x,0,a))-((a-b)/3)**2,(a**2+a*b+b**2)/18))(2*(b+x)/(b*(a+b)),2*(a-x)/(a*(a+b)))
+
+@@ topic=5D | sec=5·4·2 | page=5·31 | diff=2 | type=Numerical
+Q: A variable $X$ on $[0,5]$ has density $f(x)=A\sin\dfrac{\pi x}5$. Its lower and upper quartiles are
+A: $\tfrac53,\ \tfrac{10}3$
+B: $\tfrac54,\ \tfrac{15}4$
+C: $2,\ 3$
+D: $\tfrac52,\ 5$
+ANS: A
+S: $A\int_0^5\sin\frac{\pi x}5dx=A\cdot\frac{10}\pi=1\Rightarrow A=\frac\pi{10}$; $F(x)=\tfrac12\left(1-\cos\frac{\pi x}5\right)$.
+S: $F(Q_1)=\tfrac14\Rightarrow\cos\frac{\pi Q_1}5=\tfrac12\Rightarrow Q_1=\tfrac53$.
+S: By symmetry about $2.5$: $Q_3=5-\tfrac53=\tfrac{10}3$.
+SC: $\cos\theta=\tfrac12\Rightarrow\theta=\tfrac\pi3$. For any density symmetric about $c$: $Q_1+Q_3=2c$.
+TR: $\tfrac54,\tfrac{15}4$ would be the quartiles of a <i>uniform</i> law on $[0,5]$.
+CHK: solve(Eq((1-cos(pi*x/5))/2,R(1,4)),x)[0] == R(5,3)
+
+@@ topic=5D | sec=5·4·2 | page=5·31 | diff=1 | type=Numerical
+Q: $X$ on $[0,1]$ has p.d.f. $ax^2+bx$. If the arithmetic mean of $X$ is $0.5$, then $(a,b)$ is
+A: $(-6,\ 6)$
+B: $(6,\ -6)$
+C: $(3,\ 0)$
+D: $(0,\ 2)$
+ANS: A
+S: $\tfrac a3+\tfrac b2=1$ and $\tfrac a4+\tfrac b3=\tfrac12$.
+S: Multiply: $2a+3b=6$ and $3a+4b=6$. Solving: $a=-6,\ b=6$.
+S: $f(x)=6x(1-x)\ge0$ on $[0,1]$ — valid.
+SC: Mean $\tfrac12$ on $[0,1]$ suggests a symmetric density; $6x(1-x)$ is the only option symmetric about $\tfrac12$.
+CHK: (lambda A,B: solve([A/3+B/2-1,A/4+B/3-R(1,2)],[A,B]) == {A:-6,B:6})(Symbol('A'),Symbol('B'))
+
+@@ topic=5D | sec=5·4·2 | page=5·79 | diff=2 | type=Numerical
+Q: For the triangular distribution $dF=\dfrac1a\left[1-\dfrac{|x-b|}a\right]dx,\ b-a<x<b+a$, the variance is
+A: $\dfrac{a^2}6$
+B: $\dfrac{a^2}{12}$
+C: $\dfrac{a^2}3$
+D: $\dfrac{a^2}{18}$
+ANS: A
+S: Put $u=x-b$: density $\tfrac1a\left(1-\tfrac{|u|}a\right)$ on $(-a,a)$, mean $0$.
+S: $E(U^2)=\tfrac2a\int_0^au^2\left(1-\tfrac ua\right)du=\tfrac2a\left(\tfrac{a^3}3-\tfrac{a^3}4\right)=\tfrac{a^2}6$.
+SC: Symmetric triangle = sum of two independent $U(-a/2,a/2)$: variance $=2\cdot\tfrac{a^2}{12}=\tfrac{a^2}6$.
+TR: $a^2/12$ is the variance of <i>one</i> uniform on a width-$a$ interval.
+CHK: eq(2/a*integrate(u**2*(1-u/a),(u,0,a)), a**2/6)
+
+// ---------------------------------------------------------------- 5E
+@@ topic=5E | sec=5·5·4 | page=5·64 | diff=1 | type=Numerical
+Q: $X$ and $Y$ have joint p.m.f. $p(x,y)=\dfrac{x+y}{21}$, $x=1,2,3$; $y=1,2$. Then $P(X=2\mid Y=1)$ is
+A: $\tfrac13$
+B: $\tfrac17$
+C: $\tfrac37$
+D: $\tfrac3{21}$
+ANS: A
+S: $P(Y=1)=\dfrac{2+3+4}{21}=\dfrac9{21}$.
+S: $P(X=2,Y=1)=\dfrac3{21}$.
+S: $P(X=2\mid Y=1)=\dfrac{3/21}{9/21}=\dfrac13$.
+SC: Conditional on a row/column = cell ÷ row total; the common denominator 21 cancels, so work with numerators only: $3/9$.
+TR: $\tfrac3{21}$ is the joint probability, not the conditional one.
+CHK: R(3,9) == R(1,3)
+
+@@ topic=5E | sec=5·5·4 | page=5·64 | diff=2 | type=Numerical
+Q: $X$ and $Y$ have joint p.m.f. $p(x,y)=\dfrac{x+y}{21}$, $x=1,2,3$; $y=1,2$. Then $E(X\mid Y=2)$ equals
+A: $\tfrac{13}6$
+B: $2$
+C: $\tfrac{15}7$
+D: $\tfrac{46}{21}$
+ANS: A
+S: Column $y=2$ numerators: $3,4,5$ (total $12$).
+S: $E(X\mid Y=2)=\dfrac{1\cdot3+2\cdot4+3\cdot5}{12}=\dfrac{26}{12}=\dfrac{13}6$.
+SC: Weighted average of $x$ with weights $x+2$: $\dfrac{\sum x(x+2)}{\sum(x+2)}$.
+TR: $\tfrac{46}{21}$ is the unconditional mean $E(X)$.
+CHK: R(1*3+2*4+3*5,12) == R(13,6)
+
+@@ topic=5E | sec=5·5 | page=5·79 | diff=2 | type=Numerical
+Q: Two fair dice are rolled. Let $X$ be the sum and $Y$ the absolute difference of the faces. $P(X=7,\ Y\le3)$ equals
+A: $\tfrac19$
+B: $\tfrac16$
+C: $\tfrac1{12}$
+D: $\tfrac29$
+ANS: A
+S: Sum 7: $(1,6),(2,5),(3,4),(4,3),(5,2),(6,1)$ with differences $5,3,1,1,3,5$.
+S: $Y\le3$ keeps $(2,5),(3,4),(4,3),(5,2)$: 4 outcomes.
+S: Probability $=\tfrac4{36}=\tfrac19$.
+SC: For a fixed sum, list only one half and double. Parity check: sum odd $\Rightarrow$ difference odd.
+CHK: R(sum(1 for i in range(1,7) for j in range(1,7) if i+j==7 and abs(i-j)<=3),36) == R(1,9)
+
+@@ topic=5E | sec=5·5 | page=5·78 | diff=1 | type=Numerical
+Q: Four fair coins are tossed. $X$ = number of heads and $Y$ = (number of heads) $-$ (number of tails). $P(-2\le Y<4)$ is
+A: $\tfrac78$
+B: $\tfrac{15}{16}$
+C: $\tfrac58$
+D: $\tfrac34$
+ANS: A
+S: $Y=X-(4-X)=2X-4$.
+S: $-2\le 2X-4<4\iff 1\le X<4\iff X\in\{1,2,3\}$.
+S: $P=\dfrac{4+6+4}{16}=\dfrac78$.
+SC: Translate the event on $Y$ to one on $X$ by the linear map, then read binomial coefficients $1,4,6,4,1$.
+CHK: R(4+6+4,16) == R(7,8)
+
+@@ topic=5E | sec=5·5·5 | page=5·80 | diff=3 | type=Statement
+Q: $X$ and $Y$ have joint p.m.f. $$p(x,y)=\binom yx p^x(1-p)^{y-x}\,\frac{e^{-\lambda}\lambda^y}{y!},\quad x=0,1,\dots,y;\ y=0,1,2,\dots$$ 1. $X\sim$ Poisson$(\lambda p)$<br>2. $Y-X\sim$ Poisson$(\lambda(1-p))$ and is independent of $X$<br>3. $X$ and $Y$ are independent<br>Which are correct?
+A: 1 and 2 only
+B: 1 only
+C: 1 and 3 only
+D: 1, 2 and 3
+ANS: A
+S: The model: $Y\sim P(\lambda)$ and, given $Y=y$, $X\sim B(y,p)$ (Poisson thinning).
+S: Put $Z=Y-X$: $p=\dfrac{e^{-\lambda}\lambda^{x+z}}{x!\,z!}p^x(1-p)^z=\dfrac{e^{-\lambda p}(\lambda p)^x}{x!}\cdot\dfrac{e^{-\lambda q}(\lambda q)^z}{z!}$.
+S: This factorises, so $X\sim P(\lambda p)$ and $Z\sim P(\lambda q)$ are independent — 1 and 2 true.
+S: $X\le Y$ always and $P(X=1,Y=0)=0\ne P(X=1)P(Y=0)$, so $X,Y$ are dependent — 3 false.
+SC: <b>Thinning</b>: Poisson($\lambda$) events kept with probability $p$ give Poisson($\lambda p$); kept and discarded counts are independent Poissons.
+CHK: eq(summation(binomial(k,1)*p*(1-p)**(k-1)*exp(-lam)*lam**k/factorial(k),(k,1,oo)), lam*p*exp(-lam*p))
+
+@@ topic=5E | sec=5·5·4 | page=5·80 | diff=3 | type=Numerical
+Q: Given $Y=y$, $X$ has p.m.f. $f(x\mid y)=\dfrac{e^{-y}y^x}{x!}$, $x=0,1,2,\dots$, and $Y$ has p.d.f. $\lambda e^{-\lambda y},\ y>0$. The marginal p.m.f. of $X$ is
+A: $\dfrac{\lambda}{(1+\lambda)^{x+1}}$
+B: $\dfrac{\lambda^x}{(1+\lambda)^{x+1}}$
+C: $\dfrac{e^{-\lambda}\lambda^x}{x!}$
+D: $\dfrac{1}{(1+\lambda)^x}$
+ANS: A
+S: $P(X=x)=\int_0^\infty\dfrac{e^{-y}y^x}{x!}\lambda e^{-\lambda y}dy=\dfrac\lambda{x!}\int_0^\infty y^xe^{-(1+\lambda)y}dy$.
+S: $=\dfrac\lambda{x!}\cdot\dfrac{x!}{(1+\lambda)^{x+1}}=\dfrac\lambda{(1+\lambda)^{x+1}}$.
+S: This is geometric with $p=\dfrac\lambda{1+\lambda}$: $P(X=x)=p\,q^x$.
+SC: Poisson mixed over an exponential (Gamma with shape 1) rate gives a Geometric; over Gamma($r$) it gives a Negative Binomial.
+TR: Option B has the wrong power on $\lambda$; check $x=0$: must equal $\tfrac{\lambda}{1+\lambda}$.
+CHK: eq(integrate(exp(-y)*y**3/factorial(3)*lam*exp(-lam*y),(y,0,oo)), lam/(1+lam)**4)
+
+@@ topic=5E | sec=5·5·5 | page=5·64 | diff=1 | type=Numerical
+Q: $X,Y$ take values $0,1$ with $P(0,0)=\tfrac16,\ P(0,1)=\tfrac13,\ P(1,0)=\tfrac16,\ P(1,1)=\tfrac13$. Which statement is correct?
+A: $X$ and $Y$ are independent
+B: $X$ and $Y$ are dependent because $P(0,1)\ne P(1,0)$
+C: $\text{Cov}(X,Y)=\tfrac1{12}$
+D: $P(X=1)=\tfrac13$
+ANS: A
+S: Marginals: $P(X=0)=\tfrac12,\ P(X=1)=\tfrac12$; $P(Y=0)=\tfrac13,\ P(Y=1)=\tfrac23$.
+S: Check every cell: $\tfrac12\cdot\tfrac13=\tfrac16$, $\tfrac12\cdot\tfrac23=\tfrac13$ — all four equal the joint probabilities.
+S: Hence independent and $\text{Cov}=0$.
+SC: For a $2\times2$ table, independence $\iff p_{00}p_{11}=p_{01}p_{10}$: $\tfrac16\cdot\tfrac13=\tfrac13\cdot\tfrac16$. One multiplication.
+CHK: R(1,6)*R(1,3) == R(1,3)*R(1,6)
+
+// ---------------------------------------------------------------- 5F
+@@ topic=5F | sec=5·5·5 | page=5·64 | diff=2 | type=Numerical
+Q: $f(x,y)=kxy,\ 1\le x\le y\le2$ is a joint p.d.f. The value of $k$ is
+A: $\tfrac89$
+B: $\tfrac49$
+C: $\tfrac98$
+D: $\tfrac9{16}$
+ANS: A
+S: $\int_1^2\int_1^y xy\,dx\,dy=\int_1^2 y\cdot\dfrac{y^2-1}2dy=\tfrac12\left[\tfrac{y^4}4-\tfrac{y^2}2\right]_1^2$.
+S: $=\tfrac12\left[(4-2)-\left(\tfrac14-\tfrac12\right)\right]=\tfrac12\cdot\tfrac94=\tfrac98$.
+S: $k=\tfrac89$.
+SC: Over the full square $[1,2]^2$ the integral of $xy$ is $\left(\tfrac32\right)^2=\tfrac94$; by symmetry in $x\leftrightarrow y$ the region $x\le y$ carries half: $\tfrac98$.
+CHK: 1/integrate(integrate(x*y,(x,1,y)),(y,1,2)) == R(8,9)
+
+@@ topic=5F | sec=5·5 | page=5·64 | diff=1 | type=Numerical
+Q: $f(x,y)=e^{-(x+y)},\ x\ge0,\ y\ge0$. Then $P(X+Y<1)$ equals
+A: $1-\tfrac2e$
+B: $1-\tfrac1e$
+C: $\tfrac12$
+D: $\left(1-\tfrac1e\right)^2$
+ANS: A
+S: $X,Y$ are i.i.d. Exp(1), so $X+Y\sim$ Gamma(2): $P(X+Y<1)=1-e^{-1}(1+1)$.
+S: Directly: $\int_0^1\int_0^{1-x}e^{-x-y}dy\,dx=\int_0^1\left(e^{-x}-e^{-1}\right)dx=1-e^{-1}-e^{-1}$.
+SC: $P(\text{Gamma}(n,1)\le t)=1-e^{-t}\sum_{j<n}t^j/j!$ — Poisson–Gamma duality.
+TR: $\left(1-\tfrac1e\right)^2=P(X<1,Y<1)$ — the square, not the triangle.
+CHK: integrate(integrate(exp(-x-y),(y,0,1-x)),(x,0,1)).simplify() == 1-2*exp(-1)
+
+@@ topic=5F | sec=5·5·3 | page=5·65 | diff=2 | type=Numerical
+Q: $(X,Y)$ has joint p.d.f. $f(x,y)=8xy,\ 0<x<y<1$. Then $P\left(X<\tfrac12,\ Y<\tfrac14\right)$ is
+A: $\tfrac1{256}$
+B: $\tfrac1{16}$
+C: $\tfrac1{64}$
+D: $\tfrac1{32}$
+ANS: A
+S: Since $X<Y<\tfrac14$, the condition $X<\tfrac12$ is automatic.
+S: $P=\int_0^{1/4}\int_0^y8xy\,dx\,dy=\int_0^{1/4}4y^3dy=\left(\tfrac14\right)^4=\tfrac1{256}$.
+SC: Marginal of the larger variable: $f_Y(y)=4y^3\Rightarrow F_Y(y)=y^4$. The event is just $Y<\tfrac14$.
+TR: $\tfrac1{16}$ comes from wrongly integrating $x$ up to $\tfrac12$.
+CHK: integrate(integrate(8*x*y,(x,0,y)),(y,0,R(1,4))) == R(1,256)
+
+@@ topic=5F | sec=5·5·4 | page=5·65 | diff=1 | type=Numerical
+Q: $X$ and $Y$ have joint p.d.f. $f(x,y)=2$ on $x\ge0,\ y\ge0,\ x+y\le1$. Then $E(Y\mid X=x)$ is
+A: $\dfrac{1-x}2$
+B: $1-x$
+C: $\dfrac{1-x}3$
+D: $\dfrac12$
+ANS: A
+S: $f_X(x)=\int_0^{1-x}2\,dy=2(1-x),\ 0<x<1$.
+S: $f(y\mid x)=\dfrac2{2(1-x)}=\dfrac1{1-x}$ on $0<y<1-x$: uniform.
+S: $E(Y\mid X=x)=\dfrac{1-x}2$.
+SC: A uniform joint density over a region makes every conditional uniform over the corresponding slice. Mean = midpoint of the slice.
+CHK: integrate(y/(1-x),(y,0,1-x)).simplify() == (1-x)/2
+
+@@ topic=5F | sec=5·5·3 | page=5·65 | diff=2 | type=Numerical
+Q: $(X,Y)$ has joint p.d.f. $f(x,y)=6(1-x-y)$ for $x>0,\ y>0,\ x+y<1$. Then $E(X)$ equals
+A: $\tfrac14$
+B: $\tfrac13$
+C: $\tfrac12$
+D: $\tfrac16$
+ANS: A
+S: $f_X(x)=\int_0^{1-x}6(1-x-y)dy=3(1-x)^2$, $0<x<1$ — Beta$(1,3)$.
+S: $E(X)=\dfrac1{1+3}=\tfrac14$.
+SC: $(X,Y,1-X-Y)$ is Dirichlet$(1,1,2)$: $E(X)=\dfrac{1}{1+1+2}=\tfrac14$.
+CHK: integrate(integrate(6*x*(1-x-y),(y,0,1-x)),(x,0,1)) == R(1,4)
+
+@@ topic=5F | sec=5·5·5 | page=5·66 | diff=2 | type=Statement
+Q: $X,Y$ have joint p.d.f. $f(x,y)=\tfrac14(1+xy)$, $|x|<1,\ |y|<1$.<br>1. $\text{Cov}(X,Y)=\tfrac19$<br>2. $X^2$ and $Y^2$ are independent<br>3. $X$ and $Y$ are independent<br>Which are correct?
+A: 1 and 2 only
+B: 2 only
+C: 2 and 3 only
+D: 1, 2 and 3
+ANS: A
+S: Marginals: $f_X(x)=\tfrac12$ on $(-1,1)$ (the $xy$ term integrates to 0); similarly $f_Y$. Means are $0$.
+S: $E(XY)=\tfrac14\iint(xy+x^2y^2)=\tfrac14\cdot\tfrac23\cdot\tfrac23=\tfrac19=\text{Cov}(X,Y)\ne0$ — so 1 true and 3 false.
+S: $P(X^2\le u,\ Y^2\le v)=\int_{-\sqrt u}^{\sqrt u}\int_{-\sqrt v}^{\sqrt v}\tfrac14(1+xy)=\sqrt u\sqrt v$ (odd part vanishes) $=P(X^2\le u)P(Y^2\le v)$ — 2 true.
+SC: The odd term $xy$ disappears on symmetric sets, so any function of $|X|$ and $|Y|$ behaves as if independent, but $X,Y$ themselves are correlated.
+CHK: integrate(integrate(x*y*(1+x*y)/4,(x,-1,1)),(y,-1,1)) == R(1,9)
+
+@@ topic=5F | sec=5·5·3 | page=5·67 | diff=3 | type=Numerical
+Q: $X,Y$ have joint p.d.f. $f(x,y)=\dfrac1{2x^2y}$ for $1\le x<\infty,\ \dfrac1x<y<x$. The marginal p.d.f. of $X$ is
+A: $\dfrac{\ln x}{x^2},\ x\ge1$
+B: $\dfrac1{x^2},\ x\ge1$
+C: $\dfrac{2\ln x}{x^2},\ x\ge1$
+D: $\dfrac{\ln x}{2x^2},\ x\ge1$
+ANS: A
+S: $f_X(x)=\int_{1/x}^x\dfrac{dy}{2x^2y}=\dfrac1{2x^2}\left[\ln y\right]_{1/x}^x=\dfrac{2\ln x}{2x^2}=\dfrac{\ln x}{x^2}$.
+S: Check: $\int_1^\infty\dfrac{\ln x}{x^2}dx=1$ ✓.
+SC: $\ln x-\ln(1/x)=2\ln x$. Always verify a marginal integrates to 1 — here $\int_1^\infty x^{-2}\ln x\,dx=\Gamma(2)=1$ after $x=e^u$.
+CHK: (lambda X: eq(integrate(1/(2*X**2*y),(y,1/X,X)), log(X)/X**2))(Symbol('X',positive=True))
+CHK: integrate(log(x)/x**2,(x,1,oo)) == 1
+
+@@ topic=5F | sec=5·5 | page=5·65 | diff=1 | type=Numerical
+Q: $f(x,y)=kx(x-y)$ for $0<x<2,\ -x<y<x$ is a joint p.d.f. Then $k$ equals
+A: $\tfrac18$
+B: $\tfrac14$
+C: $\tfrac1{16}$
+D: $\tfrac12$
+ANS: A
+S: Inner integral: $\int_{-x}^x x(x-y)\,dy=x\cdot 2x^2=2x^3$ (the $y$-term is odd).
+S: $\int_0^2 2x^3dx=8\Rightarrow k=\tfrac18$.
+SC: Over a symmetric interval in $y$, drop odd powers of $y$ before integrating.
+CHK: 1/integrate(integrate(x*(x-y),(y,-x,x)),(x,0,2)) == R(1,8)
+
+@@ topic=5F | sec=5·5·4 | page=5·80 | diff=2 | type=Statement
+Q: $(X,Y)$ has joint p.d.f. $f(x,y)=e^{-y},\ 0<x<y<\infty$.<br>1. $X\sim$ Exp(1)<br>2. $Y\sim$ Gamma(2,1)<br>3. $E(X\mid Y=y)=\dfrac y2$<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 2 only
+C: 2 and 3 only
+D: 3 only
+ANS: A
+S: $f_X(x)=\int_x^\infty e^{-y}dy=e^{-x}$ — Exp(1).
+S: $f_Y(y)=\int_0^y e^{-y}dx=ye^{-y}$ — Gamma(2).
+S: $f(x\mid y)=\dfrac{e^{-y}}{ye^{-y}}=\dfrac1y$ on $(0,y)$: uniform, so $E(X\mid Y=y)=\dfrac y2$.
+SC: This is the pair (first arrival, second arrival) of a Poisson process: given the second arrival at $y$, the first is uniform on $(0,y)$.
+CHK: integrate(exp(-y),(x,0,y)) == y*exp(-y)
+
+@@ topic=5F | sec=5·5 | page=5·66 | diff=1 | type=Numerical
+Q: The joint distribution function of $X,Y$ is $F(x,y)=(1-e^{-x})(1-e^{-y})$ for $x,y>0$. Then $P(1<X<3,\ 1<Y<2)$ is
+A: $(e^{-1}-e^{-3})(e^{-1}-e^{-2})$
+B: $(1-e^{-3})(1-e^{-2})$
+C: $e^{-2}-e^{-5}$
+D: $(e^{-1}-e^{-3})+(e^{-1}-e^{-2})$
+ANS: A
+S: $F$ factorises, so $X,Y$ are independent Exp(1).
+S: $P(1<X<3)=e^{-1}-e^{-3}$ and $P(1<Y<2)=e^{-1}-e^{-2}$; multiply.
+SC: Rectangle probability $=F(b,d)-F(a,d)-F(b,c)+F(a,c)$; with a product-form $F$ it collapses to a product of marginal differences.
+CHK: close((math.exp(-1)-math.exp(-3))*(math.exp(-1)-math.exp(-2)), si.dblquad(lambda yy,xx: math.exp(-xx-yy),1,3,1,2)[0])
+
+// ---------------------------------------------------------------- 5G
+@@ topic=5G | sec=5·6 | page=5·72 | diff=1 | type=Numerical
+Q: $X$ is uniform on $(-1,1)$. The p.d.f. of $Y=X^2$ is
+A: $\dfrac1{2\sqrt y},\ 0<y<1$
+B: $\dfrac1{\sqrt y},\ 0<y<1$
+C: $\sqrt y,\ 0<y<1$
+D: $\dfrac12,\ 0<y<1$
+ANS: A
+S: $G(y)=P(X^2\le y)=P(-\sqrt y\le X\le\sqrt y)=\dfrac{2\sqrt y}2=\sqrt y$.
+S: $g(y)=G'(y)=\dfrac1{2\sqrt y}$, $0<y<1$.
+SC: For $Y=X^2$: $g(y)=\dfrac{f(\sqrt y)+f(-\sqrt y)}{2\sqrt y}$. With $f\equiv\tfrac12$: $\dfrac{1}{2\sqrt y}$ — a Beta$(\tfrac12,1)$ law.
+TR: $\tfrac1{\sqrt y}$ double-counts the two branches with $f=1$ instead of $\tfrac12$.
+CHK: integrate(1/(2*sqrt(y)),(y,0,1)) == 1
+
+@@ topic=5G | sec=5·6 | page=5·73 | diff=1 | type=Numerical
+Q: $X$ has p.d.f. $f(x)=2x,\ 0<x<1$. The p.d.f. of $Y=3X+1$ is
+A: $\tfrac29(y-1),\ 1<y<4$
+B: $\tfrac23(y-1),\ 1<y<4$
+C: $2(y-1)/3,\ 0<y<1$
+D: $\tfrac29y,\ 0<y<3$
+ANS: A
+S: $x=\dfrac{y-1}3$, $\left|\dfrac{dx}{dy}\right|=\tfrac13$, range $1<y<4$.
+S: $g(y)=2\cdot\dfrac{y-1}3\cdot\dfrac13=\dfrac29(y-1)$.
+SC: Linear map $Y=a+bX$: $g(y)=\dfrac1{|b|}f\left(\dfrac{y-a}b\right)$ — never forget the $1/|b|$ and the new support.
+CHK: integrate(R(2,9)*(y-1),(y,1,4)) == 1
+
+@@ topic=5G | sec=5·6 | page=5·73 | diff=3 | type=Numerical
+Q: $X$ has p.d.f. $f(x)=\tfrac29(x+1),\ -1<x<2$. For $1<u<4$, the p.d.f. of $U=X^2$ is
+A: $\dfrac{1+\sqrt u}{9\sqrt u}$
+B: $\dfrac2{9\sqrt u}$
+C: $\dfrac{2(1+\sqrt u)}{9\sqrt u}$
+D: $\dfrac{1+\sqrt u}{18\sqrt u}$
+ANS: A
+S: For $1<u<4$ only the branch $x=\sqrt u$ lies in $(-1,2)$ (since $-\sqrt u<-1$).
+S: $g(u)=f(\sqrt u)\cdot\dfrac1{2\sqrt u}=\dfrac29(\sqrt u+1)\cdot\dfrac1{2\sqrt u}=\dfrac{1+\sqrt u}{9\sqrt u}$.
+S: For $0<u<1$ both branches count: $g(u)=\dfrac{f(\sqrt u)+f(-\sqrt u)}{2\sqrt u}=\dfrac2{9\sqrt u}$. Masses $\tfrac49+\tfrac59=1$ ✓.
+SC: Non-monotone map: split the $u$-range by how many pre-images fall in the support. Option B is the $(0,1)$ piece.
+CHK: integrate(2/(9*sqrt(u)),(u,0,1))+integrate((1+sqrt(u))/(9*sqrt(u)),(u,1,4)) == 1
+
+@@ topic=5G | sec=5·6 | page=5·73 | diff=2 | type=Numerical
+Q: $X\sim U(-3,3)$. The p.d.f. of $Y=2X^2-3$ on its support $(-3,15)$ is
+A: $\dfrac1{6\sqrt{2y+6}}$
+B: $\dfrac1{12\sqrt{2y+6}}$
+C: $\dfrac1{3\sqrt{2y+6}}$
+D: $\dfrac1{18}$
+ANS: A
+S: $G(y)=P\left(|X|\le\sqrt{\tfrac{y+3}2}\right)=\dfrac13\sqrt{\dfrac{y+3}2}$.
+S: $g(y)=\dfrac13\cdot\dfrac12\left(\dfrac{y+3}2\right)^{-1/2}\cdot\dfrac12=\dfrac1{6\sqrt{2(y+3)}}$.
+SC: Go through the c.d.f.: for symmetric uniform $X$, $P(|X|\le r)=r/3$. Differentiate once. Check: $\int_{-3}^{15}$ gives $\tfrac16[\sqrt{2y+6}]_{-3}^{15}=1$.
+CHK: integrate(1/(6*sqrt(2*y+6)),(y,-3,15)) == 1
+
+@@ topic=5G | sec=5·6 | page=5·73 | diff=1 | type=Numerical
+Q: $X$ has distribution function $F(x)=x$ on $[0,1]$. The mean of $Y=\sqrt X$ is
+A: $\tfrac23$
+B: $\tfrac12$
+C: $\tfrac1{\sqrt2}$
+D: $\tfrac34$
+ANS: A
+S: $P(Y\le y)=P(X\le y^2)=y^2$, so $f_Y(y)=2y$ on $(0,1)$.
+S: $E(Y)=\int_0^1 2y^2dy=\tfrac23$.
+SC: Directly: $E(\sqrt X)=\int_0^1x^{1/2}dx=\tfrac23$. No need for the density of $Y$.
+TR: $\tfrac1{\sqrt2}=\sqrt{E(X)}$ — Jensen says $E\sqrt X<\sqrt{EX}$.
+CHK: integrate(sqrt(x),(x,0,1)) == R(2,3)
+
+@@ topic=5G | sec=5·6 | page=5·79 | diff=2 | type=Conceptual
+Q: A ray of light is sent in a random direction (angle uniformly distributed) towards the $x$-axis from the point $(0,1)$. The abscissa of the point where it meets the $x$-axis has
+A: the standard Cauchy distribution
+B: the uniform distribution on $(-1,1)$
+C: the standard normal distribution
+D: the Laplace distribution
+ANS: A
+S: Let the angle with the $y$-axis be $\theta\sim U\left(-\tfrac\pi2,\tfrac\pi2\right)$; the abscissa is $X=\tan\theta$.
+S: $F(x)=P(\tan\theta\le x)=P(\theta\le\tan^{-1}x)=\tfrac12+\tfrac1\pi\tan^{-1}x$.
+S: $f(x)=\dfrac1{\pi(1+x^2)}$ — standard Cauchy.
+SC: $\tan(\text{uniform angle})$ = Cauchy. Distance $h$ from the axis gives Cauchy with scale $h$.
+CHK: diff(R(1,2)+atan(x)/pi,x) == 1/(pi*(1+x**2))
+
+@@ topic=5G | sec=5·6 | page=5·73 | diff=2 | type=Numerical
+Q: $X$ has p.d.f. $e^{-x},\ x>0$. The p.d.f. of $Y=X^3$ is
+A: $\tfrac13y^{-2/3}e^{-y^{1/3}},\ y>0$
+B: $3y^2e^{-y^3},\ y>0$
+C: $\tfrac13y^{-1/3}e^{-y^{1/3}},\ y>0$
+D: $e^{-y^{1/3}},\ y>0$
+ANS: A
+S: $x=y^{1/3}$, $\dfrac{dx}{dy}=\tfrac13y^{-2/3}$.
+S: $g(y)=e^{-y^{1/3}}\cdot\tfrac13y^{-2/3}$, $y>0$.
+SC: Monotone increasing map: $g(y)=f(x)\,dx/dy$. The result is a Weibull law with shape $\tfrac13$.
+TR: Option B is the density of $X^{1/3}$ with the roles reversed.
+CHK: integrate(R(1,3)*y**R(-2,3)*exp(-y**R(1,3)),(y,0,oo)) == 1
+
+@@ topic=5G | sec=5·6 | page=5·72 | diff=2 | type=Statement
+Q: $X$ has a continuous, strictly increasing distribution function $F$, and $U\sim U(0,1)$.<br>1. $F(X)\sim U(0,1)$<br>2. $-\ln F(X)$ has the exponential distribution with mean 1<br>3. $F^{-1}(U)$ has distribution function $F$<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 2 only
+C: 1 and 3 only
+D: 1 only
+ANS: A
+S: $P(F(X)\le u)=P(X\le F^{-1}(u))=u$ — statement 1 (probability integral transform).
+S: If $V\sim U(0,1)$ then $P(-\ln V>w)=P(V<e^{-w})=e^{-w}$ — Exp(1). So 2 is true.
+S: $P(F^{-1}(U)\le x)=P(U\le F(x))=F(x)$ — statement 3 (inverse transform method used in simulation).
+SC: Three facts that generate a dozen exam questions: $F(X)\sim U$; $-\ln U\sim$ Exp(1); $-2\ln U\sim\chi^2_2$; $F^{-1}(U)\sim F$.
+
+@@ topic=5G | sec=5·6 | page=5·70 | diff=1 | type=Conceptual
+Q: $X$ has p.d.f. $f_X$ and $y=g(x)$ is strictly decreasing and differentiable. The p.d.f. of $Y=g(X)$ is
+A: $f_X\left(g^{-1}(y)\right)\left|\dfrac{d}{dy}g^{-1}(y)\right|$
+B: $-f_X\left(g^{-1}(y)\right)$
+C: $f_X\left(g^{-1}(y)\right)\dfrac{d}{dy}g^{-1}(y)$
+D: $1-f_X\left(g^{-1}(y)\right)$
+ANS: A
+S: $H(y)=P(g(X)\le y)=P(X\ge g^{-1}(y))=1-F_X(g^{-1}(y))$.
+S: $h(y)=-f_X(g^{-1}(y))\dfrac{dx}{dy}$, and since $dx/dy<0$ this equals $f_X(g^{-1}(y))\left|\dfrac{dx}{dy}\right|$.
+SC: One formula for both monotone cases: $h(y)=f(x)\left|\dfrac{dx}{dy}\right|$ (Theorem 5·9).
+TR: Option C is negative for a decreasing map — a density cannot be negative.
+
+// ---------------------------------------------------------------- 5H
+@@ topic=5H | sec=5·7 | page=5·74 | diff=1 | type=Numerical
+Q: $X,Y$ are i.i.d. $U(0,1)$. The p.d.f. of $U=X+Y$ is
+A: $u$ for $0<u\le1$; $2-u$ for $1<u<2$
+B: $\tfrac12$ for $0<u<2$
+C: $2u$ for $0<u<1$
+D: $u^2/2$ for $0<u<2$
+ANS: A
+S: Convolution: $h(u)=\int f_X(v)f_Y(u-v)\,dv$ = length of $\{v: 0<v<1,\ 0<u-v<1\}$.
+S: For $0<u\le1$ that length is $u$; for $1<u<2$ it is $2-u$ — the triangular law.
+SC: Sum of two $U(0,1)$ = symmetric triangle on $(0,2)$ with peak 1 at $u=1$. Sum of $n$ uniforms is the Irwin–Hall law.
+CHK: integrate(u,(u,0,1))+integrate(2-u,(u,1,2)) == 1
+
+@@ topic=5H | sec=5·7 | page=5·80 | diff=2 | type=Statement
+Q: $X_1,X_2$ are i.i.d. with p.d.f. $e^{-x},\ x>0$. Let $Y_1=X_1+X_2$ and $Y_2=\dfrac{X_1}{X_1+X_2}$.<br>1. $Y_1$ has p.d.f. $y_1e^{-y_1}$<br>2. $Y_2\sim U(0,1)$<br>3. $Y_1$ and $Y_2$ are independent<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 2 only
+C: 1 and 3 only
+D: 2 and 3 only
+ANS: A
+S: Inverse: $x_1=y_1y_2,\ x_2=y_1(1-y_2)$; $|J|=y_1$.
+S: Joint density: $e^{-y_1}\cdot y_1$ on $y_1>0,\ 0<y_2<1$ — factorises as $\left(y_1e^{-y_1}\right)\cdot1$.
+S: So $Y_1\sim$ Gamma(2), $Y_2\sim U(0,1)$, independent.
+SC: Gamma$(a)$ and Gamma$(b)$ independent: $\dfrac{X}{X+Y}\sim$ Beta$_1(a,b)$ independent of $X+Y\sim$ Gamma$(a+b)$. With $a=b=1$, Beta$(1,1)=U(0,1)$.
+
+@@ topic=5H | sec=5·7 | page=5·75 | diff=3 | type=Numerical
+Q: $(X,Y)$ has joint p.d.f. $4xye^{-(x^2+y^2)},\ x\ge0,\ y\ge0$. The p.d.f. of $U=\sqrt{X^2+Y^2}$ is
+A: $2u^3e^{-u^2},\ u\ge0$
+B: $2ue^{-u^2},\ u\ge0$
+C: $4u^3e^{-u^2},\ u\ge0$
+D: $u^3e^{-u^2/2},\ u\ge0$
+ANS: A
+S: Polar: $x=u\cos\theta,\ y=u\sin\theta$, $|J|=u$, $0<\theta<\tfrac\pi2$.
+S: Joint: $4u^2\cos\theta\sin\theta\,e^{-u^2}\cdot u=2u^3e^{-u^2}\sin2\theta$.
+S: $\int_0^{\pi/2}\sin2\theta\,d\theta=1$, so $h(u)=2u^3e^{-u^2}$.
+SC: $X^2,Y^2$ are i.i.d. Exp(1) here, so $U^2\sim$ Gamma(2): density of $U$ is $2u\cdot u^2e^{-u^2}$.
+TR: $2ue^{-u^2}$ is the Rayleigh law — correct only when $X,Y$ are half-normal, not here.
+CHK: integrate(2*u**3*exp(-u**2),(u,0,oo)) == 1
+
+@@ topic=5H | sec=5·7 | page=5·81 | diff=2 | type=Numerical
+Q: $X,Y$ have joint p.d.f. $e^{-(x+y)},\ x>0,\ y>0$. The p.d.f. of $U=\dfrac{X+Y}2$ is
+A: $4ue^{-2u},\ u>0$
+B: $ue^{-u},\ u>0$
+C: $2e^{-2u},\ u>0$
+D: $2ue^{-2u},\ u>0$
+ANS: A
+S: $S=X+Y$ has p.d.f. $se^{-s}$ (Gamma 2).
+S: $U=S/2$: $g(u)=2\cdot(2u)e^{-2u}=4ue^{-2u}$.
+SC: Scaling a density: $g(u)=c\,f(cu)$ for $U=S/c$. Check at the end: $\int_0^\infty4ue^{-2u}du=4/4=1$.
+TR: $2ue^{-2u}$ forgets the Jacobian factor 2 and integrates to $\tfrac12$.
+CHK: integrate(4*u*exp(-2*u),(u,0,oo)) == 1
+
+@@ topic=5H | sec=5·7 | page=5·82 | diff=3 | type=Numerical
+Q: $X$ and $Y$ are independent with p.d.f.s $e^{-x}\ (x>0)$ and $3e^{-3y}\ (y>0)$. The p.d.f. of $Z=X/Y$ is
+A: $\dfrac3{(z+3)^2},\ z>0$
+B: $\dfrac1{(1+z)^2},\ z>0$
+C: $3e^{-3z},\ z>0$
+D: $\dfrac{3}{(1+3z)^2},\ z>0$
+ANS: A
+S: $f_Z(z)=\int_0^\infty y\,f_X(zy)f_Y(y)\,dy=\int_0^\infty y\,e^{-zy}\,3e^{-3y}dy$.
+S: $=3\int_0^\infty ye^{-(z+3)y}dy=\dfrac3{(z+3)^2}$.
+SC: Ratio density: $f_{X/Y}(z)=\int|y|f(zy,y)\,dy$. For exponentials with rates $\alpha$ (top) and $\beta$ (bottom): $\dfrac{\alpha\beta}{(\alpha z+\beta)^2}$.
+TR: Option D is the density of $Y/X$ — numerator and denominator swapped.
+CHK: integrate(3/(z+3)**2,(z,0,oo)) == 1
+CHK: eq(integrate(y*exp(-z*y)*3*exp(-3*y),(y,0,oo),conds='none'), 3/(z+3)**2)
+
+@@ topic=5H | sec=5·7 | page=5·81 | diff=2 | type=Numerical
+Q: $X,Y$ have joint p.d.f. $f(x,y)=g(x+y)$ for $x>0,\ y>0$. The p.d.f. of $Z=X+Y$ is
+A: $z\,g(z),\ z>0$
+B: $g(z),\ z>0$
+C: $\tfrac12z\,g(z),\ z>0$
+D: $z^2g(z),\ z>0$
+ANS: A
+S: $P(Z\le z)=\iint_{x+y\le z}g(x+y)\,dx\,dy$. Put $s=x+y$: the line $x+y=s$ inside the quadrant has "length" $s$ in the $(x,s)$ coordinates ($|J|=1$).
+S: $f_Z(z)=\int_0^z g(z)\,dx=z\,g(z)$.
+SC: Use $(Z,X)$ with $|J|=1$; for fixed $z$ the variable $x$ runs over $(0,z)$, giving the factor $z$.
+CHK: integrate(z*exp(-z),(z,0,oo)) == 1
+
+@@ topic=5H | sec=5·7 | page=5·75 | diff=1 | type=Conceptual
+Q: If $X$ and $Y$ are independent continuous random variables, the p.d.f. of $U=X-Y$ is
+A: $\displaystyle\int_{-\infty}^{\infty}f_X(u+v)f_Y(v)\,dv$
+B: $\displaystyle\int_{-\infty}^{\infty}f_X(v)f_Y(u-v)\,dv$
+C: $\displaystyle\int_{-\infty}^{\infty}f_X(v)f_Y(v)\,dv$
+D: $\displaystyle\int_{-\infty}^{\infty}|v|\,f_X(v)f_Y(v-u)\,dv$
+ANS: A
+S: Transform $(X,Y)\to(U,V)$ with $U=X-Y,\ V=Y$: $x=u+v,\ y=v$, $|J|=1$.
+S: Joint p.d.f. $f_X(u+v)f_Y(v)$; integrate out $v$.
+SC: Convolution for sums: $\int f_X(v)f_Y(u-v)dv$ (option B). For differences replace $Y$ by $-Y$: $\int f_X(u+v)f_Y(v)dv$.
+TR: Option B is the density of $X+Y$.
+
+@@ topic=5H | sec=5·7 | page=5·75 | diff=2 | type=Numerical
+Q: $X,Y$ are i.i.d. $U(0,1)$. $P(X+Y\le1.5)$ equals
+A: $0.875$
+B: $0.75$
+C: $0.9375$
+D: $0.5$
+ANS: A
+S: Complement: the triangle $x+y>1.5$ inside the unit square has legs $0.5$, area $\tfrac12(0.5)^2=0.125$.
+S: $P(X+Y\le1.5)=1-0.125=0.875$.
+SC: Geometric probability: area of the corner triangle $=\tfrac12(2-c)^2$ for $1\le c\le2$.
+CHK: 1-R(1,2)*R(1,2)**2 == R(7,8)
+
+@@ topic=5H | sec=5·7 | page=5·75 | diff=3 | type=Numerical
+Q: $X,Y$ are i.i.d. $U(0,1)$. The p.d.f. of $Z=XY$ is
+A: $-\ln z,\ 0<z<1$
+B: $2z,\ 0<z<1$
+C: $1,\ 0<z<1$
+D: $\dfrac1{2\sqrt z},\ 0<z<1$
+ANS: A
+S: $P(XY\le z)=z+\int_z^1\dfrac zx\,dx=z-z\ln z$.
+S: Differentiate: $f_Z(z)=1-\ln z-1=-\ln z$.
+SC: $-\ln X,-\ln Y$ are i.i.d. Exp(1), so $-\ln Z\sim$ Gamma(2): $f_Z(z)=(-\ln z)\,e^{\ln z}\cdot\dfrac1z=-\ln z$.
+TR: $\tfrac1{2\sqrt z}$ is the density of $X^2$, not of $XY$.
+CHK: integrate(-log(z),(z,0,1)) == 1
+CHK: diff(z-z*log(z),z) == -log(z)
+
+@@ topic=5H | sec=5·7 | page=5·76 | diff=2 | type=Statement
+Q: $X,Y$ are i.i.d. $N(0,1)$ and $(R,\Theta)$ are their polar coordinates.<br>1. $R^2\sim\chi^2_2$, i.e. exponential with mean 2<br>2. $\Theta\sim U(0,2\pi)$ and is independent of $R$<br>3. $R$ has p.d.f. $re^{-r^2/2},\ r>0$<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 2 only
+C: 2 and 3 only
+D: 1 and 3 only
+ANS: A
+S: Joint density $\dfrac1{2\pi}e^{-(x^2+y^2)/2}$; polar Jacobian $r$: $g(r,\theta)=\dfrac1{2\pi}\cdot re^{-r^2/2}$.
+S: This factorises: $\Theta$ uniform on $(0,2\pi)$, $R$ Rayleigh $re^{-r^2/2}$ — independent.
+S: $P(R^2>w)=P(R>\sqrt w)=e^{-w/2}$: Exp with mean 2 $=\chi^2_2$.
+SC: This is the Box–Muller idea read backwards: $R=\sqrt{-2\ln U_1}$, $\Theta=2\pi U_2$ generate two independent normals.
+CHK: integrate(y*exp(-y**2/2),(y,0,oo)) == 1

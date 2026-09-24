@@ -1,0 +1,1214 @@
+#CHAPTER 8 | Theoretical Continuous Distributions
+#TOPIC 8A | Rectangular (uniform) & triangular distributions
+#TOPIC 8B | Normal distribution: properties, moments, areas
+#TOPIC 8C | Normal: linear combinations, approximations & log-normal
+#TOPIC 8D | Gamma & chi-square
+#TOPIC 8E | Beta distributions of the first & second kind
+#TOPIC 8F | Exponential distribution & lack of memory
+#TOPIC 8G | Laplace, Weibull, logistic, Cauchy & Pareto
+#TOPIC 8H | Central limit theorem & applications
+#TOPIC 8I | Compound & truncated distributions
+#TOPIC 8J | Pearson system & variance-stabilising transformations
+#TOPIC 8K | Order statistics
+
+// ---------------------------------------------------------------- 8A
+@@ topic=8A | sec=8·1·4 | page=8·2 | diff=1 | type=Numerical
+Q: The mean deviation about the mean of the rectangular distribution $U(a,b)$ is
+A: $\dfrac{b-a}4$
+B: $\dfrac{b-a}{2\sqrt3}$
+C: $\dfrac{b-a}2$
+D: $\dfrac{(b-a)^2}{12}$
+ANS: A
+S: $|X-\mu|$ is uniform on $\left(0,\tfrac{b-a}2\right)$ by symmetry.
+S: Its mean is half of $\tfrac{b-a}2$, i.e. $\tfrac{b-a}4$.
+SC: Uniform: MD $=\tfrac{b-a}4$, SD $=\tfrac{b-a}{2\sqrt3}\approx0.289(b-a)$, QD $=\tfrac{b-a}4$ as well. MD/SD $=\tfrac{\sqrt3}2$.
+TR: Option B is the standard deviation.
+CHK: eq(integrate(abs(x),(x,-R(1,2),R(1,2))), R(1,4))
+
+@@ topic=8A | sec=8·1·1 | page=8·2 | diff=2 | type=Numerical
+Q: The kurtosis coefficient $\beta_2$ of a rectangular distribution is
+A: $1.8$
+B: $3$
+C: $2.4$
+D: $1.2$
+ANS: A
+S: For $U(-a,a)$: $\mu_{2r}=\dfrac{a^{2r}}{2r+1}$, so $\mu_2=\tfrac{a^2}3,\ \mu_4=\tfrac{a^4}5$.
+S: $\beta_2=\dfrac{a^4/5}{a^4/9}=\dfrac95=1.8$.
+SC: Benchmarks: uniform 1.8, triangular 2.4, normal 3, logistic 4.2, Laplace 6, exponential 9.
+TR: $2.4$ is the symmetric triangular value.
+CHK: (integrate(x**4,(x,-1,1))/2)/(integrate(x**2,(x,-1,1))/2)**2 == R(9,5)
+
+@@ topic=8A | sec=8·1 | page=8·12 | diff=1 | type=Numerical
+Q: $X\sim U(-a,a)$ with $P(X>1)=\tfrac13$. Then $a$ equals
+A: $3$
+B: $2$
+C: $1.5$
+D: $4$
+ANS: A
+S: $P(X>1)=\dfrac{a-1}{2a}=\dfrac13\Rightarrow3a-3=2a\Rightarrow a=3$.
+SC: Length ratio: $(a-1)/(2a)$. (Companion G&K part: $P(|X|<1)=P(|X|>1)$ gives $a=2$.)
+CHK: solve(Eq((a-1)/(2*a),R(1,3)),a) == [3]
+
+@@ topic=8A | sec=8·1 | page=8·13 | diff=2 | type=Numerical
+Q: $K$ is uniformly distributed on $(0,5)$. The probability that the roots of $4x^2+4Kx+K+2=0$ are real is
+A: $\tfrac35$
+B: $\tfrac25$
+C: $\tfrac15$
+D: $\tfrac45$
+ANS: A
+S: Real roots $\iff16K^2-16(K+2)\ge0\iff K^2-K-2\ge0\iff(K-2)(K+1)\ge0$.
+S: On $(0,5)$ this means $K\ge2$: probability $\dfrac{5-2}5=\dfrac35$.
+SC: Convert the discriminant condition into an interval of $K$, then take the length ratio.
+CHK: R(5-2,5) == R(3,5)
+
+@@ topic=8A | sec=8·1 | page=8·13 | diff=1 | type=Numerical
+Q: Buses arrive at a stop every 15 minutes starting at 7:00 a.m. A passenger arrives at a time uniformly distributed between 7:00 and 7:30. The probability that he waits less than 5 minutes is
+A: $\tfrac13$
+B: $\tfrac16$
+C: $\tfrac23$
+D: $\tfrac12$
+ANS: A
+S: He waits under 5 minutes if he arrives in $(7{:}10,7{:}15)$ or $(7{:}25,7{:}30)$.
+S: Favourable length $10$ out of $30$: $\tfrac13$.
+SC: Each 15-minute cycle contributes the same 5-minute window, so the answer is $5/15$ regardless of how many cycles.
+CHK: R(10,30) == R(1,3)
+
+@@ topic=8A | sec=8·1 | page=8·2 | diff=1 | type=Numerical
+Q: $X\sim U(0,1)$. The variance of $X^2$ is
+A: $\tfrac4{45}$
+B: $\tfrac1{12}$
+C: $\tfrac15$
+D: $\tfrac1{9}$
+ANS: A
+S: $E(X^2)=\tfrac13$, $E(X^4)=\tfrac15$.
+S: $\text{Var}(X^2)=\tfrac15-\tfrac19=\tfrac4{45}$.
+SC: $E(X^n)=\tfrac1{n+1}$ for $U(0,1)$; any polynomial moment is then arithmetic.
+CHK: R(1,5)-R(1,9) == R(4,45)
+
+@@ topic=8A | sec=8·1 | page=8·2 | diff=1 | type=Conceptual
+Q: The moment generating function of $U(a,b)$ is
+A: $\dfrac{e^{bt}-e^{at}}{(b-a)t}$
+B: $\dfrac{e^{bt}+e^{at}}{2}$
+C: $\dfrac{\sin\left(\frac{b-a}2t\right)}{\frac{b-a}2t}$
+D: $e^{\frac{a+b}2t+\frac{(b-a)^2}{24}t^2}$
+ANS: A
+S: $M(t)=\dfrac1{b-a}\int_a^be^{tx}dx=\dfrac{e^{bt}-e^{at}}{(b-a)t}$, $t\ne0$ (and $M(0)=1$).
+SC: Option C is the <i>characteristic function</i> of the centred uniform $U\left(-\tfrac{b-a}2,\tfrac{b-a}2\right)$.
+
+@@ topic=8A | sec=8·1 | page=8·12 | diff=2 | type=Statement
+Q: For the rectangular distribution $U(a,b)$:<br>1. The percentile points are equally spaced<br>2. All odd central moments vanish<br>3. The mean deviation about the mean equals the quartile deviation<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 2 only
+C: 2 only
+D: 1 and 3 only
+ANS: A
+S: $F(x)=\tfrac{x-a}{b-a}$ is linear, so the $k$-th percentile is $a+\tfrac k{100}(b-a)$: equally spaced.
+S: The law is symmetric about $\tfrac{a+b}2$: odd central moments are 0.
+S: QD $=\tfrac{Q_3-Q_1}2=\tfrac{b-a}4=$ MD.
+SC: G&K objective: "In uniform distribution, the percentile points are equi-spaced" — TRUE.
+
+// ---------------------------------------------------------------- 8B
+@@ topic=8B | sec=8·2·9 | page=8·28 | diff=1 | type=Conceptual
+Q: The points of inflexion of the normal curve $N(\mu,\sigma^2)$ are at
+A: $\mu\pm\sigma$
+B: $\mu\pm2\sigma$
+C: $\mu\pm3\sigma$
+D: $\mu\pm\tfrac{\sigma}{2}$
+ANS: A
+S: $f''(x)\propto\left[\dfrac{(x-\mu)^2}{\sigma^2}-1\right]e^{-(x-\mu)^2/2\sigma^2}$.
+S: $f''=0\iff(x-\mu)^2=\sigma^2\iff x=\mu\pm\sigma$, where the ordinate is $\dfrac1{\sigma\sqrt{2\pi}}e^{-1/2}$.
+SC: Inflexion at one SD — the curve changes from concave to convex there.
+CHK: solve(diff(exp(-x**2/2),x,2),x) == [-1,1]
+
+@@ topic=8B | sec=8·2·10 | page=8·28 | diff=1 | type=Numerical
+Q: For a normal distribution, the quartile deviation, mean deviation and standard deviation are approximately in the ratio
+A: $10:12:15$
+B: $12:10:15$
+C: $15:12:10$
+D: $2:3:4$
+ANS: A
+S: QD $\approx0.6745\sigma\approx\tfrac23\sigma$; MD $=\sqrt{2/\pi}\,\sigma\approx0.7979\sigma\approx\tfrac45\sigma$; SD $=\sigma$.
+S: $\tfrac23:\tfrac45:1=10:12:15$.
+SC: Remember "QD $=\tfrac23\sigma$, MD $=\tfrac45\sigma$" and multiply by 15.
+CHK: close(0.6745*15, 10, 2e-2) and close(math.sqrt(2/math.pi)*15, 12, 1e-2)
+
+@@ topic=8B | sec=8·2 | page=8·21 | diff=1 | type=Numerical
+Q: For $X\sim N(\mu,\sigma^2)$, the sixth central moment $\mu_6$ equals
+A: $15\sigma^6$
+B: $3\sigma^6$
+C: $105\sigma^6$
+D: $5\sigma^6$
+ANS: A
+S: $\mu_{2r}=1\cdot3\cdot5\cdots(2r-1)\,\sigma^{2r}$ and $\mu_{2r+1}=0$.
+S: $r=3$: $1\cdot3\cdot5=15$, so $\mu_6=15\sigma^6$.
+SC: Double factorials: $\mu_4=3\sigma^4,\ \mu_6=15\sigma^6,\ \mu_8=105\sigma^8$. Recurrence $\mu_{2r}=(2r-1)\sigma^2\mu_{2r-2}$.
+TR: $105\sigma^6$ is the pattern for $\mu_8$.
+CHK: integrate(x**6*exp(-x**2/2),(x,-oo,oo))/sqrt(2*pi) == 15
+
+@@ topic=8B | sec=8·2·10 | page=8·28 | diff=1 | type=Numerical
+Q: For $X\sim N(\mu,\sigma^2)$, $E|X-\mu|$ equals
+A: $\sigma\sqrt{\dfrac2\pi}$
+B: $\dfrac{\sigma}{\sqrt{2\pi}}$
+C: $\sigma$
+D: $\dfrac{2\sigma}{\pi}$
+ANS: A
+S: $E|Z|=2\int_0^\infty z\dfrac{e^{-z^2/2}}{\sqrt{2\pi}}dz=\dfrac2{\sqrt{2\pi}}=\sqrt{\dfrac2\pi}$.
+S: Scale by $\sigma$.
+SC: $\sqrt{2/\pi}\approx0.8$. Also the mean of the half-normal $|Z|$; its variance is $1-\tfrac2\pi$.
+CHK: 2*integrate(x*exp(-x**2/2),(x,0,oo))/sqrt(2*pi) == sqrt(2/pi)
+
+@@ topic=8B | sec=8·2 | page=8·164 | diff=3 | type=Numerical
+Q: $X\sim N(1,4)$. The variance of $X^2$ is
+A: $48$
+B: $32$
+C: $16$
+D: $52$
+ANS: A
+S: For $N(\mu,\sigma^2)$: $\text{Var}(X^2)=2\sigma^4+4\mu^2\sigma^2$.
+S: $=2(16)+4(1)(4)=32+16=48$.
+SC: Write $X=\mu+\sigma Z$: $X^2=\mu^2+2\mu\sigma Z+\sigma^2Z^2$; $\text{Var}=4\mu^2\sigma^2\cdot1+\sigma^4\cdot2$ (cross covariance $E Z^3=0$). With $\mu=0$ it reduces to $2\sigma^4$ ($\text{Var}(Z^2)=2$).
+TR: $32=2\sigma^4$ ignores the non-zero mean.
+CHK: (lambda X: eq(integrate((X**4)*exp(-(X-1)**2/8),(X,-oo,oo))/sqrt(8*pi)-(integrate(X**2*exp(-(X-1)**2/8),(X,-oo,oo))/sqrt(8*pi))**2, 48))(Symbol('X',real=True))
+
+@@ topic=8B | sec=8·2 | page=8·166 | diff=2 | type=Numerical
+Q: $f(x)=k\,e^{-3x^2+6x}$, $-\infty<x<\infty$, is a normal density. Its mean and variance are
+A: $1,\ \tfrac16$
+B: $1,\ \tfrac13$
+C: $3,\ \tfrac16$
+D: $2,\ 6$
+ANS: A
+S: $-3x^2+6x=-3(x-1)^2+3$, so $f\propto\exp\left[-\dfrac{(x-1)^2}{2\cdot\frac16}\right]$.
+S: Mean $1$, variance $\tfrac1{2\cdot3}=\tfrac16$ (and $k=\sqrt{3/\pi}\,e^{-3}$).
+SC: For $e^{-ax^2+bx}$: $\mu=\dfrac b{2a}$, $\sigma^2=\dfrac1{2a}$.
+TR: $\tfrac13$ uses $1/a$ instead of $1/(2a)$.
+CHK: close(si.quad(lambda w: math.exp(-3*w*w+6*w),-20,20)[0]*math.sqrt(3/math.pi)*math.exp(-3), 1)
+
+@@ topic=8B | sec=8·2·2 | page=8·20 | diff=1 | type=Statement
+Q: For the normal distribution:<br>1. Mean = median = mode<br>2. $\beta_1=0$ and $\beta_2=3$<br>3. The maximum ordinate is $\dfrac1{\sigma\sqrt{2\pi}}$ at $x=\mu$<br>4. The mean and variance can never be equal<br>Which are correct?
+A: 1, 2 and 3 only
+B: 1, 2, 3 and 4
+C: 1 and 2 only
+D: 2, 3 and 4 only
+ANS: A
+S: Symmetry and unimodality give 1; $\mu_3=0$, $\mu_4=3\sigma^4$ give 2; $f(\mu)=1/(\sigma\sqrt{2\pi})$ gives 3.
+S: $\mu$ and $\sigma^2$ are free parameters: $N(2,2)$ has equal mean and variance — 4 is false ("are sometimes equal").
+SC: G&K objective: "mean and variance of normal: (c) are sometimes equal"; for gamma they are always equal.
+
+@@ topic=8B | sec=8·2·8 | page=8·21 | diff=1 | type=Numerical
+Q: For $X\sim N(\mu,\sigma^2)$, $P(\mu-2\sigma<X<\mu+2\sigma)$ is approximately
+A: $0.9545$
+B: $0.6827$
+C: $0.9973$
+D: $0.95$
+ANS: A
+S: $P(|Z|<2)=2\Phi(2)-1=2(0.97725)-1=0.9545$.
+SC: 68.27–95.45–99.73 rule. Note $0.95$ corresponds to $\pm1.96\sigma$, not $\pm2\sigma$.
+CHK: close(2*st.norm.cdf(2)-1, 0.9545, 1e-4)
+
+@@ topic=8B | sec=8·2 | page=8·39 | diff=2 | type=Numerical
+Q: $X\sim N(30,25)$. Given $\Phi(2)=0.9772$ and $\Phi(0.8)=0.7881$, $P(26\le X\le40)$ is
+A: $0.7653$
+B: $0.1891$
+C: $0.9772$
+D: $0.5653$
+ANS: A
+S: $z_1=\dfrac{26-30}5=-0.8$, $z_2=\dfrac{40-30}5=2$.
+S: $P=\Phi(2)-\Phi(-0.8)=0.9772-(1-0.7881)=0.7653$.
+SC: Standardise both ends; for a negative $z$ use $\Phi(-z)=1-\Phi(z)$.
+TR: $0.1891=\Phi(2)-\Phi(0.8)$ forgets that $-0.8$ is below the mean.
+CHK: close(0.9772-(1-0.7881), 0.7653)
+
+@@ topic=8B | sec=8·2 | page=8·40 | diff=3 | type=Numerical
+Q: In a normal distribution, 31% of items are under 45 and 8% are over 64. Given $\Phi(0.496)=0.69$ and $\Phi(1.405)=0.92$, the mean and standard deviation are approximately
+A: $50,\ 10$
+B: $55,\ 10$
+C: $50,\ 12$
+D: $54.5,\ 9.5$
+ANS: A
+S: $P(X<45)=0.31\Rightarrow\dfrac{45-\mu}\sigma=-0.496$; $P(X>64)=0.08\Rightarrow\dfrac{64-\mu}\sigma=1.405$.
+S: Subtract: $\dfrac{19}\sigma=1.901\Rightarrow\sigma\approx10$; then $\mu=45+0.496(10)\approx50$.
+SC: Two percentiles $\Rightarrow$ two linear equations $\mu+z_i\sigma=x_i$. Subtract to get $\sigma$ first.
+CHK: close(19/1.901, 10, 1e-2) and close(45+0.496*19/1.901, 50, 1e-2)
+
+@@ topic=8B | sec=8·2·5 | page=8·23 | diff=1 | type=Conceptual
+Q: The characteristic function of $N(\mu,\sigma^2)$ is
+A: $e^{i\mu t-\sigma^2t^2/2}$
+B: $e^{\mu t+\sigma^2t^2/2}$
+C: $e^{i\mu t+\sigma^2t^2/2}$
+D: $e^{-|t|}$
+ANS: A
+S: M.g.f. $e^{\mu t+\sigma^2t^2/2}$; replace $t$ by $it$: $e^{i\mu t+\sigma^2(it)^2/2}=e^{i\mu t-\sigma^2t^2/2}$.
+SC: $(it)^2=-t^2$ flips the sign of the quadratic term. Option B is the m.g.f.; D is the Cauchy c.f.
+
+@@ topic=8B | sec=8·2 | page=8·164 | diff=2 | type=Numerical
+Q: $X\sim N(0,1)$. Given $\Phi(1.645)=0.95$, the value of $P(X^2>2.706)$ is
+A: $0.10$
+B: $0.05$
+C: $0.90$
+D: $0.025$
+ANS: A
+S: $X^2>2.706\iff|X|>\sqrt{2.706}=1.645$.
+S: $P(|X|>1.645)=2(1-0.95)=0.10$.
+SC: $\chi^2_1$ upper $\alpha$ point $=(z_{\alpha/2})^2$: $1.645^2=2.706$ (10%), $1.96^2=3.84$ (5%), $2.576^2=6.63$ (1%).
+TR: $0.05$ is the one-sided normal tail.
+CHK: close(1.645**2, 2.706, 1e-3)
+
+@@ topic=8B | sec=8·2 | page=8·61 | diff=2 | type=Numerical
+Q: $X\sim N(0,1)$. The variance of $|X|$ is
+A: $1-\dfrac2\pi$
+B: $\dfrac2\pi$
+C: $1$
+D: $\dfrac{\pi-2}{2\pi}$
+ANS: A
+S: $E|X|^2=E(X^2)=1$ and $E|X|=\sqrt{2/\pi}$.
+S: $\text{Var}|X|=1-\dfrac2\pi\approx0.363$.
+SC: Half-normal: mean $\sqrt{2/\pi}$, variance $1-2/\pi$. Scale by $\sigma$ and $\sigma^2$ for $N(0,\sigma^2)$.
+CHK: close(1-2/math.pi, 0.36338, 1e-4)
+
+@@ topic=8B | sec=8·2 | page=8·31 | diff=1 | type=Statement
+Q: Consider the following limiting results:<br>1. $B(n,p)$ tends to normal as $n\to\infty$ with $p$ fixed (neither $p$ nor $q$ small)<br>2. Poisson$(\lambda)$ tends to normal as $\lambda\to\infty$<br>3. Gamma$(\lambda)$ tends to normal as $\lambda\to\infty$<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 2 only
+C: 1 only
+D: 2 and 3 only
+ANS: A
+S: Each is a sum of many i.i.d. pieces (Bernoulli, Poisson(1), Exp(1)), so the CLT applies after standardising.
+S: $\dfrac{X-np}{\sqrt{npq}},\ \dfrac{X-\lambda}{\sqrt\lambda},\ \dfrac{X-\lambda}{\sqrt\lambda}\xrightarrow{d}N(0,1)$.
+SC: Any family closed under convolution with finite variance becomes normal for large "shape": binomial, Poisson, gamma, $\chi^2$, NB.
+
+// ---------------------------------------------------------------- 8C
+@@ topic=8C | sec=8·2 | page=8·165 | diff=1 | type=Numerical
+Q: $X_1,X_2,X_3$ are i.i.d. with density $\dfrac1{\sqrt{8\pi}}e^{-(x-1)^2/8}$. The distribution of $X_1-2X_2+X_3$ is
+A: $N(0,\ 24)$
+B: $N(0,\ 16)$
+C: $N(1,\ 24)$
+D: $N(0,\ 8)$
+ANS: A
+S: Each $X_i\sim N(1,4)$.
+S: Mean $1-2+1=0$; variance $(1+4+1)\cdot4=24$.
+SC: Linear combination of independent normals: mean $\sum a_i\mu_i$, variance $\sum a_i^2\sigma_i^2$.
+TR: $16=(1+2+1)\times4$ forgets to square the coefficient $-2$.
+CHK: (1+4+1)*4 == 24
+
+@@ topic=8C | sec=8·2 | page=8·165 | diff=1 | type=Numerical
+Q: $X_1,X_2,X_3$ are i.i.d. with density $\dfrac1{\sqrt{18\pi}}e^{-(x-1)^2/18}$. The distribution of $3X_1-X_2+2X_3$ is
+A: $N(4,\ 126)$
+B: $N(4,\ 36)$
+C: $N(6,\ 126)$
+D: $N(4,\ 14)$
+ANS: A
+S: Each $X_i\sim N(1,9)$.
+S: Mean $3-1+2=4$; variance $(9+1+4)\cdot9=126$.
+SC: $\sigma^2$ is read from $2\sigma^2=18$. Then $\sum a_i^2=14$, times 9.
+TR: $14$ forgets to multiply by $\sigma^2=9$.
+CHK: (9+1+4)*9 == 126
+
+@@ topic=8C | sec=8·2 | page=8·39 | diff=2 | type=Numerical
+Q: $X\sim N(1,9)$ and $Y\sim N(2,16)$ are independent. Given $\Phi(1)=0.8413$, $P(X-Y>4)$ equals
+A: $0.1587$
+B: $0.8413$
+C: $0.3413$
+D: $0.0228$
+ANS: A
+S: $Z=X-Y\sim N(-1,\ 25)$.
+S: $P(Z>4)=P\left(\dfrac{Z+1}5>1\right)=1-0.8413=0.1587$.
+SC: Variances add even for a difference; SD $=\sqrt{9+16}=5$ (3-4-5 triangle).
+TR: $0.8413$ is the complementary probability $P(X-Y\le4)$.
+CHK: close(1-st.norm.cdf((4+1)/5), 0.1587, 1e-3)
+
+@@ topic=8C | sec=8·2·1 | page=8·18 | diff=2 | type=Numerical
+Q: A fair coin is tossed 100 times. Using the normal approximation with continuity correction and $\Phi(1.9)=0.9713$, the probability of at least 60 heads is about
+A: $0.0287$
+B: $0.0228$
+C: $0.0359$
+D: $0.0446$
+ANS: A
+S: $X\sim B(100,\tfrac12)$: $\mu=50,\ \sigma=5$.
+S: $P(X\ge60)\approx P\left(Z\ge\dfrac{59.5-50}5\right)=P(Z\ge1.9)=1-0.9713=0.0287$.
+SC: "At least $k$" $\to$ use $k-0.5$; "at most $k$" $\to k+0.5$.
+TR: $0.0228=P(Z\ge2)$, the answer without continuity correction.
+CHK: close(1-st.norm.cdf(1.9), 0.0287, 1e-2)
+
+@@ topic=8C | sec=8·2 | page=8·31 | diff=2 | type=Numerical
+Q: $X\sim$ Poisson$(100)$. Using the normal approximation with continuity correction and $\Phi(1.05)=0.8531$, $P(X\le110)$ is about
+A: $0.8531$
+B: $0.8413$
+C: $0.1469$
+D: $0.9772$
+ANS: A
+S: $\mu=\sigma^2=100$, $\sigma=10$.
+S: $P(X\le110)\approx\Phi\left(\dfrac{110.5-100}{10}\right)=\Phi(1.05)=0.8531$.
+SC: Poisson with large $\lambda$ $\approx N(\lambda,\lambda)$; SD is $\sqrt\lambda$.
+TR: $0.8413=\Phi(1)$ — no continuity correction.
+CHK: close(st.poisson.cdf(110,100), 0.8531, 2e-2)
+
+@@ topic=8C | sec=8·2·15 | page=8·65 | diff=2 | type=Numerical
+Q: $Y\sim N(0,1)$ and $X=e^Y$ (log-normal). The mean and variance of $X$ are
+A: $e^{1/2},\ e(e-1)$
+B: $1,\ e$
+C: $e^{1/2},\ e-1$
+D: $e,\ e^2(e-1)$
+ANS: A
+S: $E(X)=E(e^Y)=M_Y(1)=e^{1/2}$; $E(X^2)=M_Y(2)=e^2$.
+S: $\text{Var}(X)=e^2-e=e(e-1)$.
+SC: Log-normal moments come from the normal m.g.f.: $E(X^r)=e^{r\mu+r^2\sigma^2/2}$.
+CHK: close(math.exp(2)-math.exp(1), math.e*(math.e-1))
+
+@@ topic=8C | sec=8·2·15 | page=8·65 | diff=2 | type=Statement
+Q: $X$ is log-normal: $\ln X\sim N(\mu,\sigma^2)$.<br>1. Median of $X$ is $e^\mu$<br>2. Mode $<$ median $<$ mean<br>3. If $X_1,X_2$ are independent log-normals, $X_1X_2$ is log-normal<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 3 only
+C: 2 and 3 only
+D: 1 only
+ANS: A
+S: $\ln$ is monotone, so median$(X)=e^{\text{median}(\ln X)}=e^\mu$.
+S: Mode $e^{\mu-\sigma^2}$, median $e^\mu$, mean $e^{\mu+\sigma^2/2}$: increasing order — positively skewed.
+S: $\ln(X_1X_2)=\ln X_1+\ln X_2$ is normal.
+SC: Log-normal is closed under products, powers and positive scaling — the multiplicative analogue of the normal.
+
+@@ topic=8C | sec=8·2 | page=8·166 | diff=1 | type=Numerical
+Q: $X\sim N(\mu,\sigma^2)$. The distribution of $U=2X-3$ is
+A: $N(2\mu-3,\ 4\sigma^2)$
+B: $N(2\mu-3,\ 2\sigma^2)$
+C: $N(2\mu,\ 4\sigma^2-3)$
+D: $N(2\mu-3,\ 4\sigma^2-3)$
+ANS: A
+S: $E(U)=2\mu-3$, $\text{Var}(U)=4\sigma^2$; a linear function of a normal is normal.
+SC: Shifts move only the mean; scaling multiplies the variance by the square.
+
+@@ topic=8C | sec=8·9 | page=8·166 | diff=2 | type=Numerical
+Q: $X_1,X_2$ are i.i.d. $N(0,1)$. The distribution of $\dfrac{X_1+X_2}{X_1-X_2}$ is
+A: standard Cauchy
+B: $N(0,1)$
+C: $F$ with $(1,1)$ d.f.
+D: $t$ with 2 d.f.
+ANS: A
+S: $U=X_1+X_2$ and $V=X_1-X_2$ are uncorrelated jointly normal, hence independent $N(0,2)$.
+S: $\dfrac UV=\dfrac{U/\sqrt2}{V/\sqrt2}$ is a ratio of independent standard normals: standard Cauchy.
+SC: Its square $\left(\tfrac{X_1+X_2}{X_1-X_2}\right)^2$ is $F_{1,1}$ (the 2020 PYQ form).
+TR: Option C is the distribution of the <i>square</i>.
+
+// ---------------------------------------------------------------- 8D
+@@ topic=8D | sec=8·3 | page=8·68 | diff=2 | type=Numerical
+Q: For the distribution $dF=k\,x^2e^{-x}dx,\ 0<x<\infty$, the coefficients $\beta_1$ and $\beta_2$ are
+A: $\tfrac43,\ 5$
+B: $2,\ 6$
+C: $\tfrac43,\ 3$
+D: $4,\ 9$
+ANS: A
+S: This is Gamma($\lambda=3$) with $k=\tfrac12$: $\kappa_r=\lambda(r-1)!$, so $\kappa_2=3,\kappa_3=6,\kappa_4=18$.
+S: $\beta_1=\dfrac{\kappa_3^2}{\kappa_2^3}=\dfrac{36}{27}=\dfrac43$; $\beta_2=3+\dfrac{\kappa_4}{\kappa_2^2}=3+2=5$.
+SC: Gamma($\lambda$): $\beta_1=\dfrac4\lambda$, $\beta_2=3+\dfrac6\lambda$. Exponential ($\lambda=1$): 4 and 9.
+TR: $(4,9)$ are the exponential values.
+CHK: R(4,3) == R(6**2,3**3)
+
+@@ topic=8D | sec=8·3 | page=8·68 | diff=1 | type=Numerical
+Q: $X$ has density $\dfrac{a^\lambda}{\Gamma(\lambda)}e^{-ax}x^{\lambda-1},\ x>0$, with mean 4 and variance 2. Then $(a,\lambda)$ equals
+A: $(2,\ 8)$
+B: $(\tfrac12,\ 2)$
+C: $(2,\ 4)$
+D: $(8,\ 2)$
+ANS: A
+S: Mean $\dfrac\lambda a=4$, variance $\dfrac\lambda{a^2}=2$.
+S: Divide: $a=\dfrac42=2$, then $\lambda=8$.
+SC: Rate $a=\mu/\sigma^2$, shape $\lambda=\mu^2/\sigma^2$ — moment estimators of the gamma.
+CHK: R(8,2) == 4 and R(8,4) == 2
+
+@@ topic=8D | sec=8·3·1 | page=8·70 | diff=1 | type=Statement
+Q: $X\sim\gamma(\lambda_1)$ and $Y\sim\gamma(\lambda_2)$ (standard gamma, unit scale) are independent.<br>1. $X+Y\sim\gamma(\lambda_1+\lambda_2)$<br>2. $\dfrac X{X+Y}\sim\beta_1(\lambda_1,\lambda_2)$<br>3. $\dfrac XY\sim\beta_2(\lambda_1,\lambda_2)$<br>Which are correct?
+A: 1, 2 and 3
+B: 1 only
+C: 1 and 2 only
+D: 2 and 3 only
+ANS: A
+S: M.g.f.: $(1-t)^{-\lambda_1}(1-t)^{-\lambda_2}=(1-t)^{-(\lambda_1+\lambda_2)}$.
+S: Transformation $u=x+y,\ v=\tfrac x{x+y}$ ($|J|=u$) factorises into $\gamma(\lambda_1+\lambda_2)\times\beta_1(\lambda_1,\lambda_2)$.
+S: $\tfrac XY=\tfrac V{1-V}$ with $V\sim\beta_1$ gives $\beta_2(\lambda_1,\lambda_2)$.
+SC: Gamma–Beta triangle: sum $\to$ gamma, proportion $\to$ Beta I, ratio $\to$ Beta II. The $F$ distribution is a scaled Beta II.
+
+@@ topic=8D | sec=8·3 | page=8·164 | diff=1 | type=Conceptual
+Q: If $X$ is a standard normal variate, then $\tfrac12X^2$ is
+A: a gamma variate with parameter $\tfrac12$
+B: a normal variate
+C: a Poisson variate
+D: an exponential variate with mean 1
+ANS: A
+S: $X^2\sim\chi^2_1$ with density $\dfrac{e^{-u/2}u^{-1/2}}{2^{1/2}\Gamma(1/2)}$.
+S: $W=\tfrac12X^2$ has density $\dfrac{e^{-w}w^{-1/2}}{\Gamma(1/2)}$: standard gamma $\gamma(\tfrac12)$.
+SC: $\chi^2_n/2\sim\gamma(n/2)$. G&K objective question VIII(xiv).
+
+@@ topic=8D | sec=8·3 | page=8·70 | diff=2 | type=Numerical
+Q: $X_1,\dots,X_4$ are i.i.d. exponential with mean 2. The variance of $S=X_1+X_2+X_3+X_4$ is
+A: $16$
+B: $8$
+C: $4$
+D: $32$
+ANS: A
+S: Each $X_i$ has variance $2^2=4$.
+S: $\text{Var}(S)=4\times4=16$; indeed $S\sim$ Gamma(shape 4, scale 2).
+SC: Gamma(shape $k$, scale $\theta$): mean $k\theta$, variance $k\theta^2$.
+TR: $8$ uses variance = mean for each exponential — true only for mean 1.
+CHK: 4*2**2 == 16
+
+@@ topic=8D | sec=8·3 | page=8·70 | diff=2 | type=Numerical
+Q: $Y\sim\chi^2_6$. Then $E\left(\dfrac1Y\right)$ equals
+A: $\tfrac14$
+B: $\tfrac16$
+C: $\tfrac13$
+D: $\tfrac15$
+ANS: A
+S: $E(1/\chi^2_n)=\dfrac1{n-2}$ for $n>2$.
+S: $n=6$: $\tfrac14$.
+SC: For $\gamma(a,\lambda)$: $E(1/X)=\dfrac a{\lambda-1}$. $\chi^2_n=\gamma(\tfrac12,\tfrac n2)$ gives $\dfrac{1/2}{n/2-1}=\dfrac1{n-2}$.
+TR: $\tfrac16=1/E(Y)$ — Jensen says $E(1/Y)$ is larger.
+CHK: integrate(y**2*exp(-y/2)/(2**3*gamma(3))/y,(y,0,oo)) == R(1,4)
+
+@@ topic=8D | sec=8·3 | page=8·68 | diff=2 | type=Numerical
+Q: $X$ has the exponential density $e^{-x},\ x>0$. Then $E\left(\sqrt X\right)$ equals
+A: $\dfrac{\sqrt\pi}2$
+B: $1$
+C: $\sqrt\pi$
+D: $\dfrac12$
+ANS: A
+S: $E(X^{1/2})=\int_0^\infty x^{1/2}e^{-x}dx=\Gamma\left(\tfrac32\right)=\tfrac12\Gamma\left(\tfrac12\right)=\dfrac{\sqrt\pi}2$.
+SC: Gamma($\lambda$): $E(X^r)=\dfrac{\Gamma(\lambda+r)}{\Gamma(\lambda)}$ for any real $r>-\lambda$.
+TR: $1=\sqrt{E(X)}$ — Jensen: $E\sqrt X<\sqrt{EX}$.
+CHK: integrate(sqrt(x)*exp(-x),(x,0,oo)) == sqrt(pi)/2
+
+@@ topic=8D | sec=8·3 | page=8·69 | diff=1 | type=Numerical
+Q: The mode of the gamma distribution $\gamma(a,\lambda)$ with density $\propto e^{-ax}x^{\lambda-1}$ and $\lambda>1$ is
+A: $\dfrac{\lambda-1}a$
+B: $\dfrac\lambda a$
+C: $\dfrac{\lambda}{a^2}$
+D: $0$
+ANS: A
+S: $\dfrac d{dx}\ln f=\dfrac{\lambda-1}x-a=0\Rightarrow x=\dfrac{\lambda-1}a$.
+SC: Mean $\lambda/a$, mode $(\lambda-1)/a$: mean $-$ mode $=1/a$ (positive skew). For $\lambda\le1$ the mode is at 0.
+CHK: solve(diff((lam-1)*log(x)-a*x,x),x) == [(lam-1)/a]
+
+@@ topic=8D | sec=8·3 | page=8·69 | diff=2 | type=Statement
+Q: $X\sim\chi^2_n$.<br>1. Its m.g.f. is $(1-2t)^{-n/2}$<br>2. Mean $=n$, variance $=2n$<br>3. $\dfrac{X-n}{\sqrt{2n}}\xrightarrow{d}N(0,1)$ as $n\to\infty$<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 2 only
+C: 2 and 3 only
+D: 1 only
+ANS: A
+S: $\chi^2_n$ is the sum of $n$ i.i.d. $Z_i^2$, each with m.g.f. $(1-2t)^{-1/2}$, mean 1, variance 2.
+S: CLT then gives 3.
+SC: Fisher's refinement: $\sqrt{2\chi^2}-\sqrt{2n-1}\approx N(0,1)$ converges faster.
+
+// ---------------------------------------------------------------- 8E
+@@ topic=8E | sec=8·4·1 | page=8·70 | diff=2 | type=Numerical
+Q: A Beta distribution of the first kind $\beta_1(m,n)$ has mean $\tfrac25$ and variance $\tfrac1{25}$. Then $(m,n)$ is
+A: $(2,\ 3)$
+B: $(3,\ 2)$
+C: $(4,\ 6)$
+D: $(1,\ 1.5)$
+ANS: A
+S: Mean $\dfrac m{m+n}=\tfrac25$ and variance $\dfrac{mn}{(m+n)^2(m+n+1)}=\dfrac{(2/5)(3/5)}{m+n+1}=\dfrac1{25}$.
+S: $m+n+1=6\Rightarrow m+n=5\Rightarrow m=2,\ n=3$.
+SC: Write the variance as $\dfrac{\mu(1-\mu)}{m+n+1}$ — one equation gives $m+n$ directly.
+TR: $(4,6)$ has the right mean but variance $\tfrac{6}{25\cdot11}$.
+CHK: R(2*3,25*6) == R(1,25)
+
+@@ topic=8E | sec=8·4·1 | page=8·70 | diff=1 | type=Numerical
+Q: The mode of the Beta distribution of the first kind $\beta_1(3,5)$ is
+A: $\tfrac13$
+B: $\tfrac38$
+C: $\tfrac25$
+D: $\tfrac12$
+ANS: A
+S: Mode $=\dfrac{m-1}{m+n-2}=\dfrac2{6}=\dfrac13$ (valid for $m,n>1$).
+SC: Mean $\tfrac m{m+n}=\tfrac38$, mode $\tfrac{m-1}{m+n-2}=\tfrac13$: mode $<$ mean when $m<n$ (positive skew).
+TR: $\tfrac38$ is the mean.
+CHK: solve(diff(2*log(x)+4*log(1-x),x),x) == [R(1,3)]
+
+@@ topic=8E | sec=8·5 | page=8·72 | diff=2 | type=Numerical
+Q: $X$ has density $f(x)=\dfrac{k\,x^2}{(1+x)^5},\ x>0$. Then $k$ and $E(X)$ are
+A: $12,\ 3$
+B: $6,\ 2$
+C: $12,\ \tfrac32$
+D: $30,\ 3$
+ANS: A
+S: $\beta_2(m,n)$ has density $\dfrac{x^{m-1}}{B(m,n)(1+x)^{m+n}}$: here $m=3,\ m+n=5\Rightarrow n=2$.
+S: $k=\dfrac1{B(3,2)}=\dfrac{\Gamma(5)}{\Gamma(3)\Gamma(2)}=12$; mean $\dfrac m{n-1}=3$.
+SC: Beta II: mean $\dfrac m{n-1}$ ($n>1$), variance $\dfrac{m(m+n-1)}{(n-1)^2(n-2)}$ ($n>2$) — here the variance does not exist.
+CHK: integrate(12*x**2/(1+x)**5,(x,0,oo)) == 1
+CHK: integrate(12*x**3/(1+x)**5,(x,0,oo)) == 3
+
+@@ topic=8E | sec=8·5 | page=8·72 | diff=2 | type=Statement
+Q: $X\sim\beta_1(m,n)$ (Beta of the first kind).<br>1. $\dfrac X{1-X}\sim\beta_2(m,n)$<br>2. $1-X\sim\beta_1(n,m)$<br>3. If $Y\sim\beta_2(m,n)$ then $\dfrac1{1+Y}\sim\beta_1(n,m)$<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 2 only
+C: 2 only
+D: 1 and 3 only
+ANS: A
+S: $y=\dfrac x{1-x}$, $x=\dfrac y{1+y}$, $\dfrac{dx}{dy}=\dfrac1{(1+y)^2}$: density $\dfrac{y^{m-1}}{B(m,n)(1+y)^{m+n}}$ — Beta II.
+S: Swapping $x\leftrightarrow1-x$ swaps the exponents.
+S: $\dfrac1{1+Y}=1-\dfrac Y{1+Y}=1-X$ with $X\sim\beta_1(m,n)$, so it is $\beta_1(n,m)$.
+SC: Beta I on $(0,1)$ $\leftrightarrow$ Beta II on $(0,\infty)$ via $y=\tfrac x{1-x}$. (G&K objective: relation between the two kinds.)
+
+@@ topic=8E | sec=8·4 | page=8·70 | diff=2 | type=Numerical
+Q: $X\sim\beta_1(2,3)$. Then $E(X^2)$ equals
+A: $\tfrac15$
+B: $\tfrac4{25}$
+C: $\tfrac1{25}$
+D: $\tfrac3{10}$
+ANS: A
+S: $E(X^r)=\dfrac{B(m+r,n)}{B(m,n)}=\dfrac{m(m+1)\cdots(m+r-1)}{(m+n)(m+n+1)\cdots(m+n+r-1)}$.
+S: $E(X^2)=\dfrac{2\cdot3}{5\cdot6}=\dfrac15$.
+SC: Rising-factorial ratio. Check: variance $\tfrac15-\tfrac4{25}=\tfrac1{25}$ ✓ with the formula $\tfrac{mn}{(m+n)^2(m+n+1)}=\tfrac{6}{150}$.
+TR: $\tfrac4{25}$ is $[E(X)]^2$.
+CHK: integrate(x**2*x*(1-x)**2,(x,0,1))/integrate(x*(1-x)**2,(x,0,1)) == R(1,5)
+
+@@ topic=8E | sec=8·4 | page=8·71 | diff=2 | type=Conceptual
+Q: $X\sim\beta_1(\tfrac12,\tfrac12)$ (the arc-sine law on $(0,1)$). Which statement is correct?
+A: Its density is U-shaped with mean $\tfrac12$ and variance $\tfrac18$
+B: It is unimodal with mode $\tfrac12$
+C: It equals the uniform distribution
+D: Its variance is $\tfrac1{12}$
+ANS: A
+S: Density $\dfrac1{\pi\sqrt{x(1-x)}}$ tends to $\infty$ at both ends — U-shaped, minimum at $\tfrac12$.
+S: Mean $\tfrac12$; variance $\dfrac{\frac14}{1+1}=\dfrac18$.
+SC: Beta shapes: $m,n>1$ unimodal; $m=n=1$ uniform; $m,n<1$ U-shaped. Variance $=\mu(1-\mu)/(m+n+1)$.
+TR: $\tfrac1{12}$ is the uniform ($m=n=1$) variance.
+CHK: close(0.25/2, 0.125)
+
+// ---------------------------------------------------------------- 8F
+@@ topic=8F | sec=8·6 | page=8·85 | diff=1 | type=Conceptual
+Q: $X$ is exponential with rate $\lambda$. For $s,t>0$, $P(X>s+t\mid X>s)$ equals
+A: $e^{-\lambda t}$
+B: $e^{-\lambda(s+t)}$
+C: $e^{-\lambda s}$
+D: $1-e^{-\lambda t}$
+ANS: A
+S: $\dfrac{P(X>s+t)}{P(X>s)}=\dfrac{e^{-\lambda(s+t)}}{e^{-\lambda s}}=e^{-\lambda t}=P(X>t)$.
+SC: Memoryless: "used is as good as new". Exponential is the only continuous law with this property (constant hazard $\lambda$).
+
+@@ topic=8F | sec=8·6 | page=8·30 | diff=1 | type=Numerical
+Q: For the exponential distribution with mean $\sigma$, the median and the inter-quartile range are
+A: $\sigma\ln2,\ \sigma\ln3$
+B: $\sigma,\ 2\sigma$
+C: $\sigma\ln2,\ \sigma\ln4$
+D: $\tfrac\sigma2,\ \sigma$
+ANS: A
+S: $F(x)=1-e^{-x/\sigma}$. Median: $e^{-m/\sigma}=\tfrac12\Rightarrow m=\sigma\ln2$.
+S: $Q_1=\sigma\ln\tfrac43$, $Q_3=\sigma\ln4$; IQR $=\sigma\ln\dfrac{4}{4/3}=\sigma\ln3$.
+SC: Exponential $p$-quantile: $-\sigma\ln(1-p)$. Mean $\sigma>$ median $0.693\sigma$ (positive skew).
+TR: $\sigma\ln4$ is $Q_3$, not the IQR.
+CHK: eq(log(4)-log(R(4,3)), log(3))
+
+@@ topic=8F | sec=8·6 | page=8·30 | diff=1 | type=Statement
+Q: For the exponential distribution $f(x)=\dfrac1\sigma e^{-x/\sigma},\ x>0$:<br>1. Mean $=$ standard deviation $=\sigma$<br>2. $\beta_1=4$ and $\beta_2=9$<br>3. $\mu_r'=r!\,\sigma^r$<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 2 only
+C: 1 and 3 only
+D: 2 and 3 only
+ANS: A
+S: $\mu_r'=\int_0^\infty x^r\tfrac1\sigma e^{-x/\sigma}dx=r!\,\sigma^r$: mean $\sigma$, $E(X^2)=2\sigma^2$, variance $\sigma^2$.
+S: Cumulants $\kappa_r=(r-1)!\,\sigma^r$: $\beta_1=\tfrac{(2\sigma^3)^2}{\sigma^6}=4$, $\beta_2=3+\tfrac{6\sigma^4}{\sigma^4}=9$.
+SC: Coefficient of variation of the exponential is exactly 1 (G&K Ex. 5(c) Q10).
+
+@@ topic=8F | sec=8·6 | page=8·86 | diff=2 | type=Numerical
+Q: $X\sim$ Exp(rate 2) and $Y\sim$ Exp(rate 3) are independent. Then $P(X<Y)$ and $E[\min(X,Y)]$ are
+A: $\tfrac25,\ \tfrac15$
+B: $\tfrac35,\ \tfrac15$
+C: $\tfrac25,\ \tfrac56$
+D: $\tfrac23,\ \tfrac12$
+ANS: A
+S: $P(X<Y)=\int_0^\infty2e^{-2x}e^{-3x}dx=\dfrac2{2+3}=\dfrac25$.
+S: $P(\min>t)=e^{-2t}e^{-3t}=e^{-5t}$: $\min\sim$ Exp(5), mean $\tfrac15$.
+SC: Competing exponentials: the first to fire is $i$ with probability $\lambda_i/\sum\lambda_j$; the minimum is Exp($\sum\lambda_j$).
+TR: $\tfrac35$ is $P(Y<X)$.
+CHK: integrate(2*exp(-2*x)*exp(-3*x),(x,0,oo)) == R(2,5)
+
+@@ topic=8F | sec=8·6 | page=8·86 | diff=3 | type=Numerical
+Q: $X$ is exponential with an unknown rate $\lambda>0$. The maximum possible value of $P(1\le X\le3)$ over all $\lambda$ is
+A: $\dfrac2{3\sqrt3}$
+B: $\dfrac14$
+C: $\dfrac13$
+D: $\dfrac1{\sqrt3}$
+ANS: A
+S: $P=e^{-\lambda}-e^{-3\lambda}=u-u^3$ with $u=e^{-\lambda}\in(0,1)$.
+S: $\dfrac d{du}(u-u^3)=1-3u^2=0\Rightarrow u=\dfrac1{\sqrt3}$.
+S: Maximum $=\dfrac1{\sqrt3}-\dfrac1{3\sqrt3}=\dfrac2{3\sqrt3}\approx0.385$.
+SC: Substitute $u=e^{-\lambda a}$ to turn the problem into maximising a polynomial. For $[a,2a]$ it is $u-u^2$, maximum $\tfrac14$ (the 2020 PYQ).
+TR: $\tfrac14$ is the answer for an interval of the form $[a,2a]$.
+CHK: close(max(math.exp(-l)-math.exp(-3*l) for l in np.linspace(0.01,5,200001)), 2/(3*math.sqrt(3)), 1e-6)
+
+@@ topic=8F | sec=8·6 | page=8·86 | diff=1 | type=Numerical
+Q: Telephone calls arrive at a switchboard as a Poisson process with rate 2 per minute. The probability that no call arrives in a 1.5-minute interval is
+A: $e^{-3}$
+B: $e^{-2}$
+C: $1-e^{-3}$
+D: $3e^{-3}$
+ANS: A
+S: Waiting time to the first call $\sim$ Exp(2): $P(T>1.5)=e^{-2\times1.5}$.
+S: Equivalently $N(1.5)\sim$ Poisson(3) and $P(N=0)=e^{-3}$.
+SC: Poisson counts $\leftrightarrow$ exponential gaps: $P(\text{no event in }t)=e^{-\lambda t}$.
+CHK: close(math.exp(-2*1.5), math.exp(-3))
+
+@@ topic=8F | sec=8·6 | page=8·86 | diff=3 | type=Conceptual
+Q: $X$ is exponential with rate $\lambda$. The distribution of the integer part $[X]$ is
+A: geometric: $P([X]=k)=(1-e^{-\lambda})e^{-\lambda k}$, $k=0,1,2,\dots$
+B: Poisson with mean $\lambda$
+C: exponential with rate $\lambda$
+D: uniform on $\{0,1,\dots\}$
+ANS: A
+S: $P([X]=k)=P(k\le X<k+1)=e^{-\lambda k}-e^{-\lambda(k+1)}=e^{-\lambda k}(1-e^{-\lambda})$.
+S: This is geometric with $p=1-e^{-\lambda}$, $q=e^{-\lambda}$.
+SC: Discretising the exponential gives the geometric — memorylessness survives discretisation.
+CHK: close((1-math.exp(-0.7))*math.exp(-0.7*3), math.exp(-2.1)-math.exp(-2.8))
+
+@@ topic=8F | sec=8·6 | page=8·86 | diff=2 | type=Numerical
+Q: $X$ is exponential with mean $\theta$. Then $E(X\mid X>a)$ equals
+A: $a+\theta$
+B: $\theta$
+C: $a$
+D: $\theta e^{-a/\theta}$
+ANS: A
+S: By lack of memory, $X-a\mid X>a$ is again exponential with mean $\theta$.
+S: Hence $E(X\mid X>a)=a+\theta$.
+SC: Mean residual life of an exponential is constant $=\theta$.
+
+@@ topic=8F | sec=8·6 | page=8·86 | diff=1 | type=Numerical
+Q: The length of a telephone conversation has p.d.f. $\tfrac15e^{-x/5},\ x>0$ (minutes). The probability that a call lasts between 5 and 10 minutes is
+A: $e^{-1}-e^{-2}$
+B: $1-e^{-1}$
+C: $e^{-2}$
+D: $e^{-1}+e^{-2}$
+ANS: A
+S: $P(5<X<10)=e^{-5/5}-e^{-10/5}=e^{-1}-e^{-2}\approx0.2325$.
+SC: Exponential interval probability $=S(a)-S(b)$ with $S(x)=e^{-x/\theta}$.
+CHK: close(math.exp(-1)-math.exp(-2), 0.2325, 1e-3)
+
+// ---------------------------------------------------------------- 8G
+@@ topic=8G | sec=8·7 | page=8·89 | diff=2 | type=Numerical
+Q: For the Laplace (double exponential) distribution $f(x)=\dfrac1{2\lambda}e^{-|x-\mu|/\lambda}$, the variance and $\beta_2$ are
+A: $2\lambda^2,\ 6$
+B: $\lambda^2,\ 9$
+C: $2\lambda^2,\ 3$
+D: $\lambda^2,\ 6$
+ANS: A
+S: $|X-\mu|\sim$ Exp(mean $\lambda$): $E(X-\mu)^2=2\lambda^2$, $E(X-\mu)^4=4!\,\lambda^4=24\lambda^4$.
+S: $\beta_2=\dfrac{24\lambda^4}{(2\lambda^2)^2}=6$ — leptokurtic. (MD about the mean $=\lambda$.)
+SC: Laplace = symmetrised exponential: even moments $\mu_{2r}=(2r)!\,\lambda^{2r}$. Excess kurtosis 3.
+CHK: integrate(x**4*exp(-x),(x,0,oo))/integrate(x**2*exp(-x),(x,0,oo))**2 == 6
+
+@@ topic=8G | sec=8·7 | page=8·89 | diff=2 | type=Numerical
+Q: $X$ and $Y$ are i.i.d. exponential with mean 2. The distribution of $X-Y$ and its variance are
+A: Laplace with $\lambda=2$; variance 8
+B: Exponential with mean 0; variance 4
+C: Laplace with $\lambda=2$; variance 4
+D: Normal $N(0,8)$
+ANS: A
+S: $\phi_{X-Y}(t)=\dfrac1{1-2it}\cdot\dfrac1{1+2it}=\dfrac1{1+4t^2}$ — the c.f. of $\dfrac1{4}e^{-|x|/2}$.
+S: Variance $=\text{Var}X+\text{Var}Y=4+4=8=2\lambda^2$ ✓.
+SC: Difference of i.i.d. exponentials (scale $\lambda$) $=$ Laplace (scale $\lambda$).
+
+@@ topic=8G | sec=8·8 | page=8·90 | diff=2 | type=Statement
+Q: $X$ has the Weibull distribution $F(x)=1-e^{-(x/\alpha)^\beta},\ x>0$.<br>1. Its hazard rate is $\dfrac\beta\alpha\left(\dfrac x\alpha\right)^{\beta-1}$<br>2. The hazard rate is increasing if $\beta>1$ and decreasing if $\beta<1$<br>3. $\beta=1$ gives the exponential distribution<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 3 only
+C: 2 and 3 only
+D: 3 only
+ANS: A
+S: $h(x)=\dfrac{f(x)}{1-F(x)}=-\dfrac d{dx}\ln S(x)=\dfrac d{dx}\left(\dfrac x\alpha\right)^\beta=\dfrac\beta\alpha\left(\dfrac x\alpha\right)^{\beta-1}$.
+S: Power $\beta-1$ decides monotonicity; $\beta=1$ gives constant hazard $1/\alpha$.
+SC: Weibull $\beta$: $<1$ infant mortality, $=1$ random failures, $>1$ wear-out.
+CHK: simplify(diff((x/a)**b,x) - b/a*(x/a)**(b-1)) == 0
+
+@@ topic=8G | sec=8·8 | page=8·91 | diff=2 | type=Numerical
+Q: The Weibull distribution $f(x)=2xe^{-x^2},\ x>0$, has mean
+A: $\dfrac{\sqrt\pi}2$
+B: $1$
+C: $\sqrt\pi$
+D: $\dfrac12$
+ANS: A
+S: $F(x)=1-e^{-x^2}$: Weibull with $\alpha=1,\ \beta=2$.
+S: $E(X)=\alpha\Gamma\left(1+\tfrac1\beta\right)=\Gamma\left(\tfrac32\right)=\dfrac{\sqrt\pi}2\approx0.886$.
+SC: Weibull moments: $E(X^r)=\alpha^r\Gamma\left(1+\tfrac r\beta\right)$. Put $u=x^\beta$ to reduce to a gamma integral.
+CHK: integrate(2*x**2*exp(-x**2),(x,0,oo)) == sqrt(pi)/2
+
+@@ topic=8G | sec=8·8·3 | page=8·92 | diff=2 | type=Numerical
+Q: The standard logistic distribution $F(x)=\dfrac1{1+e^{-x}}$ has variance
+A: $\dfrac{\pi^2}3$
+B: $1$
+C: $\dfrac{\pi^2}6$
+D: $2$
+ANS: A
+S: The density $\dfrac{e^{-x}}{(1+e^{-x})^2}$ is symmetric about 0, so the mean is 0.
+S: $E(X^2)=2\int_0^\infty\dfrac{x^2e^{-x}}{(1+e^{-x})^2}dx=\dfrac{\pi^2}3$ (using $\sum(-1)^{k+1}/k^2=\pi^2/12$).
+SC: Logistic: variance $\pi^2/3\approx3.29$, $\beta_2=4.2$ — heavier tails than normal, lighter than Laplace. If $U\sim U(0,1)$, $\ln\frac U{1-U}$ is standard logistic.
+TR: $\pi^2/6$ is the Gumbel (extreme value) variance.
+CHK: close(si.quad(lambda w: w*w*math.exp(-w)/(1+math.exp(-w))**2,-60,60)[0], math.pi**2/3)
+
+@@ topic=8G | sec=8·9 | page=8·98 | diff=1 | type=Statement
+Q: $X$ has the Cauchy distribution $f(x)=\dfrac\lambda{\pi[\lambda^2+(x-\mu)^2]}$.<br>1. $E(X)$ does not exist<br>2. The median is $\mu$ and the quartiles are $\mu\pm\lambda$<br>3. Its characteristic function is $e^{i\mu t-\lambda|t|}$<br>4. Its variance exists<br>Which are correct?
+A: 1, 2 and 3 only
+B: 1, 2, 3 and 4
+C: 1 and 3 only
+D: 2 and 3 only
+ANS: A
+S: $\int|x|f(x)dx$ diverges (integrand $\sim1/|x|$), so no mean; hence no variance (4 false).
+S: $F(x)=\tfrac12+\tfrac1\pi\tan^{-1}\tfrac{x-\mu}\lambda$: $F=\tfrac14,\tfrac12,\tfrac34$ at $\mu-\lambda,\mu,\mu+\lambda$.
+S: C.f. $e^{i\mu t-\lambda|t|}$ — not differentiable at 0, consistent with no mean.
+SC: Cauchy: location $\mu$ = median, scale $\lambda$ = semi-interquartile range. G&K objective: "Cauchy — mean does not exist but variance exists" is FALSE.
+
+@@ topic=8G | sec=8·9 | page=8·100 | diff=2 | type=Conceptual
+Q: $X$ is a standard Cauchy variate. The distribution of $Y=\dfrac1X$ is
+A: standard Cauchy
+B: $N(0,1)$
+C: uniform on $(-1,1)$
+D: Cauchy with scale 2
+ANS: A
+S: $X=\tan\theta$ with $\theta\sim U(-\tfrac\pi2,\tfrac\pi2)$; $\tfrac1X=\cot\theta=\tan\left(\tfrac\pi2-\theta\right)$, again a tangent of a uniform angle.
+S: Or directly: $g(y)=f(1/y)\cdot\dfrac1{y^2}=\dfrac1{\pi(1+1/y^2)y^2}=\dfrac1{\pi(1+y^2)}$.
+SC: Standard Cauchy is invariant under $x\mapsto1/x$; also $X/Y$ and $X/|Y|$ of i.i.d. normals are standard Cauchy.
+CHK: simplify(1/(pi*(1+1/y**2))/y**2 - 1/(pi*(1+y**2))) == 0
+
+@@ topic=8G | sec=8·9 | page=8·98 | diff=1 | type=Numerical
+Q: For the standard Cauchy distribution, $P(|X|<1)$ equals
+A: $\tfrac12$
+B: $\tfrac14$
+C: $0.6827$
+D: $\tfrac1\pi$
+ANS: A
+S: $P(|X|<1)=\dfrac1\pi\left[\tan^{-1}1-\tan^{-1}(-1)\right]=\dfrac1\pi\cdot\dfrac\pi2=\dfrac12$.
+SC: $\pm1$ are the quartiles of the standard Cauchy.
+TR: $0.6827$ is the normal $\pm1\sigma$ value.
+CHK: integrate(1/(pi*(1+x**2)),(x,-1,1)) == R(1,2)
+
+@@ topic=8G | sec=8·9·1 | page=8·100 | diff=2 | type=Numerical
+Q: $X_1$ and $X_2$ are independent standard Cauchy variates. The distribution of $X_1+X_2$ is
+A: Cauchy with location 0 and scale 2
+B: standard Cauchy
+C: Cauchy with scale $\sqrt2$
+D: not Cauchy
+ANS: A
+S: $\phi_{X_1+X_2}(t)=e^{-|t|}e^{-|t|}=e^{-2|t|}$: Cauchy with scale 2.
+S: Hence $\tfrac12(X_1+X_2)$ is again standard Cauchy.
+SC: Cauchy scales add (not their squares): stable with index 1. The mean of $n$ standard Cauchys is standard Cauchy.
+TR: $\sqrt2$ is how normal SDs would combine.
+
+@@ topic=8G | sec=8·9 | page=8·79 | diff=2 | type=Numerical
+Q: The Pareto distribution $f(x)=\dfrac{3\cdot2^3}{x^4},\ x\ge2$, has mean and variance
+A: $3,\ 3$
+B: $3,\ 9$
+C: $\tfrac32,\ 3$
+D: $3,\ $does not exist
+ANS: A
+S: Pareto($\alpha=3,\ x_0=2$): $E(X)=\dfrac{\alpha x_0}{\alpha-1}=3$, $E(X^2)=\dfrac{\alpha x_0^2}{\alpha-2}=12$.
+S: Variance $=12-9=3$.
+SC: Pareto moments: $E(X^r)=\dfrac{\alpha x_0^r}{\alpha-r}$ for $r<\alpha$; variance needs $\alpha>2$.
+CHK: integrate(24*x**-3,(x,2,oo)) == 3
+CHK: integrate(24*x**-2,(x,2,oo))-9 == 3
+
+@@ topic=8G | sec=8·8 | page=8·90 | diff=2 | type=Conceptual
+Q: $X$ is exponential with mean 1 and $\beta>0$. The distribution of $Y=X^{1/\beta}$ is
+A: Weibull with shape $\beta$: $P(Y>y)=e^{-y^\beta}$
+B: exponential with mean $\beta$
+C: gamma with shape $\beta$
+D: Pareto with index $\beta$
+ANS: A
+S: $P(Y>y)=P(X>y^\beta)=e^{-y^\beta}$.
+SC: Weibull $=$ power transform of the exponential; this is also how Weibull variates are simulated: $Y=(-\ln U)^{1/\beta}$.
+
+// ---------------------------------------------------------------- 8H
+@@ topic=8H | sec=8·10 | page=8·107 | diff=1 | type=Conceptual
+Q: The Lindeberg–Lévy central limit theorem requires the random variables $X_1,X_2,\dots$ to be
+A: independent and identically distributed with finite variance
+B: independent with bounded third absolute moments only
+C: identically distributed but possibly dependent
+D: i.i.d. with a finite mean only
+ANS: A
+S: If $X_i$ are i.i.d. with mean $\mu$ and variance $0<\sigma^2<\infty$, then $\dfrac{S_n-n\mu}{\sigma\sqrt n}\xrightarrow{d}N(0,1)$.
+S: Proof: c.f. $\left[\phi(t/\sigma\sqrt n)\right]^n=\left[1-\tfrac{t^2}{2n}+o(\tfrac1n)\right]^n\to e^{-t^2/2}$.
+SC: De Moivre–Laplace (Bernoulli summands) is the special case; Liapounoff and Lindeberg–Feller drop "identically distributed".
+TR: Finite mean alone gives only the law of large numbers (Khinchin), not the CLT.
+
+@@ topic=8H | sec=8·10 | page=8·113 | diff=2 | type=Conceptual
+Q: For independent $X_i$ with means $\mu_i$, variances $\sigma_i^2$ and $\rho_i^3=E|X_i-\mu_i|^3$, Liapounoff's form of the CLT holds if
+A: $\dfrac{\left(\sum\rho_i^3\right)^{1/3}}{\left(\sum\sigma_i^2\right)^{1/2}}\to0$
+B: $\sum\sigma_i^2<\infty$
+C: $\dfrac{\sum\rho_i^3}{n}\to0$
+D: $\sigma_i^2$ are all equal
+ANS: A
+S: Liapounoff's condition: $\lim_{n\to\infty}\dfrac{\rho}{\sigma}=0$ with $\rho^3=\sum\rho_i^3$ and $\sigma^2=\sum\sigma_i^2$.
+S: It guarantees that no single term dominates the sum.
+SC: Bounded third moments plus variances growing like $n$ make $\rho/\sigma\sim n^{1/3}/n^{1/2}\to0$.
+TR: Option B would make the total variance finite — the CLT then fails.
+
+@@ topic=8H | sec=8·10·2 | page=8·108 | diff=2 | type=Numerical
+Q: 48 numbers are each rounded to the nearest integer; the rounding errors are independent $U(-\tfrac12,\tfrac12)$. Using the CLT, the probability that the total rounding error is less than 2 in absolute value is about
+A: $0.6827$
+B: $0.9545$
+C: $0.3413$
+D: $0.5000$
+ANS: A
+S: Each error has variance $\tfrac1{12}$; the sum has variance $48\cdot\tfrac1{12}=4$, SD $2$.
+S: $P(|S|<2)\approx P(|Z|<1)=0.6827$.
+SC: Round-off errors: variance $h^2/12$ per number for rounding step $h$. Choose $n$ so that $n/12$ is a perfect square.
+CHK: 48*R(1,12) == 4
+
+@@ topic=8H | sec=8·10·2 | page=8·108 | diff=2 | type=Numerical
+Q: A fair coin is tossed 400 times. Using the normal approximation with continuity correction and $\Phi(1.05)=0.8531$, the probability that the number of heads is between 190 and 210 (inclusive) is about
+A: $0.7062$
+B: $0.6827$
+C: $0.8531$
+D: $0.6318$
+ANS: A
+S: $\mu=200,\ \sigma=\sqrt{100}=10$.
+S: $P(189.5<X<210.5)=P(|Z|<1.05)=2(0.8531)-1=0.7062$.
+SC: Inclusive range $[a,b]$ $\to$ $(a-\tfrac12,b+\tfrac12)$. Symmetric about the mean $\to2\Phi(z)-1$.
+TR: $0.6827$ omits the continuity correction ($z=1$).
+CHK: close(st.binom.cdf(210,400,0.5)-st.binom.cdf(189,400,0.5), 0.7062, 1e-2)
+
+@@ topic=8H | sec=8·10·2 | page=8·110 | diff=2 | type=Numerical
+Q: A population has $\sigma=1$. Using the CLT (with $z_{0.025}=1.96$), the minimum sample size for $P(|\bar X-\mu|<0.5)\ge0.95$ is
+A: $16$
+B: $80$
+C: $15$
+D: $62$
+ANS: A
+S: $\dfrac{0.5}{1/\sqrt n}\ge1.96\Rightarrow\sqrt n\ge3.92\Rightarrow n\ge15.37$.
+S: Round up: $n=16$.
+SC: CLT: $n=(z\sigma/\varepsilon)^2$. Chebychev for the same requirement needs $n=\sigma^2/(\varepsilon^2\alpha)=80$ — five times more.
+TR: $80$ is the Chebychev answer; $15$ rounds the wrong way.
+CHK: math.ceil((1.96/0.5)**2) == 16
+
+@@ topic=8H | sec=8·10·2 | page=8·110 | diff=3 | type=Numerical
+Q: The value of $\displaystyle\lim_{n\to\infty}e^{-n}\sum_{k=0}^{n}\frac{n^k}{k!}$ is
+A: $\tfrac12$
+B: $1$
+C: $e^{-1}$
+D: $0$
+ANS: A
+S: The sum equals $P(S_n\le n)$ where $S_n\sim$ Poisson$(n)$ is a sum of $n$ i.i.d. Poisson(1) variables.
+S: By the CLT, $P\left(\dfrac{S_n-n}{\sqrt n}\le0\right)\to\Phi(0)=\tfrac12$.
+SC: Recognise a probability in a limit and apply the CLT. Same trick: $P(\chi^2_n\le n)\to\tfrac12$, $\sum_{j\ge np}\binom nj p^jq^{n-j}\to\tfrac12$.
+TR: $1$ is the value of the full infinite series $e^{-n}\sum_{k\ge0}n^k/k!$.
+CHK: close(st.poisson.cdf(20000,20000), 0.5, 1e-2)
+
+@@ topic=8H | sec=8·10·4 | page=8·111 | diff=2 | type=Conceptual
+Q: Cramér's theorem states that if $X$ and $Y$ are independent and $X+Y$ is normally distributed, then
+A: both $X$ and $Y$ are normally distributed
+B: at least one of $X,Y$ is normal
+C: $X$ and $Y$ are identically distributed
+D: $X-Y$ is independent of $X+Y$
+ANS: A
+S: The normal law is "indecomposable except into normals": any independent summands of a normal variable are normal (§8·10·4).
+SC: Converse of the reproductive property. Contrast: a Poisson sum can only be decomposed into Poissons (Raikov) — similar spirit.
+
+@@ topic=8H | sec=8·10·2 | page=8·108 | diff=1 | type=Numerical
+Q: $X_1,\dots,X_{100}$ are i.i.d. exponential with mean 1 and $S=\sum X_i$. Using the CLT and $\Phi(1)=0.8413$, $P(S>110)$ is about
+A: $0.1587$
+B: $0.8413$
+C: $0.0228$
+D: $0.3413$
+ANS: A
+S: $E(S)=100$, $\text{Var}(S)=100$, SD $=10$.
+S: $P(S>110)\approx P(Z>1)=0.1587$.
+SC: Mean and variance of a sum scale with $n$; the SD scales with $\sqrt n$.
+CHK: close(st.gamma.sf(110,100), 0.1587, 0.15)
+
+@@ topic=8H | sec=8·10·2 | page=8·108 | diff=1 | type=Numerical
+Q: $U_1,\dots,U_{12}$ are i.i.d. $U(0,1)$. The mean and variance of $W=U_1+\cdots+U_{12}-6$ are
+A: $0,\ 1$
+B: $6,\ 1$
+C: $0,\ 12$
+D: $0,\ \tfrac1{12}$
+ANS: A
+S: $E(W)=12\cdot\tfrac12-6=0$; $\text{Var}(W)=12\cdot\tfrac1{12}=1$.
+S: By the CLT $W$ is approximately $N(0,1)$ — the classical "sum of 12 uniforms" normal generator.
+SC: Choose $n=12$ so the variance is exactly 1.
+CHK: 12*R(1,12) == 1
+
+// ---------------------------------------------------------------- 8I
+@@ topic=8I | sec=8·11 | page=8·116 | diff=3 | type=Conceptual
+Q: Given $\Lambda=\lambda$, $X\sim$ Poisson$(\lambda)$; and $\Lambda$ has density $\dfrac{a^r}{\Gamma(r)}e^{-a\lambda}\lambda^{r-1}$. The marginal distribution of $X$ is
+A: negative binomial: $\binom{x+r-1}{x}\left(\dfrac a{1+a}\right)^r\left(\dfrac1{1+a}\right)^x$
+B: Poisson with mean $r/a$
+C: geometric with $p=\dfrac a{1+a}$ for every $r$
+D: binomial with $n=r,\ p=\dfrac1{1+a}$
+ANS: A
+S: $P(X=x)=\int_0^\infty\dfrac{e^{-\lambda}\lambda^x}{x!}\dfrac{a^re^{-a\lambda}\lambda^{r-1}}{\Gamma(r)}d\lambda=\dfrac{a^r}{x!\,\Gamma(r)}\cdot\dfrac{\Gamma(x+r)}{(1+a)^{x+r}}$.
+S: $=\binom{x+r-1}x\left(\dfrac a{1+a}\right)^r\left(\dfrac1{1+a}\right)^x$ — negative binomial.
+SC: Gamma-mixed Poisson = NB (compound/contagious model for over-dispersed counts). $r=1$ gives the geometric.
+CHK: close(si.quad(lambda l: math.exp(-l)*l**2/2*(2**3/2)*math.exp(-2*l)*l**2,0,60)[0], math.comb(4,2)*(2/3)**3*(1/3)**2)
+
+@@ topic=8I | sec=8·11 | page=8·116 | diff=3 | type=Numerical
+Q: Given $P=p$, $X\sim B(n,p)$, where $P$ is uniformly distributed on $(0,1)$. Then $P(X=x)$ equals
+A: $\dfrac1{n+1},\ x=0,1,\dots,n$
+B: $\binom nx2^{-n}$
+C: $\dfrac xn$
+D: $\dfrac{2(x+1)}{(n+1)(n+2)}$
+ANS: A
+S: $P(X=x)=\int_0^1\binom nxp^x(1-p)^{n-x}dp=\binom nxB(x+1,n-x+1)=\binom nx\dfrac{x!\,(n-x)!}{(n+1)!}$.
+S: $=\dfrac1{n+1}$ — discrete uniform.
+SC: Bayes' billiard: a uniform prior on $p$ makes every success count equally likely. (Beta–binomial with $\alpha=\beta=1$.)
+CHK: all(integrate(binomial(6,j)*x**j*(1-x)**(6-j),(x,0,1)) == R(1,7) for j in range(7))
+
+@@ topic=8I | sec=8·15 | page=8·151 | diff=2 | type=Numerical
+Q: A Poisson distribution with parameter $\lambda$ is truncated at zero (the value 0 is not observable). The mean of the truncated distribution is
+A: $\dfrac\lambda{1-e^{-\lambda}}$
+B: $\lambda$
+C: $\lambda(1-e^{-\lambda})$
+D: $\dfrac{\lambda e^{-\lambda}}{1-e^{-\lambda}}$
+ANS: A
+S: Truncated p.m.f.: $\dfrac{e^{-\lambda}\lambda^x/x!}{1-e^{-\lambda}}$, $x=1,2,\dots$.
+S: Mean $=\dfrac{\sum_{x\ge1}x\,p(x)}{1-e^{-\lambda}}=\dfrac\lambda{1-e^{-\lambda}}$.
+SC: Truncation just renormalises: truncated mean $=\dfrac{E(X;\ X\in A)}{P(X\in A)}$. Removing 0 does not change $E(X;X\ge1)=\lambda$.
+CHK: close(sum(j*math.exp(-1.5)*1.5**j/math.factorial(j) for j in range(1,60))/(1-math.exp(-1.5)), 1.5/(1-math.exp(-1.5)))
+
+@@ topic=8I | sec=8·15 | page=8·152 | diff=2 | type=Numerical
+Q: A binomial distribution $B(n,p)$ is truncated at zero. The mean of the truncated distribution is
+A: $\dfrac{np}{1-q^n}$
+B: $np$
+C: $np(1-q^n)$
+D: $\dfrac{npq}{1-q^n}$
+ANS: A
+S: Divide by $P(X\ge1)=1-q^n$; the numerator $\sum_{x\ge1}xp(x)=np$ is unchanged.
+SC: Same rule as the zero-truncated Poisson: mean$/(1-P(0))$.
+CHK: close(sum(j*math.comb(5,j)*0.3**j*0.7**(5-j) for j in range(1,6))/(1-0.7**5), 1.5/(1-0.7**5))
+
+@@ topic=8I | sec=8·15 | page=8·152 | diff=3 | type=Numerical
+Q: An exponential variate with density $e^{-x}$ is truncated to the interval $(0,1)$. The mean of the truncated distribution is
+A: $\dfrac{e-2}{e-1}$
+B: $\dfrac12$
+C: $1-e^{-1}$
+D: $\dfrac1{e-1}$
+ANS: A
+S: Truncated density $\dfrac{e^{-x}}{1-e^{-1}}$ on $(0,1)$.
+S: $\int_0^1xe^{-x}dx=1-2e^{-1}$; mean $=\dfrac{1-2e^{-1}}{1-e^{-1}}=\dfrac{e-2}{e-1}\approx0.418$.
+SC: Truncating on the right pulls the mean below the midpoint $\tfrac12$ because the density is decreasing.
+TR: $\tfrac12$ would be the uniform answer.
+CHK: eq(integrate(x*exp(-x),(x,0,1))/(1-exp(-1)), (E-2)/(E-1))
+
+// ---------------------------------------------------------------- 8J
+@@ topic=8J | sec=8·12 | page=8·122 | diff=2 | type=Statement
+Q: In Pearson's system with criterion $\kappa=\dfrac{\beta_1(\beta_2+3)^2}{4(4\beta_2-3\beta_1)(2\beta_2-3\beta_1-6)}$:<br>1. $\kappa<0$ gives the Main Type I (Beta of the first kind)<br>2. $\kappa>1$ gives Type VI (Beta of the second kind)<br>3. $0<\kappa<1$ gives Type IV<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 2 only
+C: 1 only
+D: 2 and 3 only
+ANS: A
+S: $\kappa$ decides the nature of the roots of $b_0+b_1x+b_2x^2=0$ in Pearson's equation.
+S: Real roots of opposite sign ($\kappa<0$): Type I; complex roots ($0<\kappa<1$): Type IV; real roots of the same sign ($\kappa>1$): Type VI.
+SC: Transition types: $\kappa=0$ (normal, II, VII), $\kappa=1$ (V), $\kappa=\pm\infty$ (III, gamma).
+
+@@ topic=8J | sec=8·12·7 | page=8·125 | diff=2 | type=Conceptual
+Q: For the gamma distribution, $\beta_1=4/\lambda$ and $\beta_2=3+6/\lambda$. In Pearson's system it is the transition curve of
+A: Type III, since $2\beta_2-3\beta_1-6=0$
+B: Type VII, since $\beta_1=0$
+C: Type V, since $\kappa=1$
+D: Type I, since $\kappa<0$
+ANS: A
+S: $2\beta_2-3\beta_1-6=6+\tfrac{12}\lambda-\tfrac{12}\lambda-6=0$, so the denominator of $\kappa$ vanishes: $\kappa=\infty$.
+S: That is Pearson Type III (gamma / $\chi^2$).
+SC: Check any claimed type by plugging the $\beta$'s into the three factors $\beta_1$, $4\beta_2-3\beta_1$, $2\beta_2-3\beta_1-6$.
+CHK: simplify(2*(3+6/lam)-3*(4/lam)-6) == 0
+
+@@ topic=8J | sec=8·12 | page=8·127 | diff=1 | type=Statement
+Q: For a symmetric Pearson curve ($\beta_1=0$, so $\kappa=0$):<br>1. $\beta_2=3$ gives the normal curve<br>2. $\beta_2<3$ gives Type II<br>3. $\beta_2>3$ gives Type VII<br>Which are correct?
+A: 1, 2 and 3
+B: 1 only
+C: 1 and 3 only
+D: 2 and 3 only
+ANS: A
+S: With $\beta_1=0$ the curve is symmetric; its tails depend on $\beta_2$.
+S: Platykurtic symmetric ($\beta_2<3$): Type II (symmetric Beta); leptokurtic ($\beta_2>3$): Type VII (Student's $t$ form); mesokurtic: normal.
+SC: Type II $\approx$ symmetric Beta I; Type VII $\approx t$; Type III $\approx$ gamma; Type VI $\approx F$/Beta II.
+
+@@ topic=8J | sec=8·12 | page=8·119 | diff=2 | type=Conceptual
+Q: Pearson's family of frequency curves is defined by the differential equation
+A: $\dfrac1y\dfrac{dy}{dx}=\dfrac{x-a}{b_0+b_1x+b_2x^2}$
+B: $\dfrac{dy}{dx}=\dfrac{x-a}{b_0}$
+C: $\dfrac1y\dfrac{dy}{dx}=b_0+b_1x+b_2x^2$
+D: $\dfrac{d^2y}{dx^2}=-\dfrac{y}{\sigma^2}$
+ANS: A
+S: Pearson generalised the normal equation $\dfrac1y\dfrac{dy}{dx}=-\dfrac{x-\mu}{\sigma^2}$ by allowing a quadratic denominator.
+S: The four constants $a,b_0,b_1,b_2$ are expressible through the first four moments; the mode is at $x=a$.
+SC: Normal: $b_1=b_2=0$. The roots of the quadratic decide the type (via $\kappa$).
+
+@@ topic=8J | sec=8·13·1 | page=8·133 | diff=2 | type=Statement
+Q: Consider the following variance-stabilising transformations:<br>1. $\sqrt X$ for Poisson data gives variance $\approx\tfrac14$<br>2. $\sin^{-1}\sqrt{\hat p}$ for a binomial proportion gives variance $\approx\tfrac1{4n}$ (radians)<br>3. $\log X$ is appropriate when the standard deviation is proportional to the mean<br>Which are correct?
+A: 1, 2 and 3
+B: 1 and 2 only
+C: 1 and 3 only
+D: 2 and 3 only
+ANS: A
+S: Delta method: $\text{Var}\,g(X)\approx[g'(\mu)]^2\sigma^2$. Choose $g'\propto1/\sigma(\mu)$.
+S: Poisson $\sigma^2=\mu$: $g=\sqrt x$, $\text{Var}\approx\tfrac1{4\mu}\mu=\tfrac14$.
+S: Binomial proportion $\sigma^2=\tfrac{p(1-p)}n$: $g=\sin^{-1}\sqrt p$, $g'^2=\tfrac1{4p(1-p)}$, $\text{Var}\approx\tfrac1{4n}$ (i.e. $\tfrac{820.7}n$ in degrees).
+S: $\sigma\propto\mu$: $g=\log x$ gives constant variance.
+SC: Stabiliser $g(x)=\int\dfrac{dx}{\sigma(x)}$. Fisher's $z=\tanh^{-1}r$ is the same idea for correlations.
+
+@@ topic=8J | sec=8·13·5 | page=8·135 | diff=2 | type=Numerical
+Q: Fisher's $z$-transformation $z=\tfrac12\log_e\dfrac{1+r}{1-r}$ of a sample correlation coefficient from a sample of size $n$ from a bivariate normal population is approximately normal with variance
+A: $\dfrac1{n-3}$
+B: $\dfrac1{n-2}$
+C: $\dfrac{1-\rho^2}{n}$
+D: $\dfrac1{\sqrt{n-3}}$
+ANS: A
+S: $z\approx N\left(\tfrac12\log\tfrac{1+\rho}{1-\rho},\ \tfrac1{n-3}\right)$ — the variance no longer depends on $\rho$.
+SC: Variance $\tfrac1{n-3}$, standard error $\tfrac1{\sqrt{n-3}}$ (option D is the SE, not the variance).
+TR: $\tfrac{(1-\rho^2)^2}{n}$ is the large-sample variance of $r$ itself — it depends on $\rho$, which is why $z$ is used.
+
+@@ topic=8J | sec=8·12·2 | page=8·121 | diff=3 | type=Conceptual
+Q: For a Pearson curve, Karl Pearson's coefficient of skewness $\dfrac{\text{mean}-\text{mode}}{\sigma}$ can be expressed in terms of $\beta_1,\beta_2$ as
+A: $\dfrac{\sqrt{\beta_1}(\beta_2+3)}{2(5\beta_2-6\beta_1-9)}$
+B: $\dfrac{\sqrt{\beta_1}}{2}$
+C: $\dfrac{\beta_2-3}{2}$
+D: $\dfrac{\sqrt{\beta_1}(\beta_2-3)}{5\beta_2-6\beta_1-9}$
+ANS: A
+S: From Pearson's equation, mode $=\mu-\dfrac{\mu_3(\beta_2+3)}{2\mu_2(5\beta_2-6\beta_1-9)}$ (in standard units).
+S: Hence Sk $=\dfrac{\sqrt{\beta_1}(\beta_2+3)}{2(5\beta_2-6\beta_1-9)}$.
+SC: Check with the gamma law $\beta_1=4/\lambda$, $\beta_2=3+6/\lambda$: formula gives $1/\sqrt\lambda$, and indeed $(\text{mean}-\text{mode})/\sigma=1/\sqrt\lambda$.
+CHK: (lambda b1,b2: eq(sqrt(b1)*(b2+3)/(2*(5*b2-6*b1-9)), 1/sqrt(lam)))(4/lam,3+6/lam)
+
+// ---------------------------------------------------------------- 8K
+@@ topic=8K | sec=8·14·1 | page=8·136 | diff=1 | type=Conceptual
+Q: $X_{(r)}$ is the $r$-th order statistic of a random sample of size $n$ from a continuous distribution with d.f. $F$ and p.d.f. $f$. Its density is
+A: $\dfrac{n!}{(r-1)!\,(n-r)!}[F(x)]^{r-1}[1-F(x)]^{n-r}f(x)$
+B: $\dbinom nr[F(x)]^r[1-F(x)]^{n-r}$
+C: $n[F(x)]^{n-1}f(x)$
+D: $\dfrac{n!}{r!\,(n-r)!}[F(x)]^{r}[1-F(x)]^{n-r-1}f(x)$
+ANS: A
+S: Multinomial reasoning: $r-1$ observations below $x$, one in $(x,x+dx)$, $n-r$ above.
+S: Count arrangements $\dfrac{n!}{(r-1)!\,1!\,(n-r)!}$ and multiply the three probabilities.
+SC: Special cases: $r=n$ gives $nF^{n-1}f$ (maximum); $r=1$ gives $n(1-F)^{n-1}f$ (minimum).
+
+@@ topic=8K | sec=8·14 | page=8·137 | diff=2 | type=Numerical
+Q: A random sample of size 9 is taken from $U(0,1)$. The expected value of the sample range $X_{(9)}-X_{(1)}$ is
+A: $0.8$
+B: $0.9$
+C: $0.5$
+D: $\tfrac89$
+ANS: A
+S: For $U(0,1)$, $E\left(X_{(r)}\right)=\dfrac r{n+1}$.
+S: $E(\text{range})=\dfrac{n}{n+1}-\dfrac1{n+1}=\dfrac{n-1}{n+1}=\dfrac8{10}$.
+SC: $n$ uniform points split $(0,1)$ into $n+1$ gaps of equal expected length $\tfrac1{n+1}$; the range spans $n-1$ gaps.
+TR: $\tfrac89$ is $\tfrac{n-1}{n}$ — off by one in the number of gaps.
+CHK: R(9-1,9+1) == R(4,5)
+
+@@ topic=8K | sec=8·14 | page=8·137 | diff=2 | type=Numerical
+Q: The median of a random sample of size 5 from $U(0,1)$ is less than $\tfrac14$ with probability
+A: $\tfrac{53}{512}$
+B: $\tfrac1{4}$
+C: $\tfrac{45}{512}$
+D: $\tfrac{1}{64}$
+ANS: A
+S: Median $<\tfrac14\iff$ at least 3 of the 5 observations are $<\tfrac14$; the count is $B(5,\tfrac14)$.
+S: $P=\binom53\tfrac1{64}\cdot\tfrac9{16}+\binom54\tfrac1{256}\cdot\tfrac34+\tfrac1{1024}=\dfrac{90+15+1}{1024}=\dfrac{53}{512}$.
+SC: $P(X_{(r)}\le x)=P(\text{at least }r\text{ of }n\text{ are}\le x)$ — a binomial tail. No density needed.
+CHK: sum(binomial(5,j)*R(1,4)**j*R(3,4)**(5-j) for j in range(3,6)) == R(53,512)
+
+@@ topic=8K | sec=8·14 | page=8·137 | diff=2 | type=Numerical
+Q: $X_1,X_2,X_3$ are i.i.d. exponential with mean 1. The expected value of $\max(X_1,X_2,X_3)$ is
+A: $\tfrac{11}6$
+B: $3$
+C: $\tfrac13$
+D: $\tfrac32$
+ANS: A
+S: Spacings: the minimum is Exp(3); after it, by lack of memory, the next gap is Exp(2); the last gap is Exp(1).
+S: $E(\max)=\tfrac13+\tfrac12+1=\tfrac{11}6$.
+SC: Exponential order statistics: $E(X_{(r)})=\dfrac1\lambda\sum_{j=n-r+1}^{n}\dfrac1j$. Maximum $=H_n/\lambda$.
+TR: $\tfrac13$ is the expected <i>minimum</i>.
+CHK: integrate(x*3*(1-exp(-x))**2*exp(-x),(x,0,oo)) == R(11,6)
+
+@@ topic=8K | sec=8·14 | page=8·137 | diff=1 | type=Numerical
+Q: Five bulbs have independent exponential lifetimes with mean 1000 hours. The probability that none fails in the first 200 hours is
+A: $e^{-1}$
+B: $e^{-0.2}$
+C: $1-e^{-1}$
+D: $5e^{-1}$
+ANS: A
+S: $P(X_{(1)}>200)=[P(X>200)]^5=\left(e^{-0.2}\right)^5=e^{-1}$.
+SC: The minimum of $n$ i.i.d. Exp(mean $\theta$) is Exp(mean $\theta/n$) $=$ Exp(mean 200) here.
+CHK: close(math.exp(-0.2)**5, math.exp(-1))
+
+@@ topic=8K | sec=8·14 | page=8·137 | diff=2 | type=Numerical
+Q: $X$ and $Y$ are i.i.d. $N(0,\sigma^2)$. The expected range $E|X-Y|$ of this sample of size 2 is
+A: $\dfrac{2\sigma}{\sqrt\pi}$
+B: $\dfrac{\sigma}{\sqrt\pi}$
+C: $\sigma\sqrt{\dfrac2\pi}$
+D: $2\sigma$
+ANS: A
+S: $X-Y\sim N(0,2\sigma^2)$; $E|X-Y|=\sqrt{2}\sigma\sqrt{\tfrac2\pi}=\dfrac{2\sigma}{\sqrt\pi}$.
+S: Since $\max+\min=X+Y$ has mean 0, $E(\max)=\dfrac{\sigma}{\sqrt\pi}$ (the 2019 PYQ).
+SC: $\max-\min=|X-Y|$ for $n=2$: use the half-normal mean $\sqrt{2/\pi}\times$SD.
+TR: $\sigma/\sqrt\pi$ is $E(\max)$, half the range.
+CHK: close(math.sqrt(2)*math.sqrt(2/math.pi), 2/math.sqrt(math.pi))
+
+@@ topic=8K | sec=8·14 | page=8·137 | diff=1 | type=Numerical
+Q: $X_1,\dots,X_n$ is a random sample from $U(0,\theta)$. Then $E\left(X_{(n)}\right)$ equals
+A: $\dfrac{n\theta}{n+1}$
+B: $\theta$
+C: $\dfrac{\theta}{n+1}$
+D: $\dfrac{(n-1)\theta}{n}$
+ANS: A
+S: $X_{(n)}$ has density $\dfrac{nx^{n-1}}{\theta^n}$ on $(0,\theta)$.
+S: $E=\int_0^\theta\dfrac{nx^n}{\theta^n}dx=\dfrac{n\theta}{n+1}$.
+SC: Hence $\dfrac{n+1}nX_{(n)}$ is unbiased for $\theta$. $E(X_{(1)})=\dfrac\theta{n+1}$.
+CHK: eq(integrate(n*x**n/th**n,(x,0,th)), n*th/(n+1))
+
+@@ topic=8K | sec=8·14 | page=8·138 | diff=3 | type=Numerical
+Q: For a random sample of size $n$ from a continuous distribution with median $M$, the probability that $M$ lies between the smallest and the largest observation is
+A: $1-\left(\tfrac12\right)^{n-1}$
+B: $1-\left(\tfrac12\right)^n$
+C: $\left(\tfrac12\right)^{n-1}$
+D: $\dfrac{n-1}{n+1}$
+ANS: A
+S: $M$ is outside $[X_{(1)},X_{(n)}]$ iff all observations are above $M$ or all below $M$.
+S: $P=1-2\left(\tfrac12\right)^n=1-\left(\tfrac12\right)^{n-1}$.
+SC: Distribution-free confidence interval for the median: $(X_{(1)},X_{(n)})$ has coverage $1-2^{1-n}$; in general $(X_{(r)},X_{(n-r+1)})$ uses binomial$(n,\tfrac12)$ tails.
+TR: $\tfrac{n-1}{n+1}$ is the expected range of a uniform sample.
+CHK: 1-2*R(1,2)**5 == 1-R(1,2)**4
+
+@@ topic=8K | sec=8·14·3 | page=8·138 | diff=3 | type=Conceptual
+Q: $X_{(1)}<X_{(2)}<\dots<X_{(n)}$ are the order statistics of a sample from an exponential distribution with rate $\lambda$. The spacing $X_{(2)}-X_{(1)}$ is
+A: exponential with rate $(n-1)\lambda$, independent of $X_{(1)}$
+B: exponential with rate $n\lambda$
+C: exponential with rate $\lambda$
+D: gamma with shape 2 and rate $n\lambda$
+ANS: A
+S: $X_{(1)}\sim$ Exp$(n\lambda)$. At that moment $n-1$ items remain; by lack of memory their residual lives are i.i.d. Exp$(\lambda)$.
+S: The next spacing is the minimum of $n-1$ exponentials: Exp$((n-1)\lambda)$, independent of the past.
+SC: Rényi representation: $X_{(r)}=\sum_{j=1}^r\dfrac{E_j}{(n-j+1)\lambda}$ with $E_j$ i.i.d. Exp(1).
+
+@@ topic=8K | sec=8·14·3 | page=8·138 | diff=2 | type=Conceptual
+Q: The joint p.d.f. of the smallest and largest order statistics $(X_{(1)},X_{(n)})=(x,y)$, $x<y$, from a continuous $F$ with density $f$ is
+A: $n(n-1)[F(y)-F(x)]^{n-2}f(x)f(y)$
+B: $n^2[F(y)-F(x)]^{n-2}f(x)f(y)$
+C: $n(n-1)[F(y)]^{n-1}[1-F(x)]^{n-1}$
+D: $[F(y)-F(x)]^nf(x)f(y)$
+ANS: A
+S: One observation at $x$, one at $y$, the other $n-2$ in between: $\dfrac{n!}{1!\,(n-2)!\,1!}[F(y)-F(x)]^{n-2}f(x)f(y)$.
+SC: Integrating over $x$ with $y-x=w$ fixed gives the range density, e.g. $n(n-1)w^{n-2}(1-w)$ for $U(0,1)$ (the 2018 PYQ).
+
+@@ topic=8K | sec=8·14 | page=8·137 | diff=2 | type=Numerical
+Q: The variance of the median of a random sample of size 3 from $U(0,1)$ is
+A: $\tfrac1{20}$
+B: $\tfrac1{12}$
+C: $\tfrac1{36}$
+D: $\tfrac1{16}$
+ANS: A
+S: $X_{(2)}\sim$ Beta$(2,2)$ (in general $X_{(r)}\sim$ Beta$(r,n-r+1)$).
+S: $\text{Var}=\dfrac{2\cdot2}{4^2\cdot5}=\dfrac1{20}$.
+SC: $\text{Var}(X_{(r)})=\dfrac{r(n-r+1)}{(n+1)^2(n+2)}$ for uniform samples. Compare $\text{Var}(\bar X)=\tfrac1{36}$ — the mean is more efficient here.
+TR: $\tfrac1{36}$ is the variance of the sample mean.
+CHK: R(2*2,4**2*5) == R(1,20)
+
+@@ topic=8K | sec=8·14 | page=8·145 | diff=3 | type=Numerical
+Q: For large $n$, the sample median of a random sample from $N(\mu,\sigma^2)$ is approximately normal with mean $\mu$ and variance
+A: $\dfrac{\pi\sigma^2}{2n}$
+B: $\dfrac{\sigma^2}n$
+C: $\dfrac{\sigma^2}{2n}$
+D: $\dfrac{2\sigma^2}{\pi n}$
+ANS: A
+S: Asymptotically, median $\sim N\left(M,\ \dfrac1{4nf(M)^2}\right)$.
+S: For the normal, $f(\mu)=\dfrac1{\sigma\sqrt{2\pi}}$: variance $=\dfrac{2\pi\sigma^2}{4n}=\dfrac{\pi\sigma^2}{2n}$.
+SC: Efficiency of the median relative to the mean for normal data $=\dfrac{\sigma^2/n}{\pi\sigma^2/2n}=\dfrac2\pi\approx0.64$.
+TR: $\dfrac{2\sigma^2}{\pi n}$ inverts the constant.
+CHK: close(1/(4*(1/math.sqrt(2*math.pi))**2), math.pi/2)

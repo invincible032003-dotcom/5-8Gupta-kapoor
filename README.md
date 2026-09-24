@@ -32,3 +32,15 @@ critical regions and similar regions. Power function. Most powerful and uniforml
 Pearson fundamental lemma. Unbiased test. Randomized test. Likelihood ratio test. Wald's SPRT, OC and ASN 
 functions. Elements of decision theory.# 5-8Gupta-kapoor
 Problems DASHBOARD at UPSC ISS STANDARD 
+
+## Chapters 5–8 objective problem bank (Gupta & Kapoor)
+
+`GuptaKapoor-Ch5-8-ISS-Objective-Dashboard.html` is a standalone offline dashboard for the UPSC ISS objective papers. Open it in any browser; it needs no internet connection. It covers Chapters 5–8 of *Fundamentals of Mathematical Statistics*: random variables, expectation and generating functions, laws of large numbers, and the discrete and continuous distributions.
+
+- **356 original exam-style MCQs** across 39 topics, at three levels (Foundation, Exam-level, Elite). Each has a step-by-step solution and an exam shortcut. Where a distractor is built on a common slip, a trap note explains it. Each item cites the book section and page.
+- **Practice mode**: filter by chapter, topic, level, type or status (new, wrong, bookmarked). Keyboard shortcuts included.
+- **Mock tests**: timed and negatively marked, drawn at random with chapter weighting. Defaults to 80 questions, 120 minutes, +2.5 / −0.83. Includes a per-chapter breakdown and full solution review.
+- **Formula & shortcut sheets**: 18 cards for last-day revision.
+- **Progress, bookmarks and mistakes** are stored in the browser. They can be exported and imported as JSON.
+
+Every numeric answer is checked with sympy/scipy and every formula is test-rendered. The source and build steps are in `ch5-8-dashboard-src/`.
