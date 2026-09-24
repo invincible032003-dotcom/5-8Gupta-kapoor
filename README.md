@@ -44,7 +44,7 @@ The tab covers Chapters 5–8 of S.C. Gupta & V.K. Kapoor, *Fundamentals of Math
 - **Every problem opens in this order**: verdict, Step-by-Step Solution, Exam Shortcut, then Tips & Tricks. There are at least three tips per problem, including the trap behind a tempting distractor.
 - **Practice**: answer inline on the subtopic page. You can also practise a subtopic, a chapter or all four chapters in Learning or Strict Exam mode. Results, review, bookmarks, mistakes, search (*Bank → Gupta Kapoor only*) and analytics work as they do for the PYQs. A *Related PYQs* button practises the previous-year questions for the same syllabus topic.
 - **Kept separate from the 720 PYQs.** These problems are badged *GUPTA KAPOOR · not PYQ*. They never enter a year, sectional, topic, subtopic or custom PYQ mock, and the PYQ data audit is unchanged.
-- **All maths is LaTeX**, typeset by the KaTeX embedded in the file. All 8,642 formulas pass KaTeX in strict mode with the dashboard's own macros. 319 answer keys are confirmed by an exact or numerical computation (sympy/scipy). The conceptual and statement items are checked by hand against the book.
+- **All maths is LaTeX**, typeset by the KaTeX embedded in the file (see *Strict LaTeX and dark mode* below). 319 answer keys are confirmed by an exact or numerical computation (sympy/scipy). The conceptual and statement items are checked by hand against the book.
 
 ### Syllabus mapping
 
@@ -91,3 +91,30 @@ The tab covers Chapters 5–8 of S.C. Gupta & V.K. Kapoor, *Fundamentals of Math
 | 8K | Order statistics | 15 | Statistical Methods › S13 Order Statistics - Minimum, Maximum, Range, Median › Order Statistics - Minimum, Maximum & Median |
 
 The problem bank and the scripts that check it and add it to the dashboard are in `ch5-8-dashboard-src/`.
+
+## Strict LaTeX and dark mode
+
+**Strict LaTeX everywhere.** Every formula in the dashboard is typeset by its embedded KaTeX in strict mode (`strict: 'error'`), so invalid LaTeX is reported, never quietly accepted. That covers the 720 PYQs, the 750 forecast items, the 45 topic notes and the Gupta Kapoor bank.
+
+The PYQ and forecast explanations used to mix LaTeX with plain-text maths ("n - 1", "x^2", "sqrt(n)", "<=", "P(A)") and had formulas cut in half by an earlier conversion. That text has now been converted to LaTeX:
+- variables, expressions, operators, arrows and sets in running text are in `$...$`;
+- integral limits and evaluation brackets are rebuilt, e.g. $\int_x^1 8xy\,dy = 4x(1-x^2)$;
+- the topic notes have been rewritten.
+
+About 40 slips of the earlier conversion were corrected by hand. For example, "4x(1 − x²)" had become "4 × (1 − x²)", and "partial" had become the symbol ∂. One wrong explanation was also fixed (2018-Q17, why option (a) gives 22). Question stems and options keep their original wording; only their maths is typeset.
+
+All 25,447 rendered texts (35,070 formulas) pass the check in the page itself, in light and in dark mode, with no maths left outside LaTeX.
+
+**Dark mode.** The ◐ button in the top bar cycles **Auto → Dark → Light**. Auto follows the operating system. The choice is remembered in this browser only.
+
+**Tools** (in `tools/`):
+
+| Script | What it does |
+|---|---|
+| `latexify.py` | Converts the maths in the PYQ, forecast and topic-note text to LaTeX. Hand corrections are in `latex_fixes.py`. Running it again changes nothing. |
+| `check_latex.py` | Checks everything the page renders. Every formula must pass strict KaTeX, and no maths may be left outside `$...$`. Exits non-zero on any failure. |
+| `patch_dashboard.py` | Sets strict KaTeX and adds the theme toggle. Safe to re-run. |
+
+```bash
+python3 tools/latexify.py && python3 tools/patch_dashboard.py && python3 tools/check_latex.py
+```
